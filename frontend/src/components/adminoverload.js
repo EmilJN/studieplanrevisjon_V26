@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState} from "react";
 import { Link } from "react-router-dom";
 import "../styles/NavBar.css";
-import axios from "axios"
+import api from "../api";
 import { useAuth } from "./validateuser";
 
 const AdminOverload = () => {
@@ -9,7 +9,7 @@ const AdminOverload = () => {
 
     useEffect (() => {
             const getUsers = async () => {
-            await axios.get('/backend/studyprograms/get_plans_with_too_many_credits')
+            await api.get('/studyprograms/get_plans_with_too_many_credits')
             .then(response => {
                 setStudyPrograms(response.data)})
             .catch( error => {

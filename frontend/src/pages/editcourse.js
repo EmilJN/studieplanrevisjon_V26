@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../api";
 
 const EditCourse = () => {
     const [subjects, setSubjects] = useState([]); // All subjects fetched from the backend
@@ -10,7 +10,7 @@ const EditCourse = () => {
 
     // Henta emner
     useEffect(() => {
-        axios.get("http://127.0.0.1:5000/backend/subjects/")
+        api.get("/subjects/")
             .then(response => {
                 setSubjects(response.data);
                 setFilteredSubjects(response.data); 
@@ -50,7 +50,7 @@ const EditCourse = () => {
 
     // Lagre endringer i databasen
     const handleSave = () => {
-        axios.put(`http://127.0.0.1:5000/backend/subjects/${editingSubjectId}`, editedSubject)
+        api.put(`/subjects/${editingSubjectId}`, editedSubject)
             .then(response => {
                 // oppdatere emnelista
                 setSubjects((prevSubjects) =>

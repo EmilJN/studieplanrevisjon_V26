@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import axios from "axios";
+import api from "../api.js";
 import { useParams, useNavigate } from "react-router-dom";
 import "../styles/generatestudyplan.css";
 import "../styles/dragdrop.css";
@@ -98,7 +98,7 @@ const GenerateStudyplan = () => {
         semester_courses: semesterCoursesData,
       };
       console.log("Payload for GEnerARTE study plan:", payload);
-      const response = await axios.post(`/backend/studyplans/create/sp`, payload)
+      const response = await api.post(`/studyplans/create/sp`, payload)
       console.log("Response from createStudyPlan:", response.data);
       alert("New study plan created successfully!");
       navigate(`/studyprograms/${id}`);

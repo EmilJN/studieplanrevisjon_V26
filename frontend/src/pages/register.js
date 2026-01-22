@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Form, Link } from "react-router-dom";
-import axios from "axios"
+import api from "../api";
 import { useAuth } from "../components/validateuser";
 import "../styles/Forms.css";
 
@@ -63,7 +63,7 @@ const Register = () => {
     if (Object.keys(err).length === 0) {
       setErrors({})
       try {
-        await axios.post('/backend/user/register', registerInfo).then(res => {
+        await api.post('/user/register', registerInfo).then(res => {
           login(registerInfo.email, registerInfo.password1)
           window.location.href = '/verify'
         }).catch(err => {

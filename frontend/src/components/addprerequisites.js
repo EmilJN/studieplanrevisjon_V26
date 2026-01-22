@@ -1,5 +1,5 @@
 import React, {useState,useEffect} from "react";
-import axios from "axios";
+import api from "../api";
 import "../styles/CourseDetails.css"
 
 
@@ -11,7 +11,7 @@ function AddPrerequisites( parentSubject ) {
 
     // Henta emner
     useEffect(() => {
-        axios.get("http://127.0.0.1:5000/backend/courses/")
+        api.get("/courses/")
             .then(response => {
                 setSubjects(response.data);
                 setFilteredSubjects(response.data); 
@@ -50,7 +50,7 @@ function AddPrerequisites( parentSubject ) {
     }
     const handleSubmitPreRequisite = () => {
         const parentSubjectId = parentSubject.parentSubject.id
-        axios.post(`http://127.0.0.1:5000/backend/prerequisites/add/${parentSubjectId}`, prerequisiteList)
+        api.post(`/prerequisites/add/${parentSubjectId}`, prerequisiteList)
             .then(response => {
                 if (response){
                     alert("Emnene ble lagt til")

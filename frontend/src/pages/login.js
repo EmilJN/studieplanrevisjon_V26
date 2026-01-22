@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios"
+import api from "../api";
 import "../styles/Forms.css";
 import { Link } from "react-router-dom";
 
@@ -54,7 +55,7 @@ const Login = () => {
         e.preventDefault()
         console.log(loginInfo[2])
         try{
-            const response = await axios.post('/backend/user/reset_password', loginInfo);
+            const response = await api.post("/user/reset_password", loginInfo);
             alert("Det ble sendt en lenke for å tilbakestille passordet til din e-post")
         } catch(error) {
             console.error("Failed to log in:", error);

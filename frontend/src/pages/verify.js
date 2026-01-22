@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Form, Link } from "react-router-dom";
-import axios from "axios"
+import api from "../api";
 import { useAuth } from "../components/validateuser";
 
 const Verify = () => {
@@ -8,7 +8,7 @@ const Verify = () => {
     const {currentUser} = useAuth()
     const sendNewLink = () => {
         console.log(currentUser)
-        axios.post("backend/user/verify/newtoken",currentUser)
+        api.post("/user/verify/newtoken",currentUser)
         .then(response => {
             setResult(response.data.message)
         })

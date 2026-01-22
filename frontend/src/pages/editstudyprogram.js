@@ -1,9 +1,9 @@
 import React, { useState, useEffect, Fragment } from "react";
-import axios from "axios";
 import "../styles/EditStudyprogram.css"
 import {handleBecomeInCharge, handleBecomeNotInCharge} from "../utils/helpers"
 import {fetchAllInstitutes, searchStudyPrograms, fetchStudyPrograms} from "../utils/fetchHelpers"
 import { useAuth } from "../components/validateuser";
+import api from "../api";
 
 const EditStudyProgram = () => {
     const [studyPrograms, setStudyPrograms] = useState([]); // Fetched study programs
@@ -63,7 +63,7 @@ const EditStudyProgram = () => {
         if (Object.keys(err).length === 0){
             setErrors({})
             try{
-        axios.put(`/backend/studyprograms/${editingID}/update`, editingProgram)
+        api.put(`/studyprograms/${editingID}/update`, editingProgram)
             .then(response => {
                                 program = editingProgram
                                 setEditingId(null)

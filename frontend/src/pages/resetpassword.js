@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Form, useParams  } from "react-router-dom";
-import axios from "axios"
+import api from "../api";
 
 
 
@@ -15,7 +15,7 @@ const ResetPassword = () => {
 
     const handleSubmit = async (e)  => {
         e.preventDefault()
-        await axios.post(`/backend/user/reset/${token}`, formInfo)
+        await api.post(`/user/reset/${token}`, formInfo)
             .then(response => {
                 window.location.href='/login'
             })

@@ -20,7 +20,7 @@ export default function CreateStudyProgramForm() {
 
   useEffect(() => {
     const getInstitutes = async () => {
-      await axios.get('/backend/institutes/get_all')
+      await axios.get('/institutes/get_all')
         .then(response => {
           setInstitutes(response.data)
         })

@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState} from "react";
 import { Link } from "react-router-dom";
 import "../styles/NavBar.css";
-import axios from "axios"
+import api from "../api";
 import { useAuth } from "./validateuser";
 
 const AdminUserList = () => {
@@ -10,7 +10,7 @@ const AdminUserList = () => {
 
     useEffect (() => {
             const getUsers = async () => {
-            await axios.get('/backend/user/get_all_users')
+            await api.get('/user/get_all_users')
             .then(response => {
                 setUsers(response.data)})
             .catch( error => {
@@ -23,7 +23,7 @@ const AdminUserList = () => {
 
     const handleDeleteUser = (e) => {
         e.preventDefault()
-        axios.delete("/backend/user/delete/"+e.id)
+        api.delete("/user/delete/"+e.id)
         .then(setMessage(`Brukeren ${e.email} ble slettet`))
         .catch(setMessage(`Klarte ikke å slette ${e.email}`))
     }

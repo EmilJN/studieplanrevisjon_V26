@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Form, Link, useParams } from "react-router-dom";
-import axios from "axios"
+import api from "../api";
 
 
 
@@ -8,7 +8,7 @@ const VerifyToken = () => {
     const [isVerified, setIsVerified] = useState(false)
     const { token } = useParams()
     useEffect(() => {
-        axios.post(`/backend/user/verify/${token}`)
+        api.post(`/user/verify/${token}`)
             .then(response => {
                 window.location.href = '/'
             })

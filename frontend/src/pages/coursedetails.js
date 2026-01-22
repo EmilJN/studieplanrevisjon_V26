@@ -1,5 +1,5 @@
 
-import axios from "axios";
+import api from "../api";
 import { useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import "../styles/CourseDetails.css"
@@ -18,7 +18,7 @@ function CourseDetails() {
     
 
     useEffect(() => {
-            axios.get("/backend/courses/"+id)
+            api.get("/courses/"+id)
                 .then(response => {
                     setSubject(response.data)
                 })
@@ -26,7 +26,7 @@ function CourseDetails() {
                     console.error("There was an error fetching the subject!", error);
                 });
 
-            axios.get("/backend/courses/course_usage/" +id)
+            api.get("/courses/course_usage/" +id)
                 .then(response => {
                     setStudyPrograms(response.data)
                     console.log(response.data)
@@ -35,7 +35,7 @@ function CourseDetails() {
                     console.error("Could not get studyplans!", error);
                 });
 
-            axios.get("/backend/courses/overlapping_courses/" +id)
+            api.get("/courses/overlapping_courses/" +id)
                 .then(response => {
                     setOverlappingCourses(response.data)
                 })
@@ -66,7 +66,7 @@ function CourseDetails() {
 
     //Lagrer endringer som blir gjort
     const handleSave = () => {
-        axios.put(`/backend/courses/${subject.id}`, subject)
+        api.put(`/courses/${subject.id}`, subject)
             .then(response => {
                 // oppdatere emnelista
                 if (response) {
@@ -91,7 +91,7 @@ function CourseDetails() {
     }
 
     const handleRemovePreRequisite = (e) => {
-        axios.delete(`/backend/prerequisites/remove/${subject.id}/${e.id}`)
+        api.delete(`/prerequisites/remove/${subject.id}/${e.id}`)
             .then(response => {
                 window.location.reload();
             })
@@ -109,7 +109,7 @@ function CourseDetails() {
         }
         else if (studyPrograms.length === 0 && reallyDeleteCourse) {
             console.log("Emnet er slettet")
-            axios.delete(`/backend/courses/${subject.id}`)
+            api.delete(`/courses/${subject.id}`)
             alert(`${subject.name} har nå blitt slettet`)
             window.location.href = '/courses/'
         }

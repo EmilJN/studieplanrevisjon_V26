@@ -1,23 +1,22 @@
 import React from "react";
-import axios from "axios";
-
+import api from "../api";
 
 export default function CreateCourseForm() {
-
   function submitCourseForm(formData) {
-    const coursecode = formData.get("coursecode")
-    const coursename = formData.get("coursename")
-    const coursesemester = formData.get("coursesemester")
-    const coursecredits = formData.get("coursecredits")
+    const coursecode = formData.get("coursecode");
+    const coursename = formData.get("coursename");
+    const coursesemester = formData.get("coursesemester");
+    const coursecredits = formData.get("coursecredits");
     const data = {
       code: coursecode,
       name: coursename,
       semester: coursesemester,
-      credits: coursecredits
-    }
-    axios.post('http://127.0.0.1:5000/backend/courses/create', data, {"withCredentials" : true})
+      credits: coursecredits,
+    };
+    api
+      .post("/courses/create", data, { withCredentials: true })
       .then((response) => console.log(response))
-      .catch((error) => console.log(error))
+      .catch((error) => console.log(error));
   }
 
   return (
@@ -37,4 +36,3 @@ export default function CreateCourseForm() {
     </form>
   );
 }
-

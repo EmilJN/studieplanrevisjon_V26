@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../api';
 import '../styles/notifications.css';
 const ConflictSummary = ({
     termConflicts,
@@ -55,7 +55,7 @@ const ConflictSummary = ({
             };
 
             console.log('Payload for notification:', payload);
-            const response = await axios.post('/backend/notifications/create-noti/prog', payload);
+            const response = await api.post('/notifications/create-noti/prog', payload);
             console.log('Notification sent successfully:', response.data);
             setNotificationGroupId(response.data.notification_group_id);
 

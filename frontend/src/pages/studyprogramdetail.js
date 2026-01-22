@@ -22,7 +22,7 @@ import { handleDragEnd } from '../components/handledragdrop.js';
 import { groupSemestersIntoPairs } from '../utils/helpers.js';
 import { updateStudyPlanPayload } from '../utils/payloadHelpers.js';
 import { useCourses } from "../utils/CoursesContext.js";
-import axios from "axios";
+import api from "../api.js";
 
 const StudyProgramDetail = () => {
   const { id } = useParams();
@@ -124,7 +124,7 @@ const StudyProgramDetail = () => {
   };
 
   const handleDeleteStudyPlan = (e) => {
-      axios.delete("/backend/studyplans/"+e)
+      api.delete("/studyplans/"+e)
       .then(() => window.location.reload() )
   }
 
