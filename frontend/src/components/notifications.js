@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
+import api from '../api';
 import '../styles/notifications.css';
 
 const Notifications = ({ programId, setNotificationsRef }) => {
@@ -12,7 +12,7 @@ const Notifications = ({ programId, setNotificationsRef }) => {
         const fetchNotifications = async () => {
             if (!programId) return;
             try {
-                const response = await axios.get(`/notifications/?program_id=${programId}`);
+                const response = await api.get(`/notifications/?program_id=${programId}`);
                 console.log('Fetched notifications:', response.data);
                 setNotifications(response.data);
                 if (setNotificationsRef) {
@@ -32,7 +32,7 @@ const Notifications = ({ programId, setNotificationsRef }) => {
 
     const handleDeleteNotification = async (notificationId) => {
         try {
-            const response = await axios.delete(`/notifications/${notificationId}/delete`);
+            const response = await api.delete(`/notifications/${notificationId}/delete`);
             console.log('Notification deleted:', response.data);
 
             setNotifications((prevNotifications) =>

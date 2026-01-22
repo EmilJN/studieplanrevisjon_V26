@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../api";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Forms.css";
@@ -20,7 +20,7 @@ export default function CreateStudyProgramForm() {
 
   useEffect(() => {
     const getInstitutes = async () => {
-      await axios.get('/institutes/get_all')
+      await api.get('/institutes/get_all')
         .then(response => {
           setInstitutes(response.data)
         })
@@ -62,7 +62,7 @@ export default function CreateStudyProgramForm() {
     if (Object.keys(err).length === 0) {
       setErrors({})
       try {
-        const response = await axios.post("backend/studyprograms/create", formData);
+        const response = await api.post("studyprograms/create", formData);
         // window.location.href = `./studyprograms/${response.data.id}`
         const createdProgram = response.data;
         console.log("Program created:", createdProgram);

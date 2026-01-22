@@ -1,6 +1,6 @@
 // hooks/studyplanData.js
 import { useState, useCallback, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api';
 import { calculatedYear } from '../utils/helpers';
 import { fetchValgemne, fetchAllValgemner } from '../utils/fetchHelpers';
 import '../styles/dragdrop.css';
@@ -27,7 +27,7 @@ export function useStudyPlanData(programId) {
         ? `/backend/studyplans/${studyplan_id}/completesp`
         : `/backend/studyplans/studyprograms/${programId}/fullsp`;
 
-      const response = await axios.get(endpoint);
+      const response = await api.get(endpoint);
       const data = response.data;
       setSelectedPlanId(studyplan_id || (data.latest_plan?.id));
       if (data.all_plans) {

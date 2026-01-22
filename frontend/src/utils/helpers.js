@@ -10,7 +10,7 @@ This file contains helper functions and components used in more than 1 page.
 import React from "react";
 import Notifications from "../components/notifications.js";
 // import { useAuth } from "../components/validateuser";
-import axios from "axios";
+import api from "../api.js";
 
 
 //whichYear, used in studyprogramdetail and generatestudyplan for determining year.
@@ -20,7 +20,7 @@ export const determineBaseYear = (mostRecentPlan) => {
 
 
 export const handleBecomeInCharge = async (studyProgramId) => {
-  await axios.post(`/backend/studyprograms/becomeincharge/${studyProgramId}`)
+  await api.post(`studyprograms/becomeincharge/${studyProgramId}`)
     .then(response => {
       console.log(response)
     })
@@ -30,7 +30,7 @@ export const handleBecomeInCharge = async (studyProgramId) => {
 
 }
 export const handleBecomeNotInCharge = async (studyProgramId) => {
-  await axios.delete(`/backend/studyprograms/becomenotincharge/${studyProgramId}`)
+  await api.delete(`studyprograms/becomenotincharge/${studyProgramId}`)
     .then(response => {
       console.log(response)
     })

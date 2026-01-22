@@ -1,8 +1,8 @@
-import axios from "axios";
+import api from "../api";
 
 export const checkForConflicts = async (courseId, destSemester, studyprogramId) => {
     try {
-        const response = await axios.get(`/backend/studyplans/courses/${courseId}/term-conflicts`, {
+        const response = await api.get(`studyplans/courses/${courseId}/term-conflicts`, {
             params: {
                 // semester_number: destSemester,
                 // studyplan_id: studyplanId,

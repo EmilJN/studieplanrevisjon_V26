@@ -1,9 +1,9 @@
-import axios from 'axios';
+import api from "../api";
 
 
 export const getElectiveGroups = async () => {
     try {
-        const response = await axios.get(`/backend/semestercourses/elective-groups`);
+        const response = await api.get(`semestercourses/elective-groups`);
         return response.data;
     } catch (error) {
         console.error('Failed to fetch elective groups:', error);
@@ -14,7 +14,7 @@ export const getElectiveGroups = async () => {
 
 export const createElectiveGroup = async (categoryName) => {
     try {
-        const response = await axios.post(`/backend/semestercourses/elective-groups`, { name: categoryName });
+        const response = await api.post(`semestercourses/elective-groups`, { name: categoryName });
         return response.data;
     } catch (error) {
         console.error('Failed to create elective group:', error);
@@ -25,7 +25,7 @@ export const createElectiveGroup = async (categoryName) => {
 
 export const deleteElectiveGroup = async (groupId) => {
     try {
-        const response = await axios.delete(`/backend/semestercourses/elective-groups/${groupId}`);
+        const response = await api.delete(`semestercourses/elective-groups/${groupId}`);
         return response.data;
     } catch (error) {
         console.error('Failed to delete elective group:', error);
@@ -36,7 +36,7 @@ export const deleteElectiveGroup = async (groupId) => {
 
 export const updateElectiveGroup = async (groupId, newName) => {
     try {
-        const response = await axios.put(`/backend/semestercourses/elective-groups/${groupId}`, { new_name: newName });
+        const response = await api.put(`semestercourses/elective-groups/${groupId}`, { new_name: newName });
         return response.data;
     } catch (error) {
         console.error('Failed to update elective group:', error);
