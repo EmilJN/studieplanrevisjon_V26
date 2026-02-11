@@ -8,7 +8,15 @@ load_dotenv()
 
 class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY")
-    SQLALCHEMY_DATABASE_URI = f"sqlite:///{os.path.join(os.path.abspath(os.path.dirname(__file__)), '../instance/app.db')}"
+    #SQLALCHEMY_DATABASE_URI = f"sqlite:///{os.path.join(os.path.abspath(os.path.dirname(__file__)), '../instance/app.db')}"
+
+    DB_HOST = os.environ.get("DB_HOST")
+    DB_NAME = os.environ.get("DB_NAME")
+    DB_USER = os.environ.get("DB_USER")
+    DB_PASSWORD = os.environ.get("DB_PASSWORD")
+
+    SQLALCHEMY_DATABASE_URI = (f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:5432/{DB_NAME}")
+
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     BACKUP_DIR = os.path.join(os.path.abspath(os.path.dirname(__file__)), '../instance/backups')
 
@@ -17,6 +25,7 @@ class Config:
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(days=7)
     JWT_TOKEN_LOCATION = ["cookies"]
     JWT_COOKIE_SECURE = False ## Needs to be Truw when in deployment
+    JWT_COOKIE_SAMESITE = "Lax"
     JWT_COOKIE_CSRF_PROTECT = True
     JWT_CSFR_IN_COOKIES = True
 

@@ -11,7 +11,7 @@ This file contains helper fetches used in more than 1 page.
 // Fetch all institutes
 export const fetchAllInstitutes = async () => {
   try {
-    const response = await api.get("institutes/get_all");
+    const response = await api.get("/institutes/get_all");
     return response.data;
   } catch (err) {
     console.error("Error fetching institutes:", err);
@@ -47,12 +47,12 @@ export const exportStudyPlan = async (studyProgramId) => {
 
 // search for studyprograms 
 export const searchStudyPrograms = async (query) => {
-  const response = await api.get(`studyprograms/search?query=${query}`);
+  const response = await api.get(`/studyprograms/search?query=${query}`);
   return response.data;
 };
 
 export const searchCourses = async (query) => {
-  const response = await api.get(`courses/search?query=${query}`);
+  const response = await api.get(`/courses/search?query=${query}`);
   return response.data;
 };
 
@@ -60,7 +60,7 @@ export const searchCourses = async (query) => {
 
 export const fetchSemesterInfo = async (programId) => {
   try {
-    const response = await api.get(`studyprograms/${programId}/semester-info`);
+    const response = await api.get(`/studyprograms/${programId}/semester-info`);
     console.log("Semester info response:", response.data);
     return response.data;
   } catch (error) {
@@ -71,7 +71,7 @@ export const fetchSemesterInfo = async (programId) => {
 
 export const checkStudyplan = async (programId, year) => {
   try {
-    const response = await api.get(`studyplans/check?studyprogram_id=${programId}&year=${year}`);
+    const response = await api.get(`/studyplans/check?studyprogram_id=${programId}&year=${year}`);
     return response.data;
   } catch (error) {
     console.error('Error checking study plan:', error);
@@ -82,7 +82,7 @@ export const checkStudyplan = async (programId, year) => {
 
 export const updateStudyPlan = async (studyplanId, payload) => {
   try {
-    const response = await api.put(`studyplans/${studyplanId}/updatecourses`, payload);
+    const response = await api.put(`/studyplans/${studyplanId}/updatecourses`, payload);
     return response.data;
   } catch (error) {
     console.error('Error updating study plan:', error);
@@ -92,7 +92,7 @@ export const updateStudyPlan = async (studyplanId, payload) => {
 
 
 export const semesterinfo = async (programId, year) => {
-  const response = await api.get(`studyplans/studyprograms/${programId}/semesterinfo`);
+  const response = await api.get(`/studyplans/studyprograms/${programId}/semesterinfo`);
   const semesterinfoData = response.data;
 
   const newSemesters = {};
@@ -112,7 +112,7 @@ export const semesterinfo = async (programId, year) => {
 
 export const fetchCourses = async () => {
   try {
-    const response = await api.get("courses/");
+    const response = await api.get("/courses");
     return response.data;
   } catch (error) {
     console.error("Failed to fetch courses:", error);
@@ -122,7 +122,7 @@ export const fetchCourses = async () => {
 
 export const fetchStudyPrograms = async () => {
   try {
-    const response = await api.get("studyprograms/getAllStudyPrograms");
+    const response = await api.get("/studyprograms/getAllStudyPrograms");
     return response.data;
   } catch (error) {
     console.error("Failed to fetch study programs:", error);
@@ -132,7 +132,7 @@ export const fetchStudyPrograms = async () => {
 
 export const fetchValgemne = async () => {
   try {
-    const response = await api.get("courses/valgemne");
+    const response = await api.get("/courses/valgemne");
     return response.data;
   } catch (error) {
     console.error("Failed to fetch valgemne:", error);
@@ -142,7 +142,7 @@ export const fetchValgemne = async () => {
 
 export const fetchAllValgemner = async () => {
   try {
-    const response = await api.get("courses/all_valgemne");
+    const response = await api.get("/courses/all_valgemne");
     return response.data;
   } catch (error) {
     console.error("Failed to fetch valgemne:", error);
@@ -151,7 +151,7 @@ export const fetchAllValgemner = async () => {
 }
 export const fetchCategory = async () => {
   try {
-    const response = await api.get("courses/electivegroups");
+    const response = await api.get("/courses/electivegroups");
     return response.data;
   } catch (error) {
     console.error("Failed to fetch category:", error);

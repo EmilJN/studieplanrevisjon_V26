@@ -223,7 +223,7 @@ class NotificationService:
                 recipients=["truls244@gmail.com"],
                 body=f"{sender_program.name} gjøre denne endringen: {message} Mottaker er: {recipient_program.program_ansvarlig.email}"
                 )
-            mail.send(msg)
+            #mail.send(msg)
         except Exception as e:
             print(f"Error sending email: {str(e)}")
             return []

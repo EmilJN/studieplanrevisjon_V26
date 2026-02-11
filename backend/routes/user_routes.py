@@ -83,7 +83,7 @@ def register():
         recipients=[email],
         body = f"Hei velkommen til stueplanrevisjon. Her er lenken til å verifisere kontoen 127.0.0.1:3000/verifytoken/{verification_token}"
     )
-    mail.send(msg)
+    #mail.send(msg)
     return jsonify({"message":f"Velkommen til Studiegeneratoren {user.name}!"})
 
 
@@ -128,7 +128,7 @@ def new_token():
         sender="trulsovrebo@gmail.com",
         recipients=[{user}],
         body = f"Her er ny lenke til studiplanrevisjon 127.0.0.1:3000/verifytoken/{token}")
-        mail.send(msg)
+        #mail.send(msg)
         return jsonify({"message":"Det ble sendt en ny lenke til e-posten din"})
     return jsonify({"message":"Det skjedde en feil"})
     
@@ -147,7 +147,7 @@ def reset_pasword():
             recipients=[user.email],
             body = f"{email} vil tilbakestille passordet sitt. Her er lenken 127.0.0.1:3000/reset_password/{token}"
         )
-        mail.send(msg)
+        #mail.send(msg)
         return jsonify({"message":"Hvis e-postadressen er registrert, ble det sendt en e-post"})
     else:
         return jsonify({"message":"Hvis e-postadressen er registrert, ble det sendt en e-post"})
