@@ -27,7 +27,7 @@ class Config:
     JWT_COOKIE_SECURE = False ## Needs to be Truw when in deployment
     JWT_COOKIE_SAMESITE = "Lax"
     JWT_COOKIE_CSRF_PROTECT = True
-    JWT_CSFR_IN_COOKIES = True
+    JWT_CSRF_IN_COOKIES = True
 
     # Flask Mail configuration
     MAIL_SERVER = 'smtp.gmail.com'

@@ -142,15 +142,17 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(80), nullable=False)
     name = db.Column(db.String(80), nullable=False)
-    password = db.Column(db.String(80), nullable=False)
+    password = db.Column(db.String(255), nullable=False)
     role = db.Column(db.Enum('user', 'admin', 'ansvarlig', name='role_type'), nullable=False)
     verified = db.Column(db.Boolean, default=False)
     studyprograms = db.relationship('Studyprogram', back_populates='program_ansvarlig')
 
-    def check_password(self, password):
-        if not bcrypt.checkpw(password, self.password):
-            return False
-        return True
+    def check_password(self, password_bytes: bytes) -> bool:
+        return bcrypt.checkpw(password_bytes, self.password.encode("utf-8"))
+    #def check_password(self, password):
+    #    if not bcrypt.checkpw(password, self.password):
+    #        return False
+    #    return True
 
     def serialize(self):
         return {

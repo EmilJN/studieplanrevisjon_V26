@@ -17,7 +17,13 @@ mail = Mail()
 def create_app():
     app = Flask(__name__)
 
-    CORS(app, supports_credentials=True, origins=["http://localhost:3000"]) 
+    CORS(app, supports_credentials=True, origins=["http://localhost:3000", "http://127.0.0.1:3000"])
+
+    @app.route("/", defaults={"path": ""}, methods=["OPTIONS"])
+    @app.route("/<path:path>", methods=["OPTIONS"])
+    def options_handler(path):
+        return "", 204
+
     app.config.from_object(Config)
     # Initialize extensions
     db.init_app(app)
