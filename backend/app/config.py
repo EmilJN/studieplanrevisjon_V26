@@ -17,14 +17,6 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     BACKUP_DIR = os.path.join(os.path.abspath(os.path.dirname(__file__)), '../instance/backups')
 
-    # JWT token configuration
-    JWT_SECRET_KEY = os.environ.get("JWT_SECRET_KEY")
-    JWT_ACCESS_TOKEN_EXPIRES = timedelta(days=7)
-    JWT_TOKEN_LOCATION = ["cookies"]
-    JWT_COOKIE_SECURE = False ## Needs to be Truw when in deployment
-    JWT_COOKIE_CSRF_PROTECT = True
-    JWT_CSFR_IN_COOKIES = True
-
     # Flask Mail configuration
     MAIL_SERVER = 'smtp.gmail.com'
     MAIL_PORT = 587
