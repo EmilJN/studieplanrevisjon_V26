@@ -1,7 +1,5 @@
 import os
-import sqlite3
 import pandas as pd
-import dotenv
 import numpy as np
 import psycopg2
 
@@ -9,15 +7,12 @@ import psycopg2
 
 courselist = []
 
-dotenv.load_dotenv()
-
-
 connection = psycopg2.connect(
-    host="localhost",        
-    database=os.getenv("POSTGRES_DB"),
-    user=os.getenv("POSTGRES_USER"),
-    password=os.getenv("POSTGRES_PASSWORD"),
-    port=os.getenv("POSTGRES_PORT")
+    host=os.getenv("DB_HOST"),      
+    database=os.getenv("DB_NAME"),
+    user=os.getenv("DB_USER"),
+    password=os.getenv("DB_PASSWORD"),
+    port=os.getenv("DB_PORT")
 )
 
 cursor = connection.cursor()

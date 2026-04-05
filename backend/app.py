@@ -46,4 +46,12 @@ if __name__ == "__main__":
     with app.app_context():
         # Ensure tables are created
         db.create_all()
+        # Seed database if empty
+        from app.models import Course
+        if Course.query.count() == 0:
+            print("Database is empty, running seed script...")
+            import subprocess, sys
+            seed_path = "scripts/seed.py"
+            subprocess.run([sys.executable, seed_path], check=True, cwd=os.path.dirname(__file__))
+            print("Seeding complete.")
     app.run(debug=True)
