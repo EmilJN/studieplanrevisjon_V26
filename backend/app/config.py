@@ -8,7 +8,14 @@ load_dotenv()
 
 class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY")
-    SQLALCHEMY_DATABASE_URI = f"sqlite:///{os.path.join(os.path.abspath(os.path.dirname(__file__)), '../instance/app.db')}"
+    _db_host = os.environ.get("DB_HOST")
+    _db_name = os.environ.get("DB_NAME")
+    _db_user = os.environ.get("DB_USER")
+    _db_pass = os.environ.get("DB_PASSWORD")
+    if _db_host and _db_name and _db_user and _db_pass:
+        SQLALCHEMY_DATABASE_URI = f"postgresql://{_db_user}:{_db_pass}@{_db_host}/{_db_name}"
+    else:
+        SQLALCHEMY_DATABASE_URI = f"sqlite:///{os.path.join(os.path.abspath(os.path.dirname(__file__)), '../instance/app.db')}"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     BACKUP_DIR = os.path.join(os.path.abspath(os.path.dirname(__file__)), '../instance/backups')
 
