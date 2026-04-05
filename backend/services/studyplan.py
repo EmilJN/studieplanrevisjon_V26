@@ -1,7 +1,6 @@
 from app import db
 from app.models import Studyplan, Semester, SemesterCourses, Log
 from sqlalchemy import func, and_
-from flask_jwt_extended import current_user
 
 
 class StudyplanService:
@@ -60,7 +59,7 @@ class StudyplanService:
             result = self.semesterCourses_service.update_courses(formatted_courses)
             print(f"Updated courses for studyplan {studyplan_id}: {result}")
             # db.session.commit()
-            log = Log(f"{current_user.name} har redigert studieplanen med id {studyplan_id}")
+            log = Log(f"Studieplanen med id {studyplan_id} har blitt redigert")
             self.db.add(log)
             return result
         except Exception as e:
@@ -107,7 +106,7 @@ class StudyplanService:
             if semester_courses:
                 formatted_courses = self.semesterCourses_service.format_courses_for_semesters(semester_courses, semester_mapping)
                 self.semesterCourses_service.batch_add_all_courses(studyplan.id, formatted_courses)
-            log = Log(f"{current_user.name} har laget en ny studieplan for studieprogram med id: {studyprogram_id}")
+            log = Log(f"Ny studieplan laget for studieprogram med id: {studyprogram_id}")
             self.db.add(log)
             return studyplan, semesters
         except Exception as e:

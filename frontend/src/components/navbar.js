@@ -15,7 +15,6 @@ const NavBar = () => {
                         <Link className="NavBarElement" to="/" >
                             <img src="../uis_logo.jpg" />
                             <h3>Forside</h3>
-
                         </Link>
                         {currentUser.role === "admin" && <Link to={'/admin'}className="NavBarElement" ><h3>Admin</h3></Link>}
                     </div>
@@ -33,11 +32,6 @@ const NavBar = () => {
                         <Link to="/login" >
                         <img src="../uis_logo.jpg" />
                             <h3>Logg inn</h3>
-                        </Link>
-                    </div>
-                    <div className="NavBarElement">
-                        <Link to="/register" >
-                            <h3>Registrer</h3>
                         </Link>
                     </div>
                 </div>

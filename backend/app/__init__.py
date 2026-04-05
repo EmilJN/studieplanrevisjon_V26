@@ -3,15 +3,12 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from flask_migrate import Migrate
 from app.config import Config
-from flask_jwt_extended import JWTManager
-from flask_mail import Mail
+
 
 from os import environ
 
 db = SQLAlchemy()
 migrate = Migrate()
-jwt = JWTManager()
-mail = Mail()
 
 
 def create_app():
@@ -22,8 +19,6 @@ def create_app():
     # Initialize extensions
     db.init_app(app)
     migrate.init_app(app, db)
-    jwt.init_app(app)
-    mail.init_app(app)
 
     return app
 

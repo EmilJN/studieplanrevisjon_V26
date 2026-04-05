@@ -18,41 +18,17 @@ import StudyProgramDetail from './pages/studyprogramdetail';
 import GenerateStudyplan from './pages/generatestudyplan';
 import CourseDetails from './pages/coursedetails';
 import Login from './pages/login';
-import Register from './pages/register';
-import Verify from './pages/verify';
-import VerifyToken from './pages/verifytoken';
 import ProtectedRoute from './components/protectedroute';
 import { AuthProvider } from './components/validateuser';
 import { CoursesProvider } from './utils/CoursesContext';
-import ResetPassword from './pages/resetpassword';
 import axios from 'axios';
 import CreateSP from './pages/createsp';
 import Admin from './pages/admin'
 import { ProgramProvider } from './utils/programContext';
 
-function getCookie(name) {
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop().split(';').shift();
-}
-
 
 function App() {
-  axios.interceptors.request.use(config => {
-  // Get the CSRF token from cookies
-  const csrfToken = getCookie('csrf_access_token');
-  if (csrfToken) {
-    // Set the header that Flask-JWT-Extended expects
-    config.headers['X-CSRF-TOKEN'] = csrfToken;}
-    return config;
-    },error => {
-    return Promise.reject(error);
-  });
-
-
-
   axios.defaults.withCredentials = true
-
   return (
     <Router>
       <AuthProvider>
@@ -74,16 +50,11 @@ function App() {
                 <Route path="/admin" element={<Admin />} />
               </Route>
               <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/verify" element={<Verify />} />
-              <Route path="/verifytoken/:token" element={<VerifyToken />} />
-              <Route path="/reset_password/:token" element={<ResetPassword />} />
             </Routes>
           </CoursesProvider>
         </ProgramProvider>
       </AuthProvider>
     </Router>
-
   );
 }
 
