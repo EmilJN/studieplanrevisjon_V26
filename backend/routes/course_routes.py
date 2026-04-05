@@ -2,7 +2,6 @@ from flask import Flask, jsonify, request, Blueprint
 from app.models import Course, Studyprogram, Institute, Studyplan
 from app import db
 from services import ServiceFactory
-from flask_jwt_extended import  jwt_required
 
 
 # http://localhost:5000/backend/courses/
@@ -15,7 +14,6 @@ courses_bp = Blueprint('courses', __name__)
 # Subject
 # get courses
 @courses_bp.route("/", methods=["GET"])
-@jwt_required()
 def get_courses():
     try:
         course_service = ServiceFactory.get_course_service()
@@ -38,7 +36,6 @@ def get_course_by_id(course_id):
         return jsonify({"error": str(e)}), 500
 
 @courses_bp.route("/create", methods=["POST"])
-@jwt_required()
 def create_course():
     try:
         data = request.json
@@ -62,7 +59,6 @@ def create_course():
         return jsonify({"error": str(e)}), 500
 
 @courses_bp.route("/<int:course_id>", methods=["DELETE"])
-@jwt_required()
 def delete_course(course_id):
     try:
         course_service = ServiceFactory.get_course_service()
@@ -74,7 +70,6 @@ def delete_course(course_id):
         return jsonify({"error": str(e)}), 500
 
 @courses_bp.route("/<int:course_id>", methods=["PUT"])
-@jwt_required()
 def update_course(course_id):
     try:
         data = request.json
@@ -102,7 +97,6 @@ def update_course(course_id):
 
 # search courses
 @courses_bp.route('/search', methods=['GET'])
-@jwt_required()
 def search_courses():
     query = request.args.get('query', '')
     term = request.args.get('term')
@@ -121,7 +115,6 @@ def search_courses():
 
 
 @courses_bp.route('/valgemne', methods=['GET'])
-@jwt_required()
 def get_valgemne_courses():
     try:
         course_service = ServiceFactory.get_course_service()
@@ -132,7 +125,6 @@ def get_valgemne_courses():
         return jsonify({"error": str(e)}), 500
     
 @courses_bp.route('/all_valgemne', methods=['GET'])
-@jwt_required()
 def get_all_valgemne_courses():
     try:
         course_service = ServiceFactory.get_course_service()
@@ -143,7 +135,6 @@ def get_all_valgemne_courses():
 
 
 @courses_bp.route('/overlapping_courses/<int:course_id>' , methods=['GET'])
-@jwt_required()
 def get_overlapping_courses(course_id):
     try:
         course_service = ServiceFactory.get_course_service()
@@ -155,7 +146,6 @@ def get_overlapping_courses(course_id):
         return jsonify({"error": str(e)}), 500
     
 @courses_bp.route('/course_usage/<int:course_id>' , methods=['GET'])
-@jwt_required()
 def course_usage123(course_id):
     try:
         course_service = ServiceFactory.get_course_service()

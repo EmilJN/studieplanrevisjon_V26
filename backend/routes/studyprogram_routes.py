@@ -2,7 +2,6 @@ from flask import Flask, jsonify, request, Blueprint
 from app.models import Course, Studyprogram, Institute, Studyplan
 from app import db
 from services import ServiceFactory
-from flask_jwt_extended import current_user, jwt_required
 
 # http://localhost:5000/backend/studyprograms/
 # LA LINJÅ OPPFOR STÅ - brukan te å lett henta URLen te POSTMAN. 
@@ -13,7 +12,6 @@ studyprogram_bp = Blueprint('studyprograms', __name__)
 # Studyprogram
 # Create
 @studyprogram_bp.route("/create", methods=["POST"])
-@jwt_required()
 def create_studyprogram():
     try:
         data = request.json
@@ -42,7 +40,6 @@ def create_studyprogram():
 
 # Delete
 @studyprogram_bp.route("/<int:studyprogram_id>", methods=["DELETE"])
-@jwt_required()
 def delete_studyprogram(studyprogram_id):
     try:
         studyprogram_service = ServiceFactory.get_studyprogram_service()
@@ -55,7 +52,6 @@ def delete_studyprogram(studyprogram_id):
 
 # Update
 @studyprogram_bp.route("/<int:studyprogram_id>/update", methods=["PUT"])
-@jwt_required()
 def update_studyprogram(studyprogram_id):
     try:
         data = request.json
@@ -164,7 +160,6 @@ def get_studyprograms_by_degree_type(degree_type):
         return jsonify({"error": str(e)}), 500
 
 @studyprogram_bp.route("/becomeincharge/<int:studyprogram_id>", methods=["POST"])
-@jwt_required()
 def become_in_charge(studyprogram_id):
     try:
         studyprogram_service = ServiceFactory.get_studyprogram_service()
@@ -175,7 +170,6 @@ def become_in_charge(studyprogram_id):
         return jsonify({"error": str(e)}), 500
 
 @studyprogram_bp.route("/becomenotincharge/<int:studyprogram_id>", methods=["DELETE"])
-@jwt_required()
 def become_not_in_charge(studyprogram_id):
     try:
         studyprogram_service = ServiceFactory.get_studyprogram_service()
