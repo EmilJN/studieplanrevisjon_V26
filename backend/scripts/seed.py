@@ -1,18 +1,35 @@
+import os
 import sqlite3
 import pandas as pd
+import dotenv
 import numpy as np
-
+import psycopg2
 
 
 
 courselist = []
 
-connection = sqlite3.connect('instance/app.db')
+dotenv.load_dotenv()
+
+
+connection = psycopg2.connect(
+    host="localhost",        
+    database=os.getenv("POSTGRES_DB"),
+    user=os.getenv("POSTGRES_USER"),
+    password=os.getenv("POSTGRES_PASSWORD"),
+    port=os.getenv("POSTGRES_PORT")
+)
+
 cursor = connection.cursor()
 
 
-cursor.execute("DELETE FROM course")
+cursor.execute("DELETE FROM semester_courses")
+cursor.execute("DELETE FROM semester")
+cursor.execute("DELETE FROM studyplan")
+cursor.execute("DELETE FROM studyprogram")
+cursor.execute("DELETE FROM institute")
 cursor.execute("DELETE FROM prerequisites")
+cursor.execute("DELETE FROM course")
 
 
 # SEED COURSES
@@ -22,9 +39,9 @@ xls = pd.ExcelFile('static/Data.xlsx')
 courses = pd.read_excel(xls, 'Emner 2018V-2028H')
 UHCourses = pd.read_excel('static/DataMedEmnerFraTNSVUH.xlsx', 'Emner ved UH-fak 2018V-2028H')
 SVCourses = pd.read_excel('static/DataMedEmnerFraTNSVUH.xlsx', 'Emner ved SV-fak 2018V-2028H')
-utvalg = courses[['emnekode','emnenavn_bokmal','vektingstall','terminkode_und_forste','arstall_und_siste','terminkode_und_siste']]
-UHutvalg = UHCourses[['emnekode','emnenavn_bokmal','vektingstall','terminkode_und_forste','arstall_und_siste']]
-SVutvalg = SVCourses[['emnekode','emnenavn_bokmal','vektingstall','terminkode_und_forste','arstall_und_siste']]
+utvalg = courses[['emnekode','emnenavn_bokmal','vektingstall','terminkode_und_forste','arstall_und_siste','terminkode_und_siste']].copy()
+UHutvalg = UHCourses[['emnekode','emnenavn_bokmal','vektingstall','terminkode_und_forste','arstall_und_siste']].copy()
+SVutvalg = SVCourses[['emnekode','emnenavn_bokmal','vektingstall','terminkode_und_forste','arstall_und_siste']].copy()
 
 
 
@@ -43,43 +60,43 @@ SVutvalg = SVutvalg[~SVutvalg['terminkode_und_forste'].str.contains('SOM', case=
 
 #Legge til emner som e i bruk ette 2023 og sette emner som har siste undervisning i 2024 og 2025 som inavtive
 for i in np.asarray(utvalg):
-    course = [i[1],i[0],i[3],i[2]]
+    course = [str(i[1])[:80],str(i[0])[:80],i[3],i[2]]
     if i[4] <= 2024 or i[4] == 2025 and i[5]=="VÅR":
         pass
     elif i[4] == 2025 and i[5]=="HØST":
-        cursor.execute("INSERT INTO course (name, courseCode, semester, credits, degree, is_active) VALUES (?, ?, ?, ?, 'Bachelor', False);", course)
+        cursor.execute('INSERT INTO course (name, "courseCode", semester, credits, degree, is_active) VALUES (%s, %s, %s, %s, \'Bachelor\', False);', course)
         courselist.append(i[0])
     else:
-        cursor.execute("INSERT INTO course (name, courseCode, semester, credits, degree, is_active) VALUES (?, ?, ?, ?, 'Bachelor', True);", course)
+        cursor.execute('INSERT INTO course (name, "courseCode", semester, credits, degree, is_active) VALUES (%s, %s, %s, %s, \'Bachelor\', True);', course)
         courselist.append(i[0])
 
 for i in np.asarray(UHutvalg):
-    course = [i[1],i[0],i[3],i[2]]
+    course = [str(i[1])[:80],str(i[0])[:80],i[3],i[2]]
     if i[4] <= 2023:
         pass
     elif i[4] == 2024 or i[4] == 2025:
-        cursor.execute("INSERT INTO course (name, courseCode, semester, credits, degree, is_active) VALUES (?, ?, ?, ?, 'Bachelor', False);", course)
+        cursor.execute('INSERT INTO course (name, "courseCode", semester, credits, degree, is_active) VALUES (%s, %s, %s, %s, \'Bachelor\', False);', course)
         courselist.append(i[0])
     else:
-        cursor.execute("INSERT INTO course (name, courseCode, semester, credits, degree, is_active) VALUES (?, ?, ?, ?, 'Bachelor', True);", course)
+        cursor.execute('INSERT INTO course (name, "courseCode", semester, credits, degree, is_active) VALUES (%s, %s, %s, %s, \'Bachelor\', True);', course)
         courselist.append(i[0])
 
 for i in np.asarray(SVutvalg):
-    course = [i[1],i[0],i[3],i[2]]
+    course = [str(i[1])[:80],str(i[0])[:80],i[3],i[2]]
     if i[4] <= 2023:
         pass
     elif i[4] == 2024 or i[4] == 2025:
-        cursor.execute("INSERT INTO course (name, courseCode, semester, credits, degree, is_active) VALUES (?, ?, ?, ?, 'Bachelor', False);", course)
+        cursor.execute('INSERT INTO course (name, "courseCode", semester, credits, degree, is_active) VALUES (%s, %s, %s, %s, \'Bachelor\', False);', course)
         courselist.append(i[0])
     else:
-        cursor.execute("INSERT INTO course (name, courseCode, semester, credits, degree, is_active) VALUES (?, ?, ?, ?, 'Bachelor', True);", course)
+        cursor.execute('INSERT INTO course (name, "courseCode", semester, credits, degree, is_active) VALUES (%s, %s, %s, %s, \'Bachelor\', True);', course)
         courselist.append(i[0])
-cursor.execute("INSERT INTO course (name, courseCode, semester, credits, degree, is_active) VALUES ('Valgemner 5 Poeng', 'VALGEMNE', 'H', 5, 'Bachelor', True);")
-cursor.execute("INSERT INTO course (name, courseCode, semester, credits, degree, is_active) VALUES ('Valgemner 10 Poeng', 'VALGEMNE', 'H', 10, 'Bachelor', True);")
-cursor.execute("INSERT INTO course (name, courseCode, semester, credits, degree, is_active) VALUES ('Valgemner 15 Poeng', 'VALGEMNE', 'H', 15, 'Bachelor', True);")
-cursor.execute("INSERT INTO course (name, courseCode, semester, credits, degree, is_active) VALUES ('Valgemner 20 Poeng', 'VALGEMNE', 'H', 20, 'Bachelor', True);")
-cursor.execute("INSERT INTO course (name, courseCode, semester, credits, degree, is_active) VALUES ('Valgemner 25 Poeng', 'VALGEMNE', 'H', 25, 'Bachelor', True);")
-cursor.execute("INSERT INTO course (name, courseCode, semester, credits, degree, is_active) VALUES ('Valgemner 30 Poeng', 'VALGEMNE', 'H', 30, 'Bachelor', True);")
+cursor.execute("INSERT INTO course (name, \"courseCode\", semester, credits, degree, is_active) VALUES ('Valgemner 5 Poeng', 'VALGEMNE', 'H', 5, 'Bachelor', True);")
+cursor.execute("INSERT INTO course (name, \"courseCode\", semester, credits, degree, is_active) VALUES ('Valgemner 10 Poeng', 'VALGEMNE', 'H', 10, 'Bachelor', True);")
+cursor.execute("INSERT INTO course (name, \"courseCode\", semester, credits, degree, is_active) VALUES ('Valgemner 15 Poeng', 'VALGEMNE', 'H', 15, 'Bachelor', True);")
+cursor.execute("INSERT INTO course (name, \"courseCode\", semester, credits, degree, is_active) VALUES ('Valgemner 20 Poeng', 'VALGEMNE', 'H', 20, 'Bachelor', True);")
+cursor.execute("INSERT INTO course (name, \"courseCode\", semester, credits, degree, is_active) VALUES ('Valgemner 25 Poeng', 'VALGEMNE', 'H', 25, 'Bachelor', True);")
+cursor.execute("INSERT INTO course (name, \"courseCode\", semester, credits, degree, is_active) VALUES ('Valgemner 30 Poeng', 'VALGEMNE', 'H', 30, 'Bachelor', True);")
 
 connection.commit()
 
@@ -92,18 +109,25 @@ activePreReqs = preReqs[preReqs['arstall_til'].isna()]
 for i in np.asarray(activePreReqs):
     if i[0] in courselist and isinstance(i[1],str):
         preReqCode = i[1].split()
-        course_ID = cursor.execute("SELECT id FROM course WHERE courseCode =?",(i[0],)).fetchone()
-        preReq_ID = cursor.execute("SELECT id FROM course WHERE courseCode =?",(preReqCode[0],)).fetchone()
+        cursor.execute('SELECT id FROM course WHERE "courseCode" = %s',(i[0],))
+        course_ID = cursor.fetchone()
+        cursor.execute('SELECT id FROM course WHERE "courseCode" = %s',(preReqCode[0],))
+        preReq_ID = cursor.fetchone()
+        if not course_ID or not preReq_ID:
+            continue
         fetchedCourse = course_ID[0]
         fetchedPreReq = preReq_ID[0]
-        cursor.execute("INSERT OR IGNORE INTO prerequisites (course_id, prerequisite_id) VALUES (?,?)",(int(fetchedCourse),int(fetchedPreReq)))
+        cursor.execute("INSERT INTO prerequisites (course_id, prerequisite_id) VALUES (%s, %s) ON CONFLICT DO NOTHING",(int(fetchedCourse),int(fetchedPreReq)))
 
 connection.commit()
 print("Courses seeded")
 
 
-
-cursor.execute("DELETE FROM studyprogram")
+institutes = pd.read_excel('static/Data.xlsx','Steder - Fakultet og institutt')
+for x in institutes.values:
+    if x[2] != 0:
+        cursor.execute("INSERT INTO institute VALUES (%s, %s, %s)",(x[2],x[5],None)) 
+print("Institutes seeded")
 
 # Lese data om studieprogram fra fil og legge til i database
 xls = pd.ExcelFile('static/Data.xlsx')
@@ -113,32 +137,16 @@ utvalg = studyprograms[['studieprogramkode','studieprognavn','tall_varighet','in
 codesToSkip = ["B-BYGG","B-ELE-YVEI","B-ELEKTRO","M-BIOENG","M-DATATEK-5","M-INDØKG","M-INDØKG5","M-LEKTREA","M-RISGOV","M-SAMSIK","M-ROBOT","M-MAFYS5"]
 
 for i in np.asarray(utvalg):
-    program = [i[1],i[0],i[3],i[2]]
+    program = [str(i[1])[:80],str(i[0])[:80],i[3],i[2]]
     if i[0] in codesToSkip:
         continue
     if i[0][0] == "B" and i[4] == "N" and i[1][-6:] != "deltid":
-        cursor.execute("INSERT INTO studyprogram (name, program_code, degree_type, institute_id, semester_number) VALUES (?, ?, 'Bachelor', ?, ?);", program)
+        cursor.execute("INSERT INTO studyprogram (name, program_code, degree_type, institute_id, semester_number) VALUES (%s, %s, 'Bachelor', %s, %s);", program)
         pass
     elif i[0][0] == "M" and i[4] == "N" and i[0][-1] != 5 and i[1][-6:] != "deltid":
-        cursor.execute("INSERT INTO studyprogram (name, program_code, degree_type, institute_id, semester_number) VALUES (?, ?, 'Master', ?, ?);", program)
+        cursor.execute("INSERT INTO studyprogram (name, program_code, degree_type, institute_id, semester_number) VALUES (%s, %s, 'Master', %s, %s);", program)
 
 print("Studyprograms seeded")
-
-
-
-
-
-
-cursor.execute("DELETE FROM studyplan")
-cursor.execute("DELETE FROM semester")
-cursor.execute("DELETE FROM semester_courses")
-cursor.execute("DELETE FROM institute")
-
-institutes = pd.read_excel('static/Data.xlsx','Steder - Fakultet og institutt')
-for x in institutes.values:
-    if x[2] != 0:
-        cursor.execute("INSERT INTO institute VALUES (?,?,?)",(x[2],x[5],None)) 
-print("Institutes seeded")
 
 
 
