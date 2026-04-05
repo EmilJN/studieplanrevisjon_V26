@@ -68,7 +68,7 @@ def register():
     name = request.json.get("name")
     #password = bcrypt.hashpw(request.json.get("password1", None).encode(encoding="utf-8"),bcrypt.gensalt())
     pw = request.json.get("password1")
-    hashed = bcrypt.hashpw(pw.encode("utf-8"), bcrypt.gensalt()).decode("uft-8")
+    hashed = bcrypt.hashpw(pw.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
     password = hashed
     userservices = ServiceFactory.get_user_service()
     if userservices.check_if_user_exist_by_email(email):
@@ -161,7 +161,7 @@ def reset(token):
     userservice = ServiceFactory.get_user_service()
     #password = bcrypt.hashpw(request.json.get("password1", None).encode(encoding="utf-8"),bcrypt.gensalt())
     pw = request.json.get("password1")
-    hashed = bcrypt.hashpw(pw.encode("utf-8"), bcrypt.gensalt()).decode("uft-8")
+    hashed = bcrypt.hashpw(pw.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
     password = hashed
     isReset = userservice.change_password(password=password,token=token)
     if isReset:
