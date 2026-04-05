@@ -1,5 +1,7 @@
 import pandas as pd
 import os
+import sys
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import IntegrityError
@@ -105,7 +107,7 @@ def seed_semester_courses(file_path):
 
 
             if pd.isna(row['Terminnr default']):
-                course_test = db.session.query(Course).get(course_code)
+                course_test = Course.query.filter_by(courseCode=course_code).first()
                 if not course_test:
                     continue
                 if course_test.semester == "V":
@@ -221,15 +223,15 @@ def seed_elective_courses(file_path):
                 continue
             # 'Velg ett emne', 'Anbefalte valgemner', 'Andre valgemner'
 
-            cat1 = db.session.query(ElectiveGroup).get(1)
-            cat2 = db.session.query(ElectiveGroup).get(2)
-            cat3 = db.session.query(ElectiveGroup).get(3)
+            cat1 = ElectiveGroup.query.filter_by(id=1).first()
+            cat2 = ElectiveGroup.query.filter_by(id=2).first()
+            cat3 = ElectiveGroup.query.filter_by(id=3).first()
 
             # Handle missing semester_number
 
             course_code = row['courseCode']
             if pd.isna(row['Terminnr default']):
-                course_test = db.session.query(Course).get(course_code)
+                course_test = Course.query.filter_by(courseCode=course_code).first()
                 if not course_test:
                     continue
                 if course_test.semester == "V":

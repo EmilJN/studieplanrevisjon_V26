@@ -49,9 +49,10 @@ if __name__ == "__main__":
         # Seed database if empty
         from app.models import Course
         if Course.query.count() == 0:
-            print("Database is empty, running seed script...")
+            print("Database is empty, running seed scripts...")
             import subprocess, sys
-            seed_path = "scripts/seed.py"
-            subprocess.run([sys.executable, seed_path], check=True, cwd=os.path.dirname(__file__))
+            base = os.path.dirname(__file__)
+            subprocess.run([sys.executable, "scripts/seed.py"], check=True, cwd=base)
+            subprocess.run([sys.executable, "scripts/seed_semesters.py"], check=True, cwd=base)
             print("Seeding complete.")
     app.run(debug=True)
