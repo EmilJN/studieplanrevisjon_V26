@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, Blueprint
+from flask import Flask, jsonify, request, Blueprint, session
 from app.models import Course, Studyprogram, Institute, Studyplan
 from app import db
 from services import ServiceFactory
@@ -163,7 +163,7 @@ def get_studyprograms_by_degree_type(degree_type):
 def become_in_charge(studyprogram_id):
     try:
         studyprogram_service = ServiceFactory.get_studyprogram_service()
-        inCharge = studyprogram_service.become_in_charge_of_studyprogram(studyprogram_id,current_user.id)
+        inCharge = studyprogram_service.become_in_charge_of_studyprogram(studyprogram_id,session.get("user_id"))
 
         return jsonify(inCharge.serialize()), 200
     except Exception as e:
@@ -173,7 +173,7 @@ def become_in_charge(studyprogram_id):
 def become_not_in_charge(studyprogram_id):
     try:
         studyprogram_service = ServiceFactory.get_studyprogram_service()
-        inCharge = studyprogram_service.step_down_of_studyprogram(studyprogram_id,current_user.id)
+        inCharge = studyprogram_service.step_down_of_studyprogram(studyprogram_id,session.get("user_id"))
         return jsonify(inCharge.serialize()), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500

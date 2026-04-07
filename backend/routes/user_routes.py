@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, Blueprint
+from flask import Flask, jsonify, request, Blueprint, session
 from app.models import  User
 from services import ServiceFactory
 
@@ -19,7 +19,7 @@ def delete_user(user_id):
 #TODO CHANGE FOR FEIDE
 @user_bp.get("/get_user")
 def protected():
-    return current_user.serialize()
+    return session.get("user_id")
 
 
 @user_bp.get("/get_all_users")

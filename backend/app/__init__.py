@@ -3,12 +3,13 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from flask_migrate import Migrate
 from app.config import Config
-
+from authlib.integrations.flask_client import OAuth
 
 from os import environ
 
 db = SQLAlchemy()
 migrate = Migrate()
+oauth = OAuth()
 
 
 def create_app():
@@ -19,6 +20,13 @@ def create_app():
     # Initialize extensions
     db.init_app(app)
     migrate.init_app(app, db)
+    oauth.init_app(app)
+
+    oauth.register(
+        name='feide',
+        server_metadata_url='https://auth.dataporten.no/.well-known/openid-configuration',
+        client_kwargs={'scope': 'openid email profile'}
+    )
 
     return app
 
