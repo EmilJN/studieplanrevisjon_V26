@@ -1,9 +1,8 @@
-from app import db, mail
+from app import db
 from app.models import User, Studyprogram, Studyplan, Institute, Course, Notifications
 import threading
 from datetime import datetime
 from flask import request, jsonify
-from flask_mail import Message
 import uuid
 
 class NotificationService:
@@ -212,18 +211,23 @@ class NotificationService:
     
 
     def send_send_email(self, recipient_program_id, sender_program_id, message):
-        try:
-            program_service = self.studyprogram_service
-            recipient_program = program_service.get_studyprogram_by_id(recipient_program_id)
-            sender_program = program_service.get_studyprogram_by_id(sender_program_id)
-            if not recipient_program.program_ansvarlig:
-                return("No one in charge of this program")
-            msg = Message(
-                subject="Notifikasjon fra studieplanrevisjon",
-                recipients=["truls244@gmail.com"],
-                body=f"{sender_program.name} gjøre denne endringen: {message} Mottaker er: {recipient_program.program_ansvarlig.email}"
-                )
-            mail.send(msg)
-        except Exception as e:
-            print(f"Error sending email: {str(e)}")
-            return []
+        # TODO: implement with flask_mailman
+        print(f"Email notification skipped - mail not yet configured")
+        pass
+
+#    def send_send_email(self, recipient_program_id, sender_program_id, message):
+#        try:
+#            program_service = self.studyprogram_service
+#            recipient_program = program_service.get_studyprogram_by_id(recipient_program_id)
+#            sender_program = program_service.get_studyprogram_by_id(sender_program_id)
+#            if not recipient_program.program_ansvarlig:
+#                return("No one in charge of this program")
+#            msg = Message(
+#                subject="Notifikasjon fra studieplanrevisjon",
+#                recipients=["truls244@gmail.com"],
+#                body=f"{sender_program.name} gjøre denne endringen: {message} Mottaker er: {recipient_program.program_ansvarlig.email}"
+#                )
+#            mail.send(msg)
+#        except Exception as e:
+#            print(f"Error sending email: {str(e)}")
+#            return []

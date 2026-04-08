@@ -30,6 +30,7 @@ app.register_blueprint(notification_bp, url_prefix='/backend/notifications/')
 app.register_blueprint(institute_bp, url_prefix='/backend/institutes')
 app.register_blueprint(semestercourses_bp, url_prefix='/backend/semestercourses/')
 
+
 logging.basicConfig(level=logging.INFO, 
                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                    filename='database_operations.log')

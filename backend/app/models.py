@@ -1,7 +1,6 @@
 from app import db
 from datetime import timezone
 import datetime
-import bcrypt
 import pytz
 prerequisites = db.Table(
     'prerequisites',

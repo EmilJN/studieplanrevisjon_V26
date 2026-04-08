@@ -1,4 +1,0 @@
-LOAD DATABASE
-  FROM sqlite:////work/app.db
-  INTO postgresql://myuser:mypassword@db:5432/mydatabase
-WITH include drop, create tables, create indexes, reset sequences;
