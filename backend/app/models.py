@@ -1,7 +1,6 @@
 from app import db
 from datetime import timezone
 import datetime
-import bcrypt
 import pytz
 prerequisites = db.Table(
     'prerequisites',
@@ -140,47 +139,28 @@ class Studyplan(db.Model):
 class User(db.Model):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
+    feide_id = db.Column(db.String(128), unique=True, nullable=False)
     email = db.Column(db.String(80), nullable=False)
     name = db.Column(db.String(80), nullable=False)
-    password = db.Column(db.String(80), nullable=False)
     role = db.Column(db.Enum('user', 'admin', 'ansvarlig', name='role_type'), nullable=False)
-    verified = db.Column(db.Boolean, default=False)
     studyprograms = db.relationship('Studyprogram', back_populates='program_ansvarlig')
-
-    def check_password(self, password):
-        if not bcrypt.checkpw(password, self.password):
-            return False
-        return True
 
     def serialize(self):
         return {
             "id": self.id, 
             "email": self.email, 
             "role": self.role, 
-            "name": self.name, 
-            "verified":self.verified}
+            "name": self.name 
+            }
     
     def __repr__(self):
         return f'<User {self.email}>'
     
-    def __init__(self, email, password, name, role):
+    def __init__(self, feide_id, email, name, role):
+        self.feide_id = feide_id
         self.email = email
-        self.password = password
         self.name = name
         self.role = role
-
-
-class Verificationtokens(db.Model):
-    __tablename__ = 'verificationtokens'
-    token = db.Column(db.String(36), nullable=False, primary_key=True)
-    expiration_time = db.Column(db.DateTime, default=datetime.timezone.utc, nullable=False)
-    email = db.Column(db.String(80),nullable=False)
-
-    def __init__(self, token, email):
-        self.token = token
-        self.email = email
-        self.expiration_time = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=1)
-
 
 class Notifications(db.Model):
     __tablename__ = 'notifications'
@@ -328,9 +308,6 @@ class ElectiveGroup(db.Model):
     def __init__(self, category):
         self.name = category
         
-        
-
-
 class Semester(db.Model):
     __tablename__ = 'semester'
     id = db.Column(db.Integer, primary_key=True)

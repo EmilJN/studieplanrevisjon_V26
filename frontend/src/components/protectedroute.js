@@ -3,17 +3,12 @@ import { useAuth } from './validateuser';
 
 
 const ProtectedRoute = () => {
-  const { isAuthenticated, isVerified, isLoading } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
 
   
   if (!isAuthenticated && !isLoading) {
     // Save the attempted URL for redirecting after login
     return <Navigate to="/login" />;
-  }
-
-  if (!isVerified && !isLoading) {
-    // Save the attempted URL for redirecting after verification
-    return <Navigate to="/verify" />;
   }
 
   return <Outlet />;

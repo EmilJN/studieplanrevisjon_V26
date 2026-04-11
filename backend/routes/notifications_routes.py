@@ -2,7 +2,6 @@ from flask import Flask, jsonify, request, Blueprint
 from app.models import Course, Studyprogram, Institute, Studyplan, Notifications, User, Semester, SemesterCourses
 from app import db
 from services import ServiceFactory
-from flask_jwt_extended import  jwt_required
 
 
 # http://localhost:5000/backend/notifications/
@@ -14,7 +13,6 @@ notification_bp = Blueprint('notifications', __name__)
 # Notification
 # get notifications
 @notification_bp.route("/", methods=["GET"])
-@jwt_required()
 def get_notifications():
     try:
         program_id = request.args.get("program_id")
@@ -40,7 +38,6 @@ def get_notifications():
 
 
 @notification_bp.route('/create-noti/prog', methods=['POST'])
-@jwt_required()
 def create_prog_notification():
     try:
         data = request.json
@@ -71,7 +68,6 @@ def create_prog_notification():
 
 
 @notification_bp.route('/get-group/<string:group_id>', methods=['GET'])
-@jwt_required()
 def get_notification_group(group_id):
     try:
         notifications = Notifications.query.filter_by(notification_group_id=group_id).all()
@@ -96,7 +92,6 @@ def get_notification_group(group_id):
 
 
 @notification_bp.route('/find-notification-group', methods=['POST'])
-@jwt_required()
 def find_notification_group():
     try:
         data = request.get_json()
@@ -120,7 +115,6 @@ def find_notification_group():
         return jsonify({"error": "Internal server error"}), 500
 
 @notification_bp.route('/<int:notification_id>/delete', methods=['DELETE'])
-@jwt_required()
 def delete_program_notification(notification_id):
     try:
         notification_service = ServiceFactory.get_notification_service()
@@ -151,7 +145,6 @@ def delete_program_notification(notification_id):
 
 
 @notification_bp.route("/notifications", methods=["DELETE"])
-@jwt_required()
 def delete_all_notifications():
     try:
         notification_service = ServiceFactory.get_notification_service()

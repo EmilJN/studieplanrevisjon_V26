@@ -30,6 +30,7 @@ app.register_blueprint(notification_bp, url_prefix='/backend/notifications/')
 app.register_blueprint(institute_bp, url_prefix='/backend/institutes')
 app.register_blueprint(semestercourses_bp, url_prefix='/backend/semestercourses/')
 
+
 logging.basicConfig(level=logging.INFO, 
                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                    filename='database_operations.log')
@@ -55,4 +56,4 @@ if __name__ == "__main__":
             subprocess.run([sys.executable, "scripts/seed.py"], check=True, cwd=base)
             subprocess.run([sys.executable, "scripts/seed_semesters.py"], check=True, cwd=base)
             print("Seeding complete.")
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)

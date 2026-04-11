@@ -6,6 +6,7 @@ BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY")
+    
     _db_host = os.environ.get("DB_HOST")
     _db_name = os.environ.get("DB_NAME")
     _db_user = os.environ.get("DB_USER")
@@ -17,13 +18,9 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     BACKUP_DIR = os.path.join(os.path.abspath(os.path.dirname(__file__)), '../instance/backups')
 
-    # JWT token configuration
-    JWT_SECRET_KEY = os.environ.get("JWT_SECRET_KEY")
-    JWT_ACCESS_TOKEN_EXPIRES = timedelta(days=7)
-    JWT_TOKEN_LOCATION = ["cookies"]
-    JWT_COOKIE_SECURE = False ## Needs to be Truw when in deployment
-    JWT_COOKIE_CSRF_PROTECT = True
-    JWT_CSFR_IN_COOKIES = True
+    SESSION_COOKIE_SAMESITE = None
+    SESSION_COOKIE_SECURE = False  # True in production with HTTPS
+    SESSION_COOKIE_HTTPONLY = True
 
     # Flask Mail configuration
     MAIL_SERVER = 'smtp.gmail.com'
@@ -32,6 +29,9 @@ class Config:
     MAIL_USERNAME = os.environ.get("MAIL_USERNAME")
     MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD")
     MAIL_DEFAULT_SENDER ='trulsovrebo@gmail.com'
-
+    
+    #FEIDE OAuth
+    FEIDE_CLIENT_ID = os.environ.get("FEIDE_CLIENT_ID")
+    FEIDE_CLIENT_SECRET = os.environ.get("FEIDE_CLIENT_SECRET")
 
 

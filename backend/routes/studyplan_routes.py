@@ -2,7 +2,6 @@ from flask import Flask, jsonify, request, Blueprint
 from app.models import Course, Studyprogram, Institute, Studyplan, Semester, SemesterCourses, Log
 from app import db
 from services import ServiceFactory
-from flask_jwt_extended import  jwt_required
 
 
 # http://localhost:5000/backend/studyplans/
@@ -13,7 +12,6 @@ studyplan_bp = Blueprint('studyplans', __name__)
 
 # Create
 @studyplan_bp.route('/create/sp', methods=['POST'])
-@jwt_required()
 def create_studyplan():
     try:
         data = request.json
@@ -53,7 +51,6 @@ def create_studyplan():
 
 # get by id
 @studyplan_bp.route('/<int:studyplan_id>', methods=['GET'])
-@jwt_required()
 def get_studyplanById(studyplan_id):
     try:
         studyplan_service = ServiceFactory.get_studyplan_service()
@@ -72,7 +69,6 @@ def get_studyplanById(studyplan_id):
 
 # Delete
 @studyplan_bp.route('/<int:studyplan_id>', methods=['DELETE'])
-@jwt_required()
 def delete_studyplan(studyplan_id):
     try:
         studyplan_service = ServiceFactory.get_studyplan_service()
@@ -87,7 +83,6 @@ def delete_studyplan(studyplan_id):
 
 # update courses in studyplan
 @studyplan_bp.route('/<int:studyplan_id>/updatecourses', methods=['PUT'])
-@jwt_required()
 def update_studyplan_courses(studyplan_id):
     try:
         data = request.get_json()
