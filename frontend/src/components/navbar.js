@@ -1,44 +1,44 @@
-import { Link } from "react-router-dom";
-import "../styles/NavBar.css";
+import { Link, NavLink } from "react-router-dom";
 import { useAuth } from "./validateuser";
 
 const NavBar = () => {
+  const { isAuthenticated, logout, currentUser } = useAuth();
 
-    const { isAuthenticated, logout, currentUser } = useAuth()
+  return (
+    <nav
+      className="navbar navbar-expand navbar-dark px-4 mb-4"
+      style={{ backgroundColor: "var(--color-dark)" }}
+    >
+      <Link className="navbar-brand d-flex align-items-center gap-2" to="/">
+        <img src="../uis_logo.jpg" alt="UiS logo" height="40" />
+        <span>Studieplanrevisjon</span>
+      </Link>
 
-
-    return (
-        <nav className="NavBar">
-            {isAuthenticated ? (
-                <div className="NavBarLoggedIn" >
-                    <div className="NavBarLeft">
-                        <Link className="NavBarElement" to="/" >
-                            <img src="../uis_logo.jpg" />
-                            <h3>Forside</h3>
-                        </Link>
-                        {currentUser.role === "admin" && <Link to={'/admin'}className="NavBarElement" ><h3>Admin</h3></Link>}
-                    </div>
-                    
-                    <div className="NavBarRightSide" >
-                        
-                        <div className="NavBarElement" >
-                            <button onClick={logout}>Logg ut</button>
-                        </div>
-                    </div>
-                </div>
-            ) : (
-                <div className="NavBarLoggedOut" >
-                    <div className="NavBarElement">
-                        <Link to="/login" >
-                        <img src="../uis_logo.jpg" />
-                            <h3>Logg inn</h3>
-                        </Link>
-                    </div>
-                </div>
+      {isAuthenticated && (
+        <>
+          <div className="navbar-nav me-auto ms-3 gap-2">
+            <NavLink className="nav-link" to="/courses">
+              Emner
+            </NavLink>
+            <NavLink className="nav-link" to="/studyprogram">
+              Studieplaner
+            </NavLink>
+            {currentUser.role === "admin" && (
+              <NavLink className="nav-link" to="/admin">
+                Admin
+              </NavLink>
             )}
+          </div>
 
-
-        </nav>
-    );
-}
+          <div className="d-flex align-items-center gap-3">
+            <span className="text-white-50 small">{currentUser.name}</span>
+            <button className="btn btn-outline-light btn-sm" onClick={logout}>
+              Logg ut
+            </button>
+          </div>
+        </>
+      )}
+    </nav>
+  );
+};
 export default NavBar;

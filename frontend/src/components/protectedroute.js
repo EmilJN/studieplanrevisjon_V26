@@ -1,17 +1,20 @@
-import { Navigate, Outlet } from 'react-router-dom';
-import { useAuth } from './validateuser';
-
+import { Navigate, Outlet } from "react-router-dom";
+import { useAuth } from "./validateuser";
+import NavBar from "./navbar";
 
 const ProtectedRoute = () => {
   const { isAuthenticated, isLoading } = useAuth();
 
-  
   if (!isAuthenticated && !isLoading) {
-    // Save the attempted URL for redirecting after login
     return <Navigate to="/login" />;
   }
 
-  return <Outlet />;
+  return (
+    <>
+      <NavBar />
+      <Outlet />
+    </>
+  );
 };
 
-export default ProtectedRoute
+export default ProtectedRoute;

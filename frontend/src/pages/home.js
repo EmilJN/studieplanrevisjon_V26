@@ -1,35 +1,50 @@
 import { Link } from "react-router-dom";
-import "../styles/Home.css";
 
 const Home = () => {
-    return (
-        <div className="hp-link-container">
-            <Link to="createcourse" className="hp-link-box">
-                <p to="createcourse" className="hp-link-title">Lag et nytt emne eller valgemne kategori</p>
-                <p className="hp-link-info"></p>
+  const links = [
+    {
+      to: "createcourse",
+      title: "Lag et nytt emne eller valgemne kategori",
+      info: "",
+    },
+    { to: "createstudyprogram", title: "Lag et nytt studieprogram", info: "" },
+    {
+      to: "editstudyprogram",
+      title: "Rediger et studieprogram",
+      info: "Rediger informasjon til studieprogram",
+    },
+    {
+      to: "courses",
+      title: "Oversikt over emner",
+      info: "Se og endre informasjon til emner",
+    },
+    {
+      to: "studyprogram",
+      title: "Studieplaner",
+      info: "Se studieplaner til studieprogram",
+    },
+  ];
+
+  return (
+    <div className="container mt-4">
+      <div className="row g-4">
+        {links.map((link) => (
+          <div className="col-sm-6 col-lg-4" key={link.to}>
+            <Link to={link.to} className="text-decoration-none">
+              <div className="card h-100 shadow-sm border-primary">
+                <div className="card-body">
+                  <h5 className="card-title text-primary">{link.title}</h5>
+                  {link.info && (
+                    <p className="card-text text-muted">{link.info}</p>
+                  )}
+                </div>
+              </div>
             </Link>
-            <Link to="createstudyprogram" className="hp-link-box">
-                <p  className="hp-link-title">Lag et nytt studieprogram</p>
-                <p className="hp-link-info"></p>
-            </Link>
-            <Link to="editstudyprogram" className="hp-link-box">
-                <p  className="hp-link-title">Rediger et studieprogam</p>
-                <p>Rediger informasjon til studieprogram</p>
-            </Link>
-            <Link to="courses"className="hp-link-box">
-                <p  className="hp-link-title">Oversikt over emner</p>
-                <p className="hp-link-info">Se og endre infromasjon til emner</p>
-            </Link>
-            
-            {/* <div className="hp-link-box">
-                <Link to="createstudyplan" className="hp-link">Lag en ny studieplan</Link>
-            </div> */}
-            <Link to="studyprogram" className="hp-link-box">
-                <p className="hp-link-title">Studieplaner</p>
-                <p className="hp-link-info">Se studieplaner til studieprogram</p>
-            </Link>
-        </div>
-    );
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 };
 
 export default Home;

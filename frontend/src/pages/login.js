@@ -1,17 +1,42 @@
 import React from "react";
-import "../styles/Forms.css";
-
-
 
 const Login = () => {
-    return (
-        <div className="form-container" >
-            <h2>Velkommen til studieplanrevisjon</h2>
-            <a href="http://127.0.0.1:5000/backend/user/login">
-                <button>Logg inn med FEIDE</button>
-            </a>
-        </div>
-    )
+  return (
+    <div
+      className="d-flex justify-content-center align-items-center vh-100"
+      style={{ backgroundColor: "var(--color-gray)" }}
+    >
+      <div
+        className="card shadow p-5 text-center"
+        style={{
+          maxWidth: "420px",
+          width: "100%",
+          backgroundColor: "var(--color-white)",
+        }}
+      >
+        <img
+          src="../uis_logo.jpg"
+          alt="UiS logo"
+          className="mx-auto mb-4"
+          style={{ maxWidth: "100px" }}
+        />
+        <h2 className="mb-2" style={{ color: "var(--color-dark)" }}>
+          Studieplanrevisjon
+        </h2>
+        <p className="text-muted mb-4">Logg inn for å fortsette</p>
+        <a
+          href="http://127.0.0.1:5000/backend/user/login"
+          className="btn w-100"
+          style={{
+            backgroundColor: "var(--color-dark)",
+            color: "var(--color-white)",
+          }}
+        >
+          Logg inn med FEIDE
+        </a>
+      </div>
+    </div>
+  );
 };
 
 export default Login;

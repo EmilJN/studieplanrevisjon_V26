@@ -1,13 +1,31 @@
+@import url("https://fonts.googleapis.com/css2?family=Encode+Sans:wght@300;400;500;600&display=swap");
+
+:root {
+  --color-dark: #32333c;
+  --color-white: #ffffff;
+  --color-blue: #a9b6de;
+  --color-gray: #f4f4f6;
+  --color-light-blue: #e2e6f4;
+
+  /* Bootstrap overrides */
+  --bs-primary: #32333c;
+  --bs-primary-rgb: 50, 51, 60;
+  --bs-body-bg: #ffffff;
+  --bs-body-color: #32333c;
+}
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: "Encode Sans", sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.6em;
+  background-color: var(--color-white);
+  color: var(--color-dark);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  font-family:
+    source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
 }
