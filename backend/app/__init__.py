@@ -17,6 +17,7 @@ def create_app():
 
     CORS(app,origins=["http://localhost:3000", "http://127.0.0.1:3000"],supports_credentials=True,)
     app.config.from_object(Config)
+
     # Initialize extensions
     db.init_app(app)
     migrate.init_app(app, db)
@@ -24,8 +25,10 @@ def create_app():
 
     oauth.register(
         name='feide',
+        client_id=app.config.get('FEIDE_CLIENT_ID'),
+        client_secret=app.config.get('FEIDE_CLIENT_SECRET'),
         server_metadata_url='https://auth.dataporten.no/.well-known/openid-configuration',
-        client_kwargs={'scope': 'openid email profile'}
+        client_kwargs={'scope': 'openid email userinfo-name'}
     )
 
     return app

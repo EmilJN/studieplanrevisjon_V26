@@ -56,4 +56,4 @@ if __name__ == "__main__":
             subprocess.run([sys.executable, "scripts/seed.py"], check=True, cwd=base)
             subprocess.run([sys.executable, "scripts/seed_semesters.py"], check=True, cwd=base)
             print("Seeding complete.")
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)

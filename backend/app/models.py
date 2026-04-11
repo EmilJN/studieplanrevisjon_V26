@@ -162,19 +162,6 @@ class User(db.Model):
         self.name = name
         self.role = role
 
-
-class Verificationtokens(db.Model):
-    __tablename__ = 'verificationtokens'
-    token = db.Column(db.String(36), nullable=False, primary_key=True)
-    expiration_time = db.Column(db.DateTime, default=datetime.timezone.utc, nullable=False)
-    email = db.Column(db.String(80),nullable=False)
-
-    def __init__(self, token, email):
-        self.token = token
-        self.email = email
-        self.expiration_time = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=1)
-
-
 class Notifications(db.Model):
     __tablename__ = 'notifications'
     id = db.Column(db.Integer, primary_key=True)

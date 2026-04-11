@@ -8,11 +8,13 @@ user_bp = Blueprint('user', __name__)
 
 @user_bp.route("/login")
 def feide_login():
-    redirect_uri = url_for("user.feide_callback", _external=True)
+    redirect_uri = "http://127.0.0.1:5000/backend/user/callback"
     return oauth.feide.authorize_redirect(redirect_uri)
 
 @user_bp.route("/callback")
 def feide_callback():
+    from flask import current_app
+    print("SECRET_KEY:", current_app.config.get("SECRET_KEY"))
     token = oauth.feide.authorize_access_token()
     userinfo = token["userinfo"]
 
@@ -30,12 +32,12 @@ def feide_callback():
     session["user_name"] = user.name
     session["user_role"] = user.role
 
-    return redirect("http://localhost:3000/")
+    return redirect("http://127.0.0.1:3000")
 
 @user_bp.route('/logout')
 def logout():
     session.clear()
-    return redirect('http://localhost:3000/login')
+    return redirect('http://127.0.0.1:3000/login')
 
 @user_bp.route("/delete/<int:user_id>", methods=["DELETE"])
 def delete_user(user_id):
