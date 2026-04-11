@@ -130,7 +130,7 @@ studyprograms = pd.read_excel(xls, 'Studieprogram')
 utvalg = studyprograms[['studieprogramkode','studieprognavn','tall_varighet','instituttnr_studieansv','status_utgatt']]
 
 codesToSkip = ["B-BYGG","B-ELE-YVEI","B-ELEKTRO","M-BIOENG","M-DATATEK-5","M-INDØKG","M-INDØKG5","M-LEKTREA","M-RISGOV","M-SAMSIK","M-ROBOT","M-MAFYS5"]
-
+#codesToSkip = ["test"]
 for i in np.asarray(utvalg):
     program = [str(i[1])[:80],str(i[0])[:80],i[3],i[2]]
     if i[0] in codesToSkip:

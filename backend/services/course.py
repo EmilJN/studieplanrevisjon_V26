@@ -213,17 +213,23 @@ class CourseService:
         return [course.serialize() for course in overlapping_courses]
 
     def get_studyprograms_using_course(self, course_id):
-        study_plans = db.session.query(Studyplan).distinct() \
+        results = db.session.query(
+            Studyprogram.name,
+            Studyplan.year,
+            SemesterCourses.is_elective,
+        ).join(Studyplan, Studyprogram.id == Studyplan.studyprogram_id) \
         .join(Semester, Studyplan.id == Semester.studyplan_id) \
         .join(SemesterCourses, Semester.id == SemesterCourses.semester_id) \
         .filter(SemesterCourses.course_id == course_id) \
-        .order_by(Studyplan.id).subquery()
+        .distinct() \
+        .all()
 
-        study_programs = db.session.query(Studyprogram) \
-        .join(Studyplan,Studyprogram.id == Studyplan.studyprogram_id) \
-        .filter(Studyplan.studyprogram_id ==study_plans.c.studyprogram_id).all()
-
-
-
-        return [program.serialize() for program in study_programs]
+        return [
+            {
+                "name": row.name,
+                "year": row.year,
+                "mandatory": not row.is_elective,
+            }
+            for row in results
+        ]
 
