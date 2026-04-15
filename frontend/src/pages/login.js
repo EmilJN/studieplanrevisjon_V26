@@ -25,7 +25,7 @@ const Login = () => {
         </h2>
         <p className="text-muted mb-4">Logg inn for å fortsette</p>
         <a
-          href="http://127.0.0.1:5000/backend/user/login"
+          href={`${process.env.REACT_APP_BACKEND_URL}/backend/user/login`}
           className="btn w-100"
           style={{
             backgroundColor: "var(--color-dark)",

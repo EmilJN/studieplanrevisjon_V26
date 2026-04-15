@@ -16,14 +16,16 @@ services:
       SECRET_KEY: ${SECRET_KEY}
       FEIDE_CLIENT_ID: ${FEIDE_CLIENT_ID}
       FEIDE_CLIENT_SECRET: ${FEIDE_CLIENT_SECRET}
+      BACKEND_URL: ${BACKEND_URL}
+      FRONTEND_URL: ${FRONTEND_URL}
 
   frontend:
     build: ./frontend
     container_name: react-frontend
     ports:
       - "${FRONTEND_PORT}:${FRONTEND_PORT}"
-    #environment:
-    #  - REACT_APP_BACKEND_URL=http://localhost:${BACKEND_PORT}/backend
+    environment:
+      - REACT_APP_BACKEND_URL=${BACKEND_URL}
     depends_on:
       - backend
 

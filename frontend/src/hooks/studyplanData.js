@@ -24,8 +24,8 @@ export function useStudyPlanData(programId) {
     setLoading(true);
     try {
       let endpoint = studyplan_id
-        ? `/backend/studyplans/${studyplan_id}/completesp`
-        : `/backend/studyplans/studyprograms/${programId}/fullsp`;
+        ? `/studyplans/${studyplan_id}/completesp`
+        : `/studyplans/studyprograms/${programId}/fullsp`;
 
       const response = await api.get(endpoint);
       const data = response.data;

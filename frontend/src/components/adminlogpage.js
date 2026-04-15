@@ -11,7 +11,7 @@ const AdminLogPage = () => {
   useEffect(() => {
     const getLog = async () => {
       await api
-        .get("/user/get_logs")
+        .get("/backend/user/get_logs")
         .then((response) => {
           setLogs(response.data);
         })

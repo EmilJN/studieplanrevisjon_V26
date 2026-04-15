@@ -19,16 +19,16 @@ import logging
 app = create_app()
 
 # Register the blueprints
-app.register_blueprint(backup_bp, url_prefix='/backend/db')
-app.register_blueprint(courses_bp, url_prefix='/backend/courses/')
-app.register_blueprint(prerequisites_bp, url_prefix='/backend/prerequisites' )
-app.register_blueprint(studyprogram_bp, url_prefix='/backend/studyprograms/')
-app.register_blueprint(studyplan_bp, url_prefix='/backend/studyplans/')
-app.register_blueprint(exportdocx_bp, url_prefix='/backend/exportdocx/')
+app.register_blueprint(backup_bp, url_prefix='/db')
+app.register_blueprint(courses_bp, url_prefix='/courses/')
+app.register_blueprint(prerequisites_bp, url_prefix='/prerequisites' )
+app.register_blueprint(studyprogram_bp, url_prefix='/studyprograms/')
+app.register_blueprint(studyplan_bp, url_prefix='/studyplans/')
+app.register_blueprint(exportdocx_bp, url_prefix='/exportdocx/')
 app.register_blueprint(user_bp, url_prefix='/backend/user/')
-app.register_blueprint(notification_bp, url_prefix='/backend/notifications/')
-app.register_blueprint(institute_bp, url_prefix='/backend/institutes')
-app.register_blueprint(semestercourses_bp, url_prefix='/backend/semestercourses/')
+app.register_blueprint(notification_bp, url_prefix='/notifications/')
+app.register_blueprint(institute_bp, url_prefix='/institutes')
+app.register_blueprint(semestercourses_bp, url_prefix='/semestercourses/')
 
 
 logging.basicConfig(level=logging.INFO, 

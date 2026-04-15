@@ -1,3 +1,4 @@
+import os
 from flask import Flask, jsonify, request, Blueprint, session, url_for, redirect
 from app.models import  User
 from app import oauth
@@ -8,7 +9,7 @@ user_bp = Blueprint('user', __name__)
 
 @user_bp.route("/login")
 def feide_login():
-    redirect_uri = "http://127.0.0.1:5000/backend/user/callback"
+    redirect_uri = f"{os.environ.get('BACKEND_URL', 'http://localhost:5000')}/backend/user/callback"
     return oauth.feide.authorize_redirect(redirect_uri)
 
 @user_bp.route("/callback")
@@ -32,12 +33,12 @@ def feide_callback():
     session["user_name"] = user.name
     session["user_role"] = user.role
 
-    return redirect("http://127.0.0.1:3000")
+    return redirect(os.environ.get('FRONTEND_URL', 'http://localhost:3000'))
 
 @user_bp.route('/logout')
 def logout():
     session.clear()
-    return redirect('http://127.0.0.1:3000/login')
+    return redirect(f"{os.environ.get('FRONTEND_URL', 'http://localhost:3000')}/login")
 
 @user_bp.route("/delete/<int:user_id>", methods=["DELETE"])
 def delete_user(user_id):

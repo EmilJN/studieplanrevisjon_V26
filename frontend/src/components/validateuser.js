@@ -13,7 +13,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const checkAuthStatus = async () => {
       try {
-        const response = await api.get("/user/get_user");
+        const response = await api.get("/backend/user/get_user");
         if (response.status === 200) {
           setCurrentUser(response.data);
         } else {
@@ -30,11 +30,16 @@ export const AuthProvider = ({ children }) => {
     checkAuthStatus();
   }, []);
 
-const logout = () => {
-  window.location.href = "http://127.0.0.1:5000/backend/user/logout";
-};
+  const logout = () => {
+    window.location.href = `${process.env.REACT_APP_BACKEND_URL}/backend/user/logout`;
+  };
 
-const value = { currentUser, isAuthenticated: !!currentUser, isLoading, logout };
+  const value = {
+    currentUser,
+    isAuthenticated: !!currentUser,
+    isLoading,
+    logout,
+  };
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
