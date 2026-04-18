@@ -11,7 +11,7 @@ const AdminUserList = () => {
   useEffect(() => {
     const getUsers = async () => {
       await api
-        .get("/backend/user/get_all_users")
+        .get("/user/get_all_users")
         .then((response) => {
           setUsers(response.data);
         })

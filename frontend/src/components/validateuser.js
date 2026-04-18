@@ -13,7 +13,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const checkAuthStatus = async () => {
       try {
-        const response = await api.get("/backend/user/get_user");
+        const response = await api.get("/user/get_user");
         if (response.status === 200) {
           setCurrentUser(response.data);
         } else {
@@ -31,7 +31,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const logout = () => {
-    window.location.href = `${process.env.REACT_APP_BACKEND_URL}/backend/user/logout`;
+    window.location.href = `${process.env.REACT_APP_BACKEND_URL}/user/logout`;
   };
 
   const value = {

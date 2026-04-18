@@ -9,7 +9,7 @@ user_bp = Blueprint('user', __name__)
 
 @user_bp.route("/login")
 def feide_login():
-    redirect_uri = f"{os.environ.get('BACKEND_URL', 'http://localhost:5000')}/backend/user/callback"
+    redirect_uri = f"{os.environ.get('BACKEND_URL', 'http://localhost:5000')}/user/callback"
     return oauth.feide.authorize_redirect(redirect_uri)
 
 @user_bp.route("/callback")
