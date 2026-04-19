@@ -44,9 +44,9 @@ def downgrade():
     sa.Column('semester_number', sa.INTEGER(), nullable=False),
     sa.Column('is_active', sa.BOOLEAN(), nullable=True),
     sa.Column('program_code', sa.VARCHAR(length=80), nullable=False),
-    sa.Column('program_ansvarlig_id', sa.INTEGER(), nullable=True),
+    sa.Column('program_ansvarlig_id', sa.String(length=128), nullable=True),
     sa.ForeignKeyConstraint(['institute_id'], ['institute.id'], ),
-    sa.ForeignKeyConstraint(['program_ansvarlig_id'], ['user.id'], name='fk_studyprogram_program_ansvarlig_id_user'),
+    sa.ForeignKeyConstraint(['program_ansvarlig_id'], ['user.feide_id'], name='fk_studyprogram_program_ansvarlig_id_user'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('semester',
@@ -147,8 +147,8 @@ def downgrade():
     sa.Column('notification_group_id', sa.VARCHAR(length=100), nullable=True),
     sa.Column('target_term', sa.VARCHAR(length=1), nullable=True),
     sa.ForeignKeyConstraint(['program_id'], ['studyprogram.id'], ),
-    sa.ForeignKeyConstraint(['recipient_id'], ['user.id'], ),
-    sa.ForeignKeyConstraint(['sender_id'], ['user.id'], ),
+    sa.ForeignKeyConstraint(['recipient_id'], ['user.feide_id'], ),
+    sa.ForeignKeyConstraint(['sender_id'], ['user.feide_id'], ),
     sa.ForeignKeyConstraint(['source_program_id'], ['studyprogram.id'], ),
     sa.PrimaryKeyConstraint('id')
     )

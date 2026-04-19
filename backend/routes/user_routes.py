@@ -28,7 +28,7 @@ def feide_callback():
     if not user:
         user = userservice.create_user(feide_id=feide_id, email=email, name=name)
 
-    session["user_id"] = user.id
+    session["user_id"] = user.feide_id
     session["user_email"] = user.email
     session["user_name"] = user.name
     session["user_role"] = user.role
@@ -40,7 +40,7 @@ def logout():
     session.clear()
     return redirect(f"{os.environ.get('FRONTEND_URL', 'http://localhost:3000')}/login")
 
-@user_bp.route("/delete/<int:user_id>", methods=["DELETE"])
+@user_bp.route("/delete/<string:user_id>", methods=["DELETE"])
 def delete_user(user_id):
     try: 
         userservice = ServiceFactory.get_user_service()
@@ -76,7 +76,7 @@ def get_logs():
 
 
 # Promote user to admin
-@user_bp.route("/promote_user/<int:user_id>", methods=["PUT"])
+@user_bp.route("/promote_user/<string:user_id>", methods=["PUT"])
 def promote_user(user_id):
     userservice = ServiceFactory.get_user_service()
     success = userservice.promote_user(user_id)

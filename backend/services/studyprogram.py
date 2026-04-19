@@ -130,14 +130,14 @@ class StudyprogramService:
     def become_in_charge_of_studyprogram(self, studyprogram_id, user_id):
         studyprogram = self.get_studyprogram_by_id(studyprogram_id)
         user = db.session.query(User).get(user_id)
-        studyprogram.program_ansvarlig_id = user.id
+        studyprogram.program_ansvarlig_id = user.feide_id
         db.session.commit()
         return user
     
     def step_down_of_studyprogram(self, studyprogram_id, user_id):
         studyprogram = self.get_studyprogram_by_id(studyprogram_id)
         user = db.session.query(User).get(user_id)
-        if studyprogram.program_ansvarlig_id == user.id:
+        if studyprogram.program_ansvarlig_id == user.feide_id:
             studyprogram.program_ansvarlig_id = None
         db.session.commit()
         return user

@@ -24,9 +24,9 @@ const AdminUserList = () => {
 
   const handleDeleteUser = (user) => {
     api
-      .delete("/user/delete/" + user.id)
+      .delete("/user/delete/" + user.feide_id)
       .then(() => {
-        setUsers((prev) => prev.filter((u) => u.id !== user.id));
+        setUsers((prev) => prev.filter((u) => u.feide_id !== user.feide_id));
         setMessage(`Brukeren ${user.email} ble slettet`);
       })
       .catch(() => setMessage(`Klarte ikke å slette ${user.email}`));
@@ -34,10 +34,12 @@ const AdminUserList = () => {
 
   const handlePromoteUser = (user) => {
     api
-      .put("/user/promote_user/" + user.id)
+      .put("/user/promote_user/" + user.feide_id)
       .then(() => {
         setUsers((prev) =>
-          prev.map((u) => (u.id === user.id ? { ...u, role: "admin" } : u)),
+          prev.map((u) =>
+            u.feide_id === user.feide_id ? { ...u, role: "admin" } : u,
+          ),
         );
         setMessage(`Brukeren ${user.email} er nå administrator`);
       })
@@ -52,21 +54,17 @@ const AdminUserList = () => {
         <table>
           <thead>
             <tr>
-              <th>Id</th>
               <th>Navn</th>
               <th>Epostadresse</th>
               <th>Rolle</th>
-              <th>Verifisert</th>
             </tr>
           </thead>
           <tbody>
             {users.map((user) => (
-              <tr>
-                <td>{user.id}</td>
+              <tr key={user.feide_id}>
                 <td>{user.name}</td>
                 <td>{user.email}</td>
                 <td>{user.role}</td>
-                <td>{user.verified ? "Ja" : "Nei"}</td>
                 {user.role !== "admin" && (
                   <td>
                     <button onClick={() => handleDeleteUser(user)}>

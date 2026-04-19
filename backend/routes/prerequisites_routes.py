@@ -10,8 +10,8 @@ prerequisites_bp = Blueprint('prerequisites', __name__)
 def add_prerequisites(id):
     prereqs = request.get_json()
     course = Course.query.get(id)
-    for course in prereqs:
-        prereq = Course.query.get(course['id'])
+    for prereqs_course in prereqs:
+        prereq = Course.query.get(prereqs_course['id'])
         course.prerequisites.append(prereq)
     db.session.commit()
     return jsonify({"message": "courses added successfully"}), 201

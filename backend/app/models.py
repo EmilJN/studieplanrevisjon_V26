@@ -47,7 +47,7 @@ class Studyprogram(db.Model):
     semester_number = db.Column(db.Integer, nullable=False) # Antall semestre studieprogrammet går over
     is_active = db.Column(db.Boolean, default=True)
     program_code = db.Column(db.String(80), nullable=False)
-    program_ansvarlig_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='SET NULL'), nullable=True )
+    program_ansvarlig_id = db.Column(db.String(128), db.ForeignKey('user.feide_id', ondelete='SET NULL'), nullable=True )
     # Relationship 
     program_ansvarlig = db.relationship('User', back_populates='studyprograms',lazy='joined')
     institute = db.relationship('Institute', back_populates='studyprograms', lazy='joined')
@@ -84,7 +84,7 @@ class Institute(db.Model):
     __tablename__ = 'institute'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
-    ansvarlig = db.Column(db.String(80), nullable=True)
+    ansvarlig = db.Column(db.String(128), nullable=True)
 
     studyprograms = db.relationship('Studyprogram', back_populates='institute', cascade='all, delete-orphan')
 
@@ -138,8 +138,7 @@ class Studyplan(db.Model):
 # Model for bruker
 class User(db.Model):
     __tablename__ = 'user'
-    id = db.Column(db.Integer, primary_key=True)
-    feide_id = db.Column(db.String(128), unique=True, nullable=False)
+    feide_id = db.Column(db.String(128), primary_key=True, nullable=False)
     email = db.Column(db.String(80), nullable=False)
     name = db.Column(db.String(80), nullable=False)
     role = db.Column(db.Enum('user', 'admin', 'ansvarlig', name='role_type'), nullable=False)
@@ -147,7 +146,7 @@ class User(db.Model):
 
     def serialize(self):
         return {
-            "id": self.id, 
+            "feide_id": self.feide_id, 
             "email": self.email, 
             "role": self.role, 
             "name": self.name 
@@ -167,8 +166,8 @@ class Notifications(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     program_id = db.Column(db.Integer, db.ForeignKey('studyprogram.id'), nullable=True)
     source_program_id = db.Column(db.Integer, db.ForeignKey('studyprogram.id'), nullable=True)
-    recipient_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
-    sender_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    recipient_id = db.Column(db.String(128), db.ForeignKey('user.feide_id'), nullable=True)
+    sender_id = db.Column(db.String(128), db.ForeignKey('user.feide_id'), nullable=True)
     message = db.Column(db.String(200), nullable=False)
     # reason = db.Column(db.String(200), nullable=True)
     is_acknowledged = db.Column(db.Boolean, default=False)
