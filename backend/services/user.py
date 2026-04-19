@@ -1,4 +1,5 @@
 from app import db
+import os
 from app.models import User, Log
 
 class UserService:
@@ -16,6 +17,8 @@ class UserService:
 
     def create_user(self, feide_id, email, name, role='user'):
         user = User(feide_id=feide_id, email=email, name=name, role=role)
+        if email in os.getenv("ADMIN_USERS", "").split(","):
+            user.role = 'admin'
         log = Log(f"Opprettet ny bruker {user.email}")
         self.db.add(log)
         self.db.add(user)
