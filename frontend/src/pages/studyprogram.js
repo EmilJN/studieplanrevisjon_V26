@@ -28,8 +28,8 @@ const StudyProgram = () => {
 
 
   return (
-    <div>
-      <h1>Study Programs</h1>
+    <div className="container py-4">
+      <h1 className="mb-4">Studieplaner</h1>
 
       {/* Search Bar */}
       <div>
@@ -37,7 +37,7 @@ const StudyProgram = () => {
           id="programSearch"
           name="programSearch"
           type="text"
-          placeholder="Search for study programs..."
+          placeholder="Søk etter studieprogram..."
           value={programSearchQuery}
           onChange={(e) => handleProgramSearch(e.target.value)}
         />
@@ -46,19 +46,33 @@ const StudyProgram = () => {
       {/* Study Program List */}
       <div>
         {filteredPrograms.length > 0 ? (
-          <ul>
-            {filteredPrograms.map((program) => (
-              <li
-                key={program.id}
-                onClick={() => navigate(`/studyprograms/${program.id}`)}
-                style={{ cursor: "pointer", margin: "10px 0", textDecoration: "underline" }}
-              >
-                {program.name} ({program.degree_type})
-              </li>
-            ))}
-          </ul>
+          <table className="table table-bordered table-hover">
+            <thead
+              style={{
+                backgroundColor: "var(--color-dark)",
+                color: "var(--color-white)",
+              }}
+            >
+              <tr>
+                <th>Navn</th>
+                <th>Nivå</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredPrograms.map((program) => (
+                <tr
+                  key={program.id}
+                  onClick={() => navigate(`/studyprograms/${program.id}`)}
+                  style={{ cursor: "pointer" }}
+                >
+                  <td>{program.name}</td>
+                  <td>{program.degree_type}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         ) : (
-          <p>No study programs found.</p>
+          <p>Ingen studieprogram funnet.</p>
         )}
       </div>
     </div>

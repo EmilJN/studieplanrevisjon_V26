@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useCallback, use } from "react";
 import { Link } from "react-router-dom";
 import { useCourses } from "../utils/CoursesContext";
+import { useNavigate } from "react-router-dom";
 
 const Courses = () => {
   const { courses } = useCourses();
+  const navigate = useNavigate();
   const [filteredCourses, setFilteredCourses] = useState(courses);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterOpen, setFilterOpen] = useState(false);
@@ -145,15 +147,12 @@ const Courses = () => {
         </thead>
         <tbody>
           {filteredCourses.map((course) => (
-            <tr key={course.id}>
-              <td>
-                <Link
-                  to={`/courses/details/${course.id}`}
-                  state={{ courseid: course.id }}
-                >
-                  {course.name}
-                </Link>
-              </td>
+            <tr
+              key={course.id}
+              onClick={() => navigate(`/courses/details/${course.id}`)}
+              style={{ cursor: "pointer" }}
+            >
+              <td>{course.name}</td>
               <td>{course.courseCode}</td>
               <td>
                 {course.semester === "H"

@@ -44,7 +44,7 @@ export const handleBecomeNotInCharge = async (studyProgramId) => {
 // Header func for "info at the top" of the study program detail and generate studyplan pages.
 export const StudyProgramHeader = ({ studyProgram, baseYear, onGenerate, setNotificationsRef }) => (
   <div>
-    <h1>Study Program: {studyProgram.name}</h1>
+    <h1>Studieprogram: {studyProgram.name}</h1>
     <div className="header-actions">
       <Notifications
         programId={studyProgram.id}
@@ -52,19 +52,19 @@ export const StudyProgramHeader = ({ studyProgram, baseYear, onGenerate, setNoti
       />
       {onGenerate && (
         <button onClick={onGenerate} className="generate-studyplan-button">
-          Generate New Studyplan
+          Generer ny studieplan
         </button>
       )}
     </div>
     <div className="studyprogram-columns">
       <div className="studyprogram-column">
-        <strong>Current Year:</strong> {baseYear || "N/A"}
+        <strong>Inneværende år:</strong> {baseYear || "N/A"}
       </div>
       <div className="studyprogram-column">
-        <strong>Degree Type:</strong> {studyProgram.degree_type}
+        <strong>Grad type:</strong> {studyProgram.degree_type}
       </div>
       <div className="studyprogram-column">
-        <strong>Institute:</strong> {studyProgram.institute_name}
+        <strong>Institutt:</strong> {studyProgram.institute_name}
       </div>
       {studyProgram.program_ansvarlig ?
         <div className="studyprogram-column">
@@ -87,13 +87,10 @@ export const calculatedYear = (baseYear, semesterNumber, term) => {
 
 
 
-
-
-
 // Used in studyprogramdetail.js for å lista opp tidligere studieplaner.
 export const PreviousStudyPlans = ({ plans, latestPlanId, studyprogramId, onViewPlan, currentPlanId }) => (
   <div>
-    <h2>Previous Study Plans</h2>
+    <h2>Tidligere studieplaner</h2>
     {plans.length > 0 ? (
       <ul className="previous-studyplans-list">
         {plans.slice(0, 8).map((plan) => (
@@ -111,12 +108,10 @@ export const PreviousStudyPlans = ({ plans, latestPlanId, studyprogramId, onView
         ))}
       </ul>
     ) : (
-      <p>No previous study plans found.</p>
+      <p>Ingen tidligere studieplaner funnet.</p>
     )}
   </div>
 );
-
-
 
 
 // used in valgemne.js, reuseable if needed.
