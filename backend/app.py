@@ -13,6 +13,7 @@ from routes.notifications_routes import notification_bp
 from routes.institute_routes import institute_bp
 from routes.semestercourses_routes import semestercourses_bp
 import logging
+import subprocess, sys
 
 
 
@@ -51,9 +52,12 @@ if __name__ == "__main__":
         from app.models import Course
         if Course.query.count() == 0:
             print("Database is empty, running seed scripts...")
-            import subprocess, sys
             base = os.path.dirname(__file__)
             subprocess.run([sys.executable, "scripts/seed.py"], check=True, cwd=base)
             subprocess.run([sys.executable, "scripts/seed_semesters.py"], check=True, cwd=base)
             print("Seeding complete.")
+            from scripts.generateTestUsers import generateUsers, test_users
+            if os.getenv("DEBUG") == "True":
+                generateUsers(test_users)
+                print("Test users created!")
     app.run(host="0.0.0.0", port=5000, debug=True)

@@ -30,6 +30,14 @@ class UserService:
         self.db.delete(user)
         self.db.commit()
         return True
+    
+    def promote_user(self, user_id):
+        user = self.get_user_by_id(user_id)
+        if not user:
+            return False
+        user.role = "admin"
+        self.db.commit()
+        return True
 
     def get_all_users(self):
         users = self.db.query(User).all()

@@ -22,12 +22,26 @@ const AdminUserList = () => {
     getUsers();
   }, []);
 
-  const handleDeleteUser = (e) => {
-    e.preventDefault();
+  const handleDeleteUser = (user) => {
     api
-      .delete("/user/delete/" + e.id)
-      .then(setMessage(`Brukeren ${e.email} ble slettet`))
-      .catch(setMessage(`Klarte ikke å slette ${e.email}`));
+      .delete("/user/delete/" + user.id)
+      .then(() => {
+        setUsers((prev) => prev.filter((u) => u.id !== user.id));
+        setMessage(`Brukeren ${user.email} ble slettet`);
+      })
+      .catch(() => setMessage(`Klarte ikke å slette ${user.email}`));
+  };
+
+  const handlePromoteUser = (user) => {
+    api
+      .put("/user/promote_user/" + user.id)
+      .then(() => {
+        setUsers((prev) =>
+          prev.map((u) => (u.id === user.id ? { ...u, role: "admin" } : u)),
+        );
+        setMessage(`Brukeren ${user.email} er nå administrator`);
+      })
+      .catch(() => setMessage(`Klarte ikke å promotere ${user.email}`));
   };
 
   return (
@@ -56,7 +70,10 @@ const AdminUserList = () => {
                 {user.role !== "admin" && (
                   <td>
                     <button onClick={() => handleDeleteUser(user)}>
-                      Delete
+                      Slett bruker
+                    </button>
+                    <button onClick={() => handlePromoteUser(user)}>
+                      Gjør administrator
                     </button>
                   </td>
                 )}

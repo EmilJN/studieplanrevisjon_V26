@@ -8,6 +8,7 @@ services:
       db:
         condition: service_healthy
     environment:
+      DEBUG: ${DEBUG}
       ADMIN_USERS: ${ADMIN_USERS}
       DB_HOST: db
       DB_NAME: ${POSTGRES_DB}

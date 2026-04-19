@@ -73,3 +73,14 @@ def get_logs():
     userservice = ServiceFactory.get_user_service()
     logs = userservice.get_logs()
     return jsonify(logs)
+
+
+# Promote user to admin
+@user_bp.route("/promote_user/<int:user_id>", methods=["PUT"])
+def promote_user(user_id):
+    userservice = ServiceFactory.get_user_service()
+    success = userservice.promote_user(user_id)
+    if success:
+        return jsonify({"message": "User promoted to admin"}), 200
+    else:
+        return jsonify({"error": "User not found"}), 404
