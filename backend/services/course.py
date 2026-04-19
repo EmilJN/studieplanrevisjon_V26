@@ -74,24 +74,33 @@ class CourseService:
     
     # Oppdater eksisterende emne
     def update_course(self, course_id, name, courseCode, semester, credits, degree):
-        course = self.get_course_by_id(course_id)
-        if not course:
-            raise ValueError(f"Course with ID {course_id} not found")
-        if name is not None:
-            course.name = name
-        if courseCode is not None:
-            course.courseCode = courseCode
-        if semester is not None:
-            course.semester = semester
-        if credits is not None:
-            course.credits = credits
-        if degree is not None:
-            course.degree = degree
+        old_course = self.get_course_by_id(course_id)
 
-        log = Log(f"Emne ble oppdatert {course.courseCode} {course.name}")
+        if not old_course:
+            raise ValueError(f"Course with ID {course_id} not found")
+
+        old_course.is_current = False
+        new_course = Course(
+            name=name if name is not None else old_course.name,
+            courseCode=courseCode if courseCode is not None else old_course.courseCode,
+            semester=semester if semester is not None else old_course.semester,
+            credits=credits if credits is not None else old_course.credits,
+            degree=degree if degree is not None else old_course.degree,
+
+            course_group_id=old_course.course_group_id,
+            version=old_course.version + 1,
+            is_current=True,
+            is_active=old_course.is_active
+        )
+
+        self.db.add(new_course)
+
+        log = Log(f"Ny versjon av emne {new_course.courseCode} v{new_course.version}")
         self.db.add(log)
+
         self.db.commit()
-        return course
+
+        return new_course
     
     # Slett emne
     def delete_course(self, course_id):
@@ -109,6 +118,18 @@ class CourseService:
         self.db.commit()
         return {"message": f"Course with ID {course_id} deleted successfully"}
     
+    def get_all_courses_in_group(self, course_id):
+        """
+        Returnerer alle andre kurs med samme course_group_id som gitt course_id (ekskluderer seg selv).
+        """
+        current_course = self.get_course_by_id(course_id)
+        if not current_course:
+            raise ValueError(f"Course with ID {course_id} not found")
+        courses_in_group = self.db.query(Course).filter(
+            Course.course_group_id == current_course.course_group_id,
+            Course.id != current_course.id
+        ).order_by(Course.version).all()
+        return courses_in_group
 
     def get_course_info(self, course_id):
         try:

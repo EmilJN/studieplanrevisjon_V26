@@ -2,6 +2,7 @@ import os
 import pandas as pd
 import numpy as np
 import psycopg2
+import uuid
 
 
 
@@ -56,42 +57,58 @@ SVutvalg = SVutvalg[~SVutvalg['terminkode_und_forste'].str.contains('SOM', case=
 #Legge til emner som e i bruk ette 2023 og sette emner som har siste undervisning i 2024 og 2025 som inavtive
 for i in np.asarray(utvalg):
     course = [str(i[1])[:80],str(i[0])[:80],i[3],i[2]]
+    print(course)
+    group_id = str(uuid.uuid4())
+    course.insert(2, group_id)
     if i[4] <= 2024 or i[4] == 2025 and i[5]=="VÅR":
         pass
     elif i[4] == 2025 and i[5]=="HØST":
-        cursor.execute('INSERT INTO course (name, "courseCode", semester, credits, degree, is_active) VALUES (%s, %s, %s, %s, \'Bachelor\', False);', course)
+        cursor.execute('INSERT INTO course (name, "courseCode",course_group_id,is_current,version, semester, credits, degree, is_active) VALUES (%s,%s,%s,True, 1, %s, %s, \'Bachelor\', False);', course)
         courselist.append(i[0])
     else:
-        cursor.execute('INSERT INTO course (name, "courseCode", semester, credits, degree, is_active) VALUES (%s, %s, %s, %s, \'Bachelor\', True);', course)
+        cursor.execute('INSERT INTO course (name, "courseCode",course_group_id,is_current,version, semester, credits, degree, is_active) VALUES (%s,%s,%s,True, 1, %s, %s, \'Bachelor\', True);', course)
         courselist.append(i[0])
 
 for i in np.asarray(UHutvalg):
     course = [str(i[1])[:80],str(i[0])[:80],i[3],i[2]]
+    group_id = str(uuid.uuid4())
+    course.insert(2, group_id)
     if i[4] <= 2023:
         pass
     elif i[4] == 2024 or i[4] == 2025:
-        cursor.execute('INSERT INTO course (name, "courseCode", semester, credits, degree, is_active) VALUES (%s, %s, %s, %s, \'Bachelor\', False);', course)
+        cursor.execute('INSERT INTO course (name, "courseCode",course_group_id,is_current,version, semester, credits, degree, is_active) VALUES (%s,%s,%s,True, 1, %s, %s, \'Bachelor\', False);', course)
         courselist.append(i[0])
     else:
-        cursor.execute('INSERT INTO course (name, "courseCode", semester, credits, degree, is_active) VALUES (%s, %s, %s, %s, \'Bachelor\', True);', course)
+        cursor.execute('INSERT INTO course (name, "courseCode",course_group_id,is_current,version, semester, credits, degree, is_active) VALUES (%s,%s,%s,True, 1, %s, %s, \'Bachelor\', True);', course)
         courselist.append(i[0])
 
 for i in np.asarray(SVutvalg):
     course = [str(i[1])[:80],str(i[0])[:80],i[3],i[2]]
+    group_id = str(uuid.uuid4())
+    course.insert(2, group_id)
     if i[4] <= 2023:
         pass
     elif i[4] == 2024 or i[4] == 2025:
-        cursor.execute('INSERT INTO course (name, "courseCode", semester, credits, degree, is_active) VALUES (%s, %s, %s, %s, \'Bachelor\', False);', course)
+        cursor.execute('INSERT INTO course (name, "courseCode",course_group_id,is_current,version, semester, credits, degree, is_active) VALUES (%s,%s,%s,True, 1, %s, %s, \'Bachelor\', False);', course)
         courselist.append(i[0])
     else:
-        cursor.execute('INSERT INTO course (name, "courseCode", semester, credits, degree, is_active) VALUES (%s, %s, %s, %s, \'Bachelor\', True);', course)
+        cursor.execute('INSERT INTO course (name, "courseCode",course_group_id,is_current,version, semester, credits, degree, is_active) VALUES (%s,%s,%s,True, 1, %s, %s, \'Bachelor\', True);', course)
         courselist.append(i[0])
-cursor.execute("INSERT INTO course (name, \"courseCode\", semester, credits, degree, is_active) VALUES ('Valgemner 5 Poeng', 'VALGEMNE', 'H', 5, 'Bachelor', True);")
-cursor.execute("INSERT INTO course (name, \"courseCode\", semester, credits, degree, is_active) VALUES ('Valgemner 10 Poeng', 'VALGEMNE', 'H', 10, 'Bachelor', True);")
-cursor.execute("INSERT INTO course (name, \"courseCode\", semester, credits, degree, is_active) VALUES ('Valgemner 15 Poeng', 'VALGEMNE', 'H', 15, 'Bachelor', True);")
-cursor.execute("INSERT INTO course (name, \"courseCode\", semester, credits, degree, is_active) VALUES ('Valgemner 20 Poeng', 'VALGEMNE', 'H', 20, 'Bachelor', True);")
-cursor.execute("INSERT INTO course (name, \"courseCode\", semester, credits, degree, is_active) VALUES ('Valgemner 25 Poeng', 'VALGEMNE', 'H', 25, 'Bachelor', True);")
-cursor.execute("INSERT INTO course (name, \"courseCode\", semester, credits, degree, is_active) VALUES ('Valgemner 30 Poeng', 'VALGEMNE', 'H', 30, 'Bachelor', True);")
+        
+for i in range(0, 30, 5):
+    course = [
+        "Valgemner " + str(i) + " Poeng",  # name
+        "VALGEMNE" + str(i),              # courseCode
+        str(uuid.uuid4()),               # course_group_id
+        "H",                              # semester
+        i                                 # credits
+    ]
+
+    cursor.execute('''
+        INSERT INTO course 
+        (name, "courseCode", course_group_id, is_current, version, semester, credits, degree, is_active) 
+        VALUES (%s, %s, %s, True, 1, %s, %s, 'Bachelor', True);
+    ''', course)
 
 connection.commit()
 
