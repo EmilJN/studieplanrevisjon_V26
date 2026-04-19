@@ -13,7 +13,7 @@ const EditCourse = () => {
         api.get("/subjects/")
             .then(response => {
                 setSubjects(response.data);
-                setFilteredSubjects(response.data); 
+                setFilteredSubjects(response.data);
             })
             .catch(error => {
                 console.error("There was an error fetching the subjects!", error);
@@ -90,8 +90,8 @@ const EditCourse = () => {
             />
 
             {/* Emne tabell */}
-            <table border="1" style={{ width: "100%", textAlign: "left" }}>
-                <thead>
+            <table className="table table-bordered table-hover">
+                <thead className="table-dark">
                     <tr>
                         <th>Name</th>
                         <th>Subject Code</th>

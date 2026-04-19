@@ -48,38 +48,39 @@ const AdminUserList = () => {
 
   return (
     <div>
-      <h2>Liste over brukere</h2>
+      <h2 className="mb-4">Liste over brukere</h2>
       {message && message}
-      <div>
-        <table>
-          <thead>
-            <tr>
-              <th>Navn</th>
-              <th>Epostadresse</th>
-              <th>Rolle</th>
+      <table className="table table-bordered table-hover">
+        <thead className="table-dark">
+          <tr>
+            <th>Navn</th>
+            <th>Epostadresse</th>
+            <th>Rolle</th>
+            <th>Handlnger</th>
+          </tr>
+        </thead>
+        <tbody>
+          {users.map((user) => (
+            <tr key={user.feide_id}>
+              <td>{user.name}</td>
+              <td>{user.email}</td>
+              <td>{user.role}</td>
+              {user.role !== "admin" && (
+                <td>
+                  <button className="btn btn-sm btn-outline-danger"
+                    onClick={() => handleDeleteUser(user)}>
+                    Slett bruker
+                  </button>
+                  <button className="btn btn-sm btn-outline-danger"
+                    onClick={() => handlePromoteUser(user)}>
+                    Gjør administrator
+                  </button>
+                </td>
+              )}
             </tr>
-          </thead>
-          <tbody>
-            {users.map((user) => (
-              <tr key={user.feide_id}>
-                <td>{user.name}</td>
-                <td>{user.email}</td>
-                <td>{user.role}</td>
-                {user.role !== "admin" && (
-                  <td>
-                    <button onClick={() => handleDeleteUser(user)}>
-                      Slett bruker
-                    </button>
-                    <button onClick={() => handlePromoteUser(user)}>
-                      Gjør administrator
-                    </button>
-                  </td>
-                )}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };

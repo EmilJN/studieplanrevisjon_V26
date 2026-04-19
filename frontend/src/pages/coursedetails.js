@@ -114,146 +114,160 @@ function CourseDetails() {
 
   if (editingActive) {
     return (
-      <div className="course-detail-container">
-        <h2>
-          {" "}
-          <input
-            name="name"
-            value={subject.name}
-            onChange={handleFieldChange}
-          />
-        </h2>
-        <ul>
-          <li>Emnekode:</li>{" "}
-          <input
-            name="courseCode"
-            type="text"
-            onChange={handleFieldChange}
-            value={subject.courseCode}
-          />
-          <li>
-            Antall Studiepoeng:{" "}
-            <input
-              name="credits"
-              onChange={handleFieldChange}
-              value={subject.credits}
-            />
-          </li>
-          <li>
-            Semester (H eller V):{" "}
-            <input
-              name="semester"
-              onChange={handleFieldChange}
-              value={subject.semester}
-            />
-          </li>
-          <li>
-            Nivå:{" "}
-            <input
-              name="degree"
-              onChange={handleFieldChange}
-              value={subject.degree}
-            />
-          </li>
-          <li className="course-details-list-headline">Forkunnskaper:</li>{" "}
-          {subject.prereqs !== undefined && subject.prereqs.length > 0
-            ? subject.prereqs.map((element) => (
-                <li key={element.id}>
-                  {element.name}{" "}
-                  <button onClick={() => handleRemovePreRequisite(element)}>
-                    Fjern
-                  </button>{" "}
-                </li>
-              ))
-            : "Ingen"}
-          <li className="course-details-list-headline">Blir brukt i:</li>{" "}
-          {studyPrograms &&
-            studyPrograms.map((element) => (
-              <li className="prereq-item">
-                {" "}
-                {element.name} ,Årskull: {element.year}, type:
-                {element.mandatory ? "Obligatorisk" : "Valgemne"}
-              </li>
-            ))}
-          <li className="course-details-list-headline">Overlapper med</li>
-          {overlappingCourses &&
-            overlappingCourses.map((element) => (
-              <a
-                key={element.id}
-                href={`/courses/details/${element.id}`}
-                className="prereq-item"
-              >
-                {element.name}
-              </a>
-            ))}
-        </ul>
-        <button onClick={handleEdit}>Avbryt</button>
-        <button onClick={handleSave}>Lagre</button>
+      <div className="container py-4">
+        <div className="row justify-content-center">
+          <div className="col-12 col-md-8">
+            <h2 className="mb-4">
+              <input className="form-control" name="name" value={subject.name} onChange={handleFieldChange} />
+            </h2>
+
+            <div className="row g-3 mb-4">
+              <div className="col-md-6">
+                <label className="form-label fw-semibold">Emnekode</label>
+                <input className="form-control" name="courseCode" value={subject.courseCode} onChange={handleFieldChange} />
+              </div>
+              <div className="col-md-6">
+                <label className="form-label fw-semibold">Studiepoeng</label>
+                <input className="form-control" name="credits" value={subject.credits} onChange={handleFieldChange} />
+              </div>
+              <div className="col-md-6">
+                <label className="form-label fw-semibold">Semester (H eller V)</label>
+                <input className="form-control" name="semester" value={subject.semester} onChange={handleFieldChange} />
+              </div>
+              <div className="col-md-6">
+                <label className="form-label fw-semibold">Nivå</label>
+                <input className="form-control" name="degree" value={subject.degree} onChange={handleFieldChange} />
+              </div>
+            </div>
+
+            <h5 className="fw-semibold">Forkunnskaper</h5>
+            <ul className="list-group mb-4">
+              {subject.prereqs !== undefined && subject.prereqs.length > 0
+                ? subject.prereqs.map((element) => (
+                  <li key={element.id} className="list-group-item d-flex justify-content-between align-items-center">
+                    {element.name}
+                    <button className="btn btn-sm btn-outline-danger" onClick={() => handleRemovePreRequisite(element)}>Fjern</button>
+                  </li>
+                ))
+                : <li className="list-group-item text-muted">Ingen</li>}
+            </ul>
+            <button
+              className="btn btn-outline-secondary mb-2"
+              onClick={handlePrerequisiteVisible}
+            >
+              {isPreReqVisible ? "Avbryt" : "Legg til forkunnskaper"}
+            </button>
+            {
+              isPreReqVisible && (
+                <div className="mt-3">
+                  <AddPrerequisites parentSubject={subject} />
+                </div>
+              )
+            }
+
+            <h5 className="fw-semibold">Blir brukt i:</h5>
+            <ul className="list-group mb-4">
+              {studyPrograms && studyPrograms.length > 0
+                ? studyPrograms.map((element) => (
+                  <li key={element.name + element.year} className="list-group-item">
+                    {element.name} - Årskull: {element.year} -
+                    {element.mandatory ? "Obligatorisk" : "Valgemne"}
+                  </li>
+                ))
+                : <li className="list-group-item text-muted">Ingen</li>}
+            </ul>
+
+            <h5 className="fw-semibold">Overlapper med:</h5>
+            <ul className="list-group mb-4">
+              {overlappingCourses && overlappingCourses.length > 0
+                ? overlappingCourses.map((element) => (
+                  <li key={element.id} className="list-group-item">
+                    <a href={`/courses/details/${element.id}`}>{element.name}</a>
+                  </li>
+                ))
+                : <li className="list-group-item text-muted">Ingen</li>}
+            </ul>
+
+            <div className="d-flex gap-2">
+              <button className="btn btn-success" onClick={handleSave}>Lagre</button>
+              <button className="btn btn-outline-danger" onClick={handleEdit}>Avbryt</button>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
+
   return (
-    <div class="course-detail-container">
-      <h2>{subject.name}</h2>
-      <ul>
-        <li>Emnekode: {subject.courseCode}</li>
-        <li>Antall Studiepoeng: {subject.credits}</li>
-        <li>
-          Semester: {subject.semester === "H" && "Høst"}
-          {subject.semester === "V" && "Vår"}
-        </li>
-        <li>Nivå: {subject.degree}</li>
-        <li className="course-details-list-headline">Forkunnskaper:</li>{" "}
-        {subject.prereqs !== undefined && subject.prereqs.length > 0 ? (
-          subject.prereqs.map((element) => (
-            <li key={element.id} className="prereq-item">
-              {element.name}
-            </li>
-          ))
-        ) : (
-          <li> Ingen </li>
-        )}
-        <li className="course-details-list-headline">Blir brukt i:</li>{" "}
-        {studyPrograms &&
-          studyPrograms.map((element) => (
-            <li key={element.name + element.year} className="prereq-item">
-              {" "}
-              {element.name} ,Årskull: {element.year}, type:
-              {element.mandatory ? "Obligatorisk" : "Valgemne"}
-            </li>
-          ))}
-        <li className="course-details-list-headline">Overlapper med</li>
-        {overlappingCourses &&
-          overlappingCourses.map((element) => (
-            <a
-              key={element.id}
-              href={`/courses/details/${element.id}`}
-              className="prereq-item"
-            >
-              {element.name}
-            </a>
-          ))}
-      </ul>
-      <button onClick={handleEdit}>Rediger Emne</button>
-      <button onClick={handleDeleteCourse}>Slett Emne</button>
-      {errorMessage ? <div>{errorMessage}</div> : null}
-      {reallyDeleteCourse ? (
-        <div>
-          {" "}
-          <p>Er du sikker på at du vil slette {subject.courseCode}?</p>
-          <button onClick={() => handleDeleteCourse()}>Ja</button>{" "}
-          <button onClick={() => setReallyDeleteCourse(false)}>Nei</button>{" "}
+    <div className="container py-4">
+      <div className="row justify-content-center">
+        <div className="col-12 col-md-8">
+          <div className="d-flex justify-content-between align-items-start mb-4">
+            <h2 className="mb-0">{subject.name}</h2>
+            <div className="d-flex gap-2">
+              <button className="btn btn-primary" onClick={handleEdit}>Rediger emne</button>
+              <button className="btn btn-outline-danger" onClick={handleDeleteCourse}>Slett emne</button>
+            </div>
+          </div>
+
+          {errorMessage && <div className="alert alert-warning">{errorMessage}</div>}
+          {reallyDeleteCourse && (
+            <div className="alert alert-danger d-flex align-items-center gap-3">
+              <span>Er du sikker på at du vil slette {subject.courseCode}?</span>
+              <button className="btn btn-sm btn-danger" onClick={handleDeleteCourse}>Ja</button>
+              <button className="btn btn-sm btn-outline-secondary" onClick={() => setReallyDeleteCourse(false)}>Nei</button>
+            </div>
+          )}
+
+          <div className=" card border-0 shadow-sm mb-4">
+            <div className="card-body row g-3">
+              <div className="col-md-6">
+                <span className="fw-semibold">Emnekode:</span> {subject.courseCode}
+              </div>
+              <div className="col-md-6">
+                <span className="fw-semibold">Studiepoeng:</span> {subject.credits}
+              </div>
+              <div className="col-md-6">
+                <span className="fw-semibold">Semester:</span> {subject.semester === "H" && "Høst"}{subject.semester === "V" && "Vår"}
+              </div>
+              <div className="col-md-6">
+                <span className="fw-semibold">Nivå:</span> {subject.degree}
+              </div>
+            </div>
+          </div>
+
+          <h5 className="fw-semibold">Forkunnskaper</h5>
+          <ul className="list-group mb-4">
+            {subject.prereqs !== undefined && subject.prereqs.length > 0
+              ? (subject.prereqs.map((element) => (
+                <li key={element.id} className="list-group-item">{element.name}</li>
+              ))
+              ) : <li className="list-group-item text-muted">Ingen</li>}
+          </ul>
+
+          <h5 className="fw-semibold">Blir brukt i:</h5>
+          <ul className="list-group mb-4">
+            {studyPrograms && studyPrograms.length > 0
+              ? studyPrograms.map((element) => (
+                <li key={element.name + element.year} className="list-group-item">
+                  {element.name} - Årskull: {element.year} -
+                  {element.mandatory ? "Obligatorisk" : "Valgemne"}
+                </li>
+              ))
+              : <li className="list-group-item text-muted">Ingen</li>}
+          </ul>
+
+          <h5 className="fw-semibold">Overlapper med:</h5>
+          <ul className="list-group mb-4">
+            {overlappingCourses && overlappingCourses.length > 0
+              ? overlappingCourses.map((element) => (
+                <li key={element.id} className="list-group-item">
+                  <a href={`/courses/details/${element.id}`}>{element.name}</a>
+                </li>
+              ))
+              : <li className="list-group-item text-muted">Ingen</li>}
+          </ul>
         </div>
-      ) : null}
-      {isPreReqVisible ? (
-        <button onClick={handlePrerequisiteVisible}>Avbryt</button>
-      ) : (
-        <button onClick={handlePrerequisiteVisible}>
-          Legg til forkunnskaper
-        </button>
-      )}
-      <div className="add-prerequisite-container">
-        {isPreReqVisible ? <AddPrerequisites parentSubject={subject} /> : null}
       </div>
     </div>
   );

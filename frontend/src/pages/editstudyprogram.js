@@ -238,12 +238,7 @@ const EditStudyProgram = () => {
       </div>
 
       <table className="table table-bordered table-hover">
-        <thead
-          style={{
-            backgroundColor: "var(--color-dark)",
-            color: "var(--color-white)",
-          }}
-        >
+        <thead className="table-dark">
           <tr>
             <th style={{ width: "40%" }}>Navn</th>
             <th style={{ width: "15%" }}>Nivå</th>
@@ -395,18 +390,18 @@ const EditStudyProgram = () => {
                           <span className="fw-semibold">Ansvarlig:</span>{" "}
                           {program.program_ansvarlig
                             ? program.program_ansvarlig_id === currentUser && (
-                                <span>
-                                  {program.program_ansvarlig.name}{" "}
-                                  <button
-                                    className="btn btn-sm btn-outline-danger"
-                                    onClick={() =>
-                                      handleBecomeNotInCharge(program.id)
-                                    }
-                                  >
-                                    Ikke vær ansvarlig
-                                  </button>
-                                </span>
-                              )
+                              <span>
+                                {program.program_ansvarlig.name}{" "}
+                                <button
+                                  className="btn btn-sm btn-outline-danger"
+                                  onClick={() =>
+                                    handleBecomeNotInCharge(program.id)
+                                  }
+                                >
+                                  Ikke vær ansvarlig
+                                </button>
+                              </span>
+                            )
                             : "Ingen"}
                         </div>
                       </div>

@@ -14,8 +14,8 @@ const Admin = () => {
         <div className="container py-4">
             <div>{isAuthenticated ? (
                 <div className="row">
-                    <div className="col-12 col-md-2">
-                        <h1 className="h4 mb-3">Admin Panel</h1>
+                    <div className="col-12 col-md-3">
+                        <h1 className="mb-3 text-center">Admin Panel</h1>
                         <div className="d-flex flex-column gap-2">
                             <button
                                 className={`btn ${activePage === 'userList' ? 'btn-primary' : 'btn-outline-secondary'}`}
@@ -31,7 +31,7 @@ const Admin = () => {
                                 Studieprogramliste</button>
                         </div>
                     </div>
-                    <div className="col-12 col-md-10">
+                    <div className="col-12 col-md-9">
                         {activePage === 'welcome' && <div> Velkommen til admininistatorsiden</div>}
                         {activePage === 'userList' && <AdminUserList />}
                         {activePage === 'logs' && <AdminLogPage />}

@@ -24,27 +24,25 @@ const AdminLogPage = () => {
 
   return (
     <div>
-      <h2>Liste over brukere</h2>
-      <div>
-        <table>
-          <thead>
+      <h2 className="mb-4">Logg</h2>
+      <table className="table table-bordered table-hover">
+        <thead className="table-dark">
+          <tr>
+            <th>Id</th>
+            <th>Tid</th>
+            <th>Melding</th>
+          </tr>
+        </thead>
+        <tbody>
+          {logs.map((log) => (
             <tr>
-              <th>Id</th>
-              <th>Tid</th>
-              <th>Melding</th>
+              <td>{log.id}</td>
+              <td>{log.time}</td>
+              <td>{log.message}</td>
             </tr>
-          </thead>
-          <tbody>
-            {logs.map((log) => (
-              <tr>
-                <td>{log.id}</td>
-                <td>{log.time}</td>
-                <td>{log.message}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };
