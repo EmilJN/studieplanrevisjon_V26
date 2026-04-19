@@ -24,8 +24,8 @@ const AdminOverload = () => {
         <div>
             <h3>Liste over studieprogrammene med semester med over 30 poeng i den siste studieplanen</h3>
             <div>
-                <table>
-                    <thead>
+                <table className="table table-bordered table-hover">
+                    <thead className="table-dark">
                         <tr>
                             <th>Id</th>
                             <th>Navn</th>

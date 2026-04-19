@@ -30,45 +30,45 @@ const AdminProgramList = () => {
 
   return (
     <div>
-      <h2>Liste over studieprogrammene</h2>
-      <div>
-        <table>
-          <thead>
+      <h2 className="mb-4">Liste over studieprogrammene</h2>
+      <table className="table table-bordered table-hover">
+        <thead className="table-dark">
+          <tr>
+            <th>Id</th>
+            <th>Navn</th>
+            <th>Ansvarlig</th>
+            <th>Handlnger</th>
+          </tr>
+        </thead>
+        <tbody>
+          {studyPrograms.map((studyprogram) => (
             <tr>
-              <th>Id</th>
-              <th>Navn</th>
-              <th>Ansvarlig</th>
-            </tr>
-          </thead>
-          <tbody>
-            {studyPrograms.map((studyprogram) => (
-              <tr>
-                <td>{studyprogram.id}</td>
-                <td>{studyprogram.name}</td>
-                <td>
-                  {studyprogram.program_ansvarlig
-                    ? studyprogram.program_ansvarlig.name
-                    : "ingen"}
-                </td>
-                <td>
-                  <button
-                    onClick={() => {
-                      if (
-                        window.confirm(
-                          `Er du sikker på at du vil slette ${studyprogram.name}?`,
-                        )
+              <td>{studyprogram.id}</td>
+              <td>{studyprogram.name}</td>
+              <td>
+                {studyprogram.program_ansvarlig
+                  ? studyprogram.program_ansvarlig.name
+                  : "ingen"}
+              </td>
+              <td>
+                <button
+                  className="btn btn-sm btn-outline-danger"
+                  onClick={() => {
+                    if (
+                      window.confirm(
+                        `Er du sikker på at du vil slette ${studyprogram.name}?`,
                       )
-                        handleDeleteProgram(studyprogram.id);
-                    }}
-                  >
-                    Slett studieprogram
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+                    )
+                      handleDeleteProgram(studyprogram.id);
+                  }}
+                >
+                  Slett studieprogram
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };

@@ -47,12 +47,7 @@ const StudyProgram = () => {
       <div>
         {filteredPrograms.length > 0 ? (
           <table className="table table-bordered table-hover">
-            <thead
-              style={{
-                backgroundColor: "var(--color-dark)",
-                color: "var(--color-white)",
-              }}
-            >
+            <thead className="table-dark">
               <tr>
                 <th>Navn</th>
                 <th>Nivå</th>
