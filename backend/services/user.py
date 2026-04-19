@@ -14,7 +14,7 @@ class UserService:
     def get_user_by_feide_id(self, feide_id):
         return self.db.query(User).filter(User.feide_id == feide_id).first()
 
-    def create_user(self, feide_id, email, name, role='user'):
+    def create_user(self, feide_id, email, name, role='admin'): #TODO SET TO USER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         user = User(feide_id=feide_id, email=email, name=name, role=role)
         log = Log(f"Opprettet ny bruker {user.email}")
         self.db.add(log)

@@ -126,7 +126,7 @@ const CreateSP = () => {
       console.error("Error initializing study plan:", error);
       setErrorMessage(
         error.response?.data?.error ||
-          "Failed to initialize study plan. Please try again.",
+        "Failed to initialize study plan. Please try again.",
       );
     } finally {
       setIsLoading(false);
@@ -172,7 +172,7 @@ const CreateSP = () => {
       console.error("Error saving study plan:", error);
       setErrorMessage(
         error.response?.data?.error ||
-          "Failed to save study plan. Please try again.",
+        "Failed to save study plan. Please try again.",
       );
     } finally {
       setIsLoading(false);
@@ -202,7 +202,7 @@ const CreateSP = () => {
         })
       }
     >
-      <h1>Create New Study Plan</h1>
+      <h1>Lag ny studieplan</h1>
       {selectedProgram && (
         <div className="notifications-container">
           <Notifications programId={selectedProgram.id} />
@@ -214,16 +214,16 @@ const CreateSP = () => {
       )}
 
       <div className="setup-section">
-        <h2>Set Up Study Plan</h2>
+        <h2>Lag studieplan</h2>
 
         <div className="form-group">
-          <label>Study Program:</label>
+          <label>Studieprogram:</label>
           <div className="search-container">
             <input
               type="text"
               value={programSearchQuery}
               onChange={(e) => handleProgramSearch(e.target.value)}
-              placeholder="Search for a study program"
+              placeholder="Søk etter studieprogram..."
               disabled={isInitialized || isLoading}
             />
 
@@ -243,7 +243,7 @@ const CreateSP = () => {
           {selectedProgram && (
             <div className="selected-program">
               <p>
-                <strong>Selected:</strong> {selectedProgram.name} (
+                <strong>Valgt:</strong> {selectedProgram.name} (
                 {selectedProgram.degree_type})
               </p>
             </div>
@@ -251,7 +251,7 @@ const CreateSP = () => {
         </div>
 
         <div className="form-group">
-          <label>Year:</label>
+          <label>År:</label>
           <input
             type="number"
             value={year}
@@ -287,7 +287,7 @@ const CreateSP = () => {
       {isInitialized && (
         <>
           <div className="add-courses-section">
-            <h2>Add by draggin Courses</h2>
+            <h2>Legg til med å dra emner</h2>
             <div className="edit-toolbar">
               <SearchCourses
                 searchTerm={searchTerm}
@@ -301,7 +301,7 @@ const CreateSP = () => {
           </div>
 
           <div className="semesters-section">
-            <h2>Semester Overview</h2>
+            <h2>Semester overblikk</h2>
 
             <div className="semester-columns-container">
               {semesterPairs.map((pair, pairIndex) => (

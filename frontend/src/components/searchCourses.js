@@ -15,8 +15,6 @@ const SearchBar = ({ searchTerm, setSearchTerm }) => (
   </div>
 );
 
-
-
 /*
 
 Denne kan importeras når man trenger search bar med dropdown meny. (KUN DRAG AND DROP FUNKE MED DENNE IMPORTEN)
@@ -57,7 +55,7 @@ const SearchCourses = ({
 
   return (
     <div className="search-courses-container">
-      <h3>Search for courses</h3>
+      <h3>Søk etter emner...</h3>
       <SearchBar
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
@@ -94,7 +92,7 @@ const SearchCourses = ({
       </div>
 
       {filteredCourses.length === 0 && (
-        <div className="no-results">No Courses found</div>
+        <div className="no-results">Ingen emner funnet</div>
       )}
     </div>
   );
