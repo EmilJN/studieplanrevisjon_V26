@@ -81,8 +81,11 @@ const EditStudyProgram = () => {
           .put(`/studyprograms/${editingID}/update`, editingProgram)
           .then(() => {
             setStudyPrograms((prev) =>
-              prev.map((p) => (p.id === editingID ? { ...p, ...editingProgram } : p))
-            );
+              prev.map((p) =>
+                p.id === editingID ? {...p, ...editingProgram, 
+                  institute: institutes.find((i) => i.id === Number(editingProgram.institute)) || p.institute,
+                  }: p
+              ));
             setEditingId(null);
           })
           .catch((error) => {
