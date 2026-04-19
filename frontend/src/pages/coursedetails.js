@@ -1,7 +1,6 @@
 import api from "../api";
 import { useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
-import "../styles/CourseDetails.css";
 import AddPrerequisites from "../components/addprerequisites";
 
 function CourseDetails() {

@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import "../styles/NavBar.css";
 import api from "../api";
 import { useAuth } from "./validateuser";
 import Admin from "../pages/admin";
