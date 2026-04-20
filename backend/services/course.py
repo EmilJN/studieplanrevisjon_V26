@@ -105,12 +105,15 @@ class CourseService:
     # Slett emne
     def delete_course(self, course_id):
         course = self.get_course_by_id(course_id)
+        course_group = self.get_all_courses_in_group(course_id)
         if not course:
             raise ValueError(f"Course with ID {course_id} not found")
         
         if self.is_course_in_use(course_id):
-            raise ValueError(f"Course with ID {course_id} is in use and cannot be deleted") 
-        
+            raise ValueError(f"Course with ID {course_id} is in use and cannot be deleted")
+
+        if course.is_current and len(course_group) > 0:
+            course_group[-1].is_current = True
 
         self.db.delete(course)
         log = Log(f"Emne ble slettet {course.name}")
@@ -119,9 +122,6 @@ class CourseService:
         return {"message": f"Course with ID {course_id} deleted successfully"}
     
     def get_all_courses_in_group(self, course_id):
-        """
-        Returnerer alle andre kurs med samme course_group_id som gitt course_id (ekskluderer seg selv).
-        """
         current_course = self.get_course_by_id(course_id)
         if not current_course:
             raise ValueError(f"Course with ID {course_id} not found")
@@ -130,6 +130,7 @@ class CourseService:
             Course.id != current_course.id
         ).order_by(Course.version).all()
         return courses_in_group
+    
 
     def get_course_info(self, course_id):
         try:

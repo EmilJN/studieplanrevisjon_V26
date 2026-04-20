@@ -78,23 +78,46 @@ function CourseDetails() {
     }));
   };
 
-  //Lagrer endringer som blir gjort
   const handleSave = () => {
     api
       .put(`/courses/${subject.id}`, subject)
       .then((response) => {
-        // oppdatere emnelista
         if (response) {
           alert("Suksess");
         }
-        setEditingActive(false); // Exit edit mode
+        Promise.all([
+          api.get("/courses/" + subject.id),
+          api.get("/courses/course_usage/" + subject.id),
+          api.get(`/courses/${subject.id}/course_group`),
+          api.get(`/courses/overlapping_courses/${subject.id}`),
+        ])
+          .then(
+            ([
+              subjectRes,
+              studyProgramsRes,
+              allVersionsRes,
+              overlappingCoursesRes,
+            ]) => {
+              setSubject(subjectRes.data);
+              setStudyPrograms(studyProgramsRes.data);
+              setAllVersions(
+                Array.isArray(allVersionsRes.data)
+                  ? allVersionsRes.data
+                  : [allVersionsRes.data],
+              );
+              setOverlappingCourses(overlappingCoursesRes.data);
+            },
+          )
+          .catch((error) => {
+            console.error("Error refreshing course details after save", error);
+          });
+        setEditingActive(false);
       })
       .catch((error) => {
         console.error("Klarte ikke å endre emnet.", error);
       });
   };
 
-  // Viser/gjemmer emnene når knapp blir trykket
   const handlePrerequisiteVisible = () => {
     if (isPreReqVisible) {
       setIsPreReqVisible(false);
