@@ -1,5 +1,7 @@
 from app import db
 from app.models import Course, Studyprogram, Studyplan, Institute, Semester, SemesterCourses, Log
+import uuid
+from services.prerequisite import PrerequisiteService
 from sqlalchemy import func, and_, or_, union, literal, text, literal_column
 from sqlalchemy.orm import joinedload
 from flask import jsonify, request
@@ -64,6 +66,10 @@ class CourseService:
             courseCode=course_code,
             semester=semester,
             credits=credits,
+            degree=degree,
+            version=1,
+            course_group_id=uuid.uuid4().int,
+
         )
         print(course)
         self.db.add(course)
@@ -74,8 +80,25 @@ class CourseService:
     
     # Oppdater eksisterende emne
     def update_course(self, course_id, name, courseCode, semester, credits, degree):
-        old_course = self.get_course_by_id(course_id)
+        course_to_update = self.get_course_by_id(course_id)
+        if not course_to_update:
+            raise ValueError(f"Course with ID {course_id} not found")
+        
+        course_to_update.name = name if name is not None else course_to_update.name
+        course_to_update.courseCode = courseCode if courseCode is not None else course_to_update.courseCode
+        course_to_update.semester = semester if semester is not None else course_to_update.semester
+        course_to_update.credits = credits if credits is not None else course_to_update.credits
+        course_to_update.degree = degree if degree is not None else course_to_update.degree
 
+        log = Log(f"Emne oppdatert {course_to_update.courseCode}")
+        self.db.add(log)
+        self.db.commit()
+
+        return course_to_update
+
+        
+    def new_course_version(self, course_id, name, courseCode, semester, credits, degree):
+        old_course = self.get_course_by_id(course_id)
         if not old_course:
             raise ValueError(f"Course with ID {course_id} not found")
 
@@ -97,9 +120,8 @@ class CourseService:
 
         log = Log(f"Ny versjon av emne {new_course.courseCode} v{new_course.version}")
         self.db.add(log)
-
         self.db.commit()
-
+        PrerequisiteService.transfer_prerequisites(course_id, new_course.id)
         return new_course
     
     # Slett emne
@@ -195,7 +217,6 @@ class CourseService:
             .join(Studyplan, Studyplan.id == Semester.studyplan_id) \
             .join(Studyprogram, Studyprogram.id == Studyplan.studyprogram_id) \
             .all()
-            # Organize the results into a dictionary
             course_usage = {}
             for row in results:
                 if row.course_id not in course_usage:

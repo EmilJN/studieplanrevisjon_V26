@@ -5,6 +5,7 @@ import AddPrerequisites from "../components/addprerequisites";
 import { Link } from "react-router-dom";
 
 function CourseDetails() {
+  const [editAsNewVersion, setEditAsNewVersion] = useState(false);
   const { id } = useParams();
   const [subject, setSubject] = useState({}); // spesifik emne
   const [editingActive, setEditingActive] = useState(false);
@@ -79,7 +80,7 @@ function CourseDetails() {
 
   const handleSave = () => {
     api
-      .put(`/courses/${subject.id}`, subject)
+      .put(`/courses/${subject.id}`, { ...subject, editAsNewVersion })
       .then((response) => {
         if (response) {
           alert("Suksess");
@@ -129,8 +130,9 @@ function CourseDetails() {
   const handleRemovePreRequisite = (e) => {
     api
       .delete(`/prerequisites/remove/${subject.id}/${e.id}`)
-      .then((response) => {
-        window.location.reload();
+      .then(() => {
+        // Last inn data på nytt uten reload
+        api.get("/courses/" + id).then((response) => setSubject(response.data));
       })
       .catch((error) => {
         console.error("Klarte ikke å slette emnet");
@@ -163,7 +165,6 @@ function CourseDetails() {
                 onChange={handleFieldChange}
               />
             </h2>
-
             <div className="row g-3 mb-4">
               <div className="col-md-6">
                 <label className="form-label fw-semibold">Emnekode</label>
@@ -205,39 +206,6 @@ function CourseDetails() {
               </div>
             </div>
 
-            <h5 className="fw-semibold">Forkunnskaper</h5>
-            <ul className="list-group mb-4">
-              {subject.prereqs !== undefined && subject.prereqs.length > 0 ? (
-                subject.prereqs.map((element) => (
-                  <li
-                    key={element.id}
-                    className="list-group-item d-flex justify-content-between align-items-center"
-                  >
-                    {element.name}
-                    <button
-                      className="btn btn-sm btn-outline-danger"
-                      onClick={() => handleRemovePreRequisite(element)}
-                    >
-                      Fjern
-                    </button>
-                  </li>
-                ))
-              ) : (
-                <li className="list-group-item text-muted">Ingen</li>
-              )}
-            </ul>
-            <button
-              className="btn btn-outline-secondary mb-2"
-              onClick={handlePrerequisiteVisible}
-            >
-              {isPreReqVisible ? "Avbryt" : "Legg til forkunnskaper"}
-            </button>
-            {isPreReqVisible && (
-              <div className="mt-3">
-                <AddPrerequisites parentSubject={subject} />
-              </div>
-            )}
-
             <h5 className="fw-semibold">Blir brukt i:</h5>
             <ul className="list-group mb-4">
               {studyPrograms && studyPrograms.length > 0 ? (
@@ -269,13 +237,36 @@ function CourseDetails() {
                 <li className="list-group-item text-muted">Ingen</li>
               )}
             </ul>
-
+            <div className="form-check mb-3">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                id="editAsNewVersion"
+                checked={editAsNewVersion}
+                onChange={() => setEditAsNewVersion((prev) => !prev)}
+              />
+              <label className="form-check-label" htmlFor="editAsNewVersion">
+                Lagre som ny variant av emnet
+              </label>
+              <div className="form-text">
+                Lagre emnet som en ny variant, slik at den gamle versjonen
+                fortsatt er tilgjengelig.
+              </div>
+            </div>
             <div className="d-flex gap-2">
               <button className="btn btn-success" onClick={handleSave}>
                 Lagre
               </button>
-              <button className="btn btn-outline-danger" onClick={handleEdit}>
-                Avbryt
+              <button
+                className="btn btn-outline-danger"
+                onClick={() => {
+                  handleEdit();
+                  api
+                    .get("/courses/" + id)
+                    .then((response) => setSubject(response.data));
+                }}
+              >
+                Lukk
               </button>
             </div>
           </div>
@@ -358,16 +349,44 @@ function CourseDetails() {
 
           <h5 className="fw-semibold">Forkunnskaper</h5>
           <ul className="list-group mb-4">
-            {subject.prereqs !== undefined && subject.prereqs.length > 0 ? (
-              subject.prereqs.map((element) => (
-                <li key={element.id} className="list-group-item">
+            {subject.prerequisites !== undefined &&
+            subject.prerequisites.length > 0 ? (
+              subject.prerequisites.map((element) => (
+                <li
+                  key={element.id}
+                  className="list-group-item d-flex justify-content-between align-items-center"
+                >
                   {element.name}
+                  <button
+                    className="btn btn-sm btn-outline-danger"
+                    onClick={() => handleRemovePreRequisite(element)}
+                  >
+                    Fjern
+                  </button>
                 </li>
               ))
             ) : (
               <li className="list-group-item text-muted">Ingen</li>
             )}
           </ul>
+          <button
+            className="btn btn-outline-secondary mb-2"
+            onClick={handlePrerequisiteVisible}
+          >
+            {isPreReqVisible ? "Lukk" : "Legg til forkunnskaper"}
+          </button>
+          {isPreReqVisible && (
+            <div className="mt-3">
+              <AddPrerequisites
+                parentSubject={subject}
+                onPrereqsAdded={() => {
+                  api
+                    .get("/courses/" + id)
+                    .then((response) => setSubject(response.data));
+                }}
+              />
+            </div>
+          )}
 
           <h5 className="fw-semibold">Blir brukt i:</h5>
           <ul className="list-group mb-4">

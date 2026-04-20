@@ -1,28 +1,29 @@
 from flask import Flask, jsonify, request, Blueprint
 from app.models import db, Course
+from services.prerequisite import PrerequisiteService
 from flask_migrate import Migrate
 
 prerequisites_bp = Blueprint('prerequisites', __name__)
 
 
 # Legg til prerequisite
-@prerequisites_bp.route("/add/<int:id>", methods=["POST"])
-def add_prerequisites(id):
-    prereqs = request.get_json()
-    course = Course.query.get(id)
-    for prereqs_course in prereqs:
-        prereq = Course.query.get(prereqs_course['id'])
-        course.prerequisites.append(prereq)
-    db.session.commit()
-    return jsonify({"message": "courses added successfully"}), 201
+@prerequisites_bp.route("/add/<int:parent_id>", methods=["POST"])
+def add_prerequisites(parent_id):
+    prereqiered_course_list = request.get_json()
+    try:
+        result = PrerequisiteService.add_prerequisites(parent_id, prereqiered_course_list)
+        return jsonify({
+            "message": "courses added successfully",
+            **result
+        }), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
 
 @prerequisites_bp.route("/remove/<int:id>/<int:preid>", methods=["DELETE"])
-def remove_prerequisite(id,preid):
-    course = Course.query.get(id)
-    prereq = Course.query.get(preid)
-    for i in course.prerequisites:
-        if i.id == preid:
-            course.prerequisites.remove(i)
-
-    db.session.commit()
-    return(jsonify({"message":"Removed"}))
+def remove_prerequisite(id, preid):
+    try:
+        result = PrerequisiteService.remove_prerequisite(id, preid)
+        return jsonify({"message": "Removed", **result})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+    

@@ -165,8 +165,8 @@ const Courses = () => {
           <tr>
             <th>Navn</th>
             <th>Emnekode</th>
-            <th>Semester</th>
             <th>Nivå</th>
+            <th>Semester</th>
             <th>Studiepoeng</th>
             <th>Tidligere versjoner</th>
             <th>Aktiv</th>

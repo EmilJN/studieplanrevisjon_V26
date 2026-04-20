@@ -1,5 +1,3 @@
-import uuid
-
 from flask import Flask, jsonify, request, Blueprint
 from app.models import Course, Studyprogram, Institute, Studyplan
 from app import db
@@ -42,9 +40,6 @@ def create_course():
 
         course_service = ServiceFactory.get_course_service()
         course = course_service.add_course(
-            course_group_id=uuid.uuid4().int,
-            version=1,
-            is_current=True,
             name=name,
             course_code=course_code,
             semester=semester,
@@ -81,18 +76,31 @@ def delete_course(course_id):
 def update_course(course_id):
     try:
         data = request.json
+
         course_service = ServiceFactory.get_course_service()
-        new_course = course_service.update_course(
-            course_id=course_id,
-            name=data.get("name"),
-            courseCode=data.get("courseCode"),
-            semester=data.get("semester"),
-            credits=data.get("credits"),
-            degree=data.get("degree")
-        )
+        edit_as_new = data.get("editAsNewVersion", False)
+        if edit_as_new:
+            new_course = course_service.new_course_version(
+                course_id=course_id,
+                name=data.get("name"),
+                courseCode=data.get("courseCode"),
+                semester=data.get("semester"),
+                credits=data.get("credits"),
+                degree=data.get("degree"),
+            )
+            
+        else:
+            new_course = course_service.update_course(
+                course_id=course_id,
+                name=data.get("name"),
+                courseCode=data.get("courseCode"),
+                semester=data.get("semester"),
+                credits=data.get("credits"),
+                degree=data.get("degree"),
+            )
 
         return jsonify({
-            "message": "New course version created",
+            "message": "New course version created" if edit_as_new else "Course updated",
             "course": new_course.serialize(),
             "version": new_course.version,
             "course_group_id": new_course.course_group_id
