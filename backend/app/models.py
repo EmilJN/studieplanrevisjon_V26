@@ -13,6 +13,9 @@ prerequisites = db.Table(
 class Course(db.Model):
     __tablename__ = 'course'
     id = db.Column(db.Integer, primary_key=True)
+    course_group_id = db.Column(db.String(128), nullable=False)
+    is_current = db.Column(db.Boolean, default=True)
+    version = db.Column(db.Integer, nullable=False, default=1)
     name = db.Column(db.String(80), nullable=False)
     courseCode = db.Column(db.String(80), nullable=False)
     semester = db.Column(db.Enum('H', 'V', name='semester_type'), nullable=False)
@@ -25,20 +28,51 @@ class Course(db.Model):
                                     primaryjoin=(id == prerequisites.c.course_id),
                                     secondaryjoin=(id == prerequisites.c.prerequisite_id))
 
-    def serialize(self):
-        prereqs = []
-        for courses in self.prerequisites:
-            prereqs.append({ "id": courses.id, "name": courses.name, "code": courses.courseCode })
-        return {"id": self.id, "name": self.name, "courseCode": self.courseCode, "semester": self.semester, "credits": self.credits, "is_active": self.is_active, "degree" : self.degree, "prereqs" : prereqs}
-    
-    def __repr__(self):
-        return f'<course {self.name}>'
-    
-    def __init__(self, name, courseCode, semester, credits):
+
+    def __init__(self, name, courseCode, semester, credits,
+                 course_group_id,
+                 degree=None,
+                 is_active=False,
+                 version=1,
+                 is_current=True):
+
         self.name = name
         self.courseCode = courseCode
         self.semester = semester
         self.credits = credits
+        self.course_group_id = course_group_id
+        self.degree = degree
+        self.is_active = is_active
+        self.version = version
+        self.is_current = is_current
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "course_group_id": self.course_group_id,
+            "version": self.version,
+            "is_current": self.is_current,
+
+            "name": self.name,
+            "courseCode": self.courseCode,
+            "semester": self.semester.value if hasattr(self.semester, "value") else self.semester,
+            "credits": self.credits,
+            "is_active": self.is_active,
+            "degree": self.degree,
+
+            "prerequisites": [
+                {
+                    "id": c.id,
+                    "course_group_id": getattr(c, "course_group_id", None),
+                    "name": c.name,
+                    "courseCode": c.courseCode
+                }
+                for c in self.prerequisites
+            ]
+        }
+
+    def __repr__(self):
+        return f"<Course {self.courseCode} v{self.version}>"
 
 
 # Model for studieprogram

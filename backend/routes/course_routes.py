@@ -1,18 +1,13 @@
+import uuid
+
 from flask import Flask, jsonify, request, Blueprint
 from app.models import Course, Studyprogram, Institute, Studyplan
 from app import db
 from services import ServiceFactory
 
 
-# http://localhost:5000/backend/courses/
-# LA LINJÅ OPPFOR STÅ - brukan te å lett henta URLen te POSTMAN. 
-
-# Create a Blueprint
 courses_bp = Blueprint('courses', __name__)
 
-
-# Subject
-# get courses
 @courses_bp.route("/", methods=["GET"])
 def get_courses():
     try:
@@ -45,9 +40,11 @@ def create_course():
         credits = data.get("credits")
         degree = data.get("degree")
 
-
         course_service = ServiceFactory.get_course_service()
         course = course_service.add_course(
+            course_group_id=uuid.uuid4().int,
+            version=1,
+            is_current=True,
             name=name,
             course_code=course_code,
             semester=semester,
@@ -55,6 +52,17 @@ def create_course():
             degree=degree
         )
         return jsonify(course.serialize()), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+@courses_bp.route("/<int:course_id>/course_group", methods=["GET"])
+def get_all_courses_in_group(course_id):
+    try:
+        course_service = ServiceFactory.get_course_service()
+        previous_courses = course_service.get_all_courses_in_group(course_id)
+        return jsonify([course.serialize() for course in previous_courses]), 200
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 404
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -73,26 +81,33 @@ def delete_course(course_id):
 def update_course(course_id):
     try:
         data = request.json
-        name = data.get("name")
-        course_code = data.get("courseCode")
-        semester = data.get("semester")
-        credits = data.get("credits")
-        degree = data.get("degree")
-
         course_service = ServiceFactory.get_course_service()
-        course = course_service.update_course(
+        new_course = course_service.update_course(
             course_id=course_id,
-            name=name,
-            courseCode=course_code,
-            semester=semester,
-            credits=credits,
-            degree=degree
+            name=data.get("name"),
+            courseCode=data.get("courseCode"),
+            semester=data.get("semester"),
+            credits=data.get("credits"),
+            degree=data.get("degree")
         )
-        return jsonify(course.serialize()), 200
+
+        return jsonify({
+            "message": "New course version created",
+            "course": new_course.serialize(),
+            "version": new_course.version,
+            "course_group_id": new_course.course_group_id
+        }), 200
+
     except ValueError as e:
-        return jsonify({"error": str(e)}), 404
+        return jsonify({
+            "error": str(e)
+        }), 404
+
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({
+            "error": "Internal server error",
+            "details": str(e)
+        }), 500
     
 
 # search courses

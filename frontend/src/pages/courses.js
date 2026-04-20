@@ -14,6 +14,7 @@ const Courses = () => {
     degree: "",
     credits: "",
     is_active: "",
+    current: "",
   });
 
   useEffect(() => {
@@ -33,6 +34,8 @@ const Courses = () => {
       result = result.filter((c) => String(c.credits) === filters.credits);
     if (filters.is_active === "yes") result = result.filter((c) => c.is_active);
     if (filters.is_active === "no") result = result.filter((c) => !c.is_active);
+    if (filters.current === "yes") result = result.filter((c) => c.is_current);
+    if (filters.current === "no") result = result.filter((c) => !c.is_current);
     setFilteredCourses(result);
   }, [searchTerm, filters, courses]);
 
@@ -96,6 +99,19 @@ const Courses = () => {
               </select>
             </div>
             <div className="col-md-3">
+              <label className="form-label fw-semibold">Nåværende</label>
+              <select
+                className="form-select"
+                name="current"
+                value={filters.current}
+                onChange={handleFilterChange}
+              >
+                <option value="">Alle</option>
+                <option value="yes">Nåværende</option>
+                <option value="no">Tidligere</option>
+              </select>
+            </div>
+            <div className="col-md-3">
               <label className="form-label fw-semibold">Studiepoeng</label>
               <select
                 className="form-select"
@@ -136,7 +152,9 @@ const Courses = () => {
             <th>Navn</th>
             <th>Emnekode</th>
             <th>Semester</th>
+            <th>Nivå</th>
             <th>Studiepoeng</th>
+            <th>Tidligere versjoner</th>
             <th>Aktiv</th>
           </tr>
         </thead>
@@ -149,6 +167,7 @@ const Courses = () => {
             >
               <td>{course.name}</td>
               <td>{course.courseCode}</td>
+              <td>{course.degree}</td>
               <td>
                 {course.semester === "H"
                   ? "Høst"
@@ -157,6 +176,7 @@ const Courses = () => {
                     : course.semester}
               </td>
               <td>{course.credits}</td>
+              <td>{course.version - 1 === 0 ? "Nei" : course.version - 1}</td>
               <td>
                 <span
                   className={`badge ${course.is_active ? "bg-success" : "bg-secondary"}`}
