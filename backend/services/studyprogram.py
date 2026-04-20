@@ -35,7 +35,6 @@ class StudyprogramService:
         self.db.commit()
         return {"message": f"Studyprogram with ID {studyprogram_id} deleted successfully"}
 
-
     # Oppdater eksisterende studieprogram (navn, degree_type, institutt)
     def update_studyprogram(self, studyprogram_id, name=None, degree_type=None, institute=None,program_code=None):
         studyprogram = self.get_studyprogram_by_id(studyprogram_id)
@@ -105,9 +104,6 @@ class StudyprogramService:
         print(f"Total semesters for studyprogram {studyprogram_id}: {total_semesters}")
         return total_semesters
         
-
-
-
     def get_institute_by_program_id(self, studyprogram_id):
         studyprogram = self.get_studyprogram_by_id(studyprogram_id)
         if studyprogram is None:
@@ -174,7 +170,7 @@ class StudyprogramService:
                 "institute_ansvarlig": institute.ansvarlig,
                 "institute_name": institute.name,
                 "program_ansvarlig": {
-                    "id":studyprogram.program_ansvarlig.id,
+                    "id":studyprogram.program_ansvarlig.feide_id,
                     "name" : studyprogram.program_ansvarlig.name,
                     "email" : studyprogram.program_ansvarlig.email
                     }if studyprogram.program_ansvarlig else None

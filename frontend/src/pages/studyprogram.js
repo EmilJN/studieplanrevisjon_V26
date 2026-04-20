@@ -51,6 +51,7 @@ const StudyProgram = () => {
               <tr>
                 <th>Navn</th>
                 <th>Nivå</th>
+                <th>Ansvarlig</th>
               </tr>
             </thead>
             <tbody>
@@ -62,6 +63,7 @@ const StudyProgram = () => {
                 >
                   <td>{program.name}</td>
                   <td>{program.degree_type}</td>
+                  <td>{program.program_ansvarlig ? program.program_ansvarlig.name : "Ingen"}</td>
                 </tr>
               ))}
             </tbody>

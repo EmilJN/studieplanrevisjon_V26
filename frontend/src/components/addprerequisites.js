@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import api from "../api";
-import "../styles/CourseDetails.css";
 
 function AddPrerequisites(parentSubject) {
   const [subjects, setSubjects] = useState([]); // All subjects fetched from the backend

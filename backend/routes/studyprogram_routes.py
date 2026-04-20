@@ -164,7 +164,6 @@ def become_in_charge(studyprogram_id):
     try:
         studyprogram_service = ServiceFactory.get_studyprogram_service()
         inCharge = studyprogram_service.become_in_charge_of_studyprogram(studyprogram_id,session.get("user_id"))
-
         return jsonify(inCharge.serialize()), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500

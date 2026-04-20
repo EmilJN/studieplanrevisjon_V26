@@ -56,8 +56,6 @@ export const searchCourses = async (query) => {
   return response.data;
 };
 
-
-
 export const fetchSemesterInfo = async (programId) => {
   try {
     const response = await api.get(`studyprograms/${programId}/semester-info`);
@@ -79,7 +77,6 @@ export const checkStudyplan = async (programId, year) => {
   }
 };
 
-
 export const updateStudyPlan = async (studyplanId, payload) => {
   try {
     const response = await api.put(`studyplans/${studyplanId}/updatecourses`, payload);
@@ -89,7 +86,6 @@ export const updateStudyPlan = async (studyplanId, payload) => {
     throw error;
   }
 }
-
 
 export const semesterinfo = async (programId, year) => {
   const response = await api.get(`studyplans/studyprograms/${programId}/semesterinfo`);
@@ -105,10 +101,8 @@ export const semesterinfo = async (programId, year) => {
       semester_courses: [],
     };
   });
-
   return newSemesters;
 };
-
 
 export const fetchCourses = async () => {
   try {
@@ -138,7 +132,7 @@ export const fetchValgemne = async () => {
     console.error("Failed to fetch valgemne:", error);
     return ("Failed to load valgemne. Please try again.");
   }
-}
+};
 
 export const fetchAllValgemner = async () => {
   try {
@@ -148,7 +142,8 @@ export const fetchAllValgemner = async () => {
     console.error("Failed to fetch valgemne:", error);
     return ("Failed to load valgemne. Please try again.");
   }
-}
+};
+
 export const fetchCategory = async () => {
   try {
     const response = await api.get("courses/electivegroups");
@@ -157,7 +152,7 @@ export const fetchCategory = async () => {
     console.error("Failed to fetch category:", error);
     return ("Failed to load category. Please try again.");
   }
-}
+};
 
 
 

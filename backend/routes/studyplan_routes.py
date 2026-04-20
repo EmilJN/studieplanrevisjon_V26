@@ -17,19 +17,15 @@ def create_studyplan():
         data = request.json
         print("Received data:", data)
 
-
         if not data.get('year') or not data.get('studyprogram_id'):
             return jsonify({"error": "Missing required fields: year and studyprogram_id"}), 400
 
-
         studyplan_service = ServiceFactory.get_studyplan_service()
-
 
         if studyplan_service.check_studyplan_exists(data['year'], data['studyprogram_id']):
             return jsonify({
                 "error": f"A study plan for program ID {data['studyprogram_id']} and year {data['year']} already exists"
             }), 409
-
 
         studyplan, semesters = studyplan_service.create_complete_studyplan(
             year=data['year'],
@@ -235,6 +231,7 @@ def detect_term_conflicts(course_id):
         print(f"Error detecting term conflicts: {str(e)}")
         return jsonify({"error": str(e)}), 500
     
+
 # Endepunkt for å finne semesterene for en studieplan (inkl. litt info om emnene)   
 @studyplan_bp.route('/<int:studyplan_id>/semesters', methods=['GET'])
 def get_studyplan_semesters(studyplan_id):
@@ -243,7 +240,6 @@ def get_studyplan_semesters(studyplan_id):
         return jsonify([semester.serialize() for semester in studyplan.semesters]), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
 
 
 # Endepunkt for å hente den siste SP'en for et studieprogram
@@ -261,6 +257,7 @@ def get_latest_sp(studyprogram_id):
         return jsonify({"error": str(e)}), 404
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 @studyplan_bp.route('/<int:studyplan_id>/courszez', methods=['GET'])
 def get_courses_by_studyplan(studyplan_id):
@@ -282,7 +279,6 @@ def get_courses_by_studyplan(studyplan_id):
 @studyplan_bp.route('/studyprograms/<int:studyprogram_id>/fullsp', methods=['GET'])
 def get_full_sp(studyprogram_id):
     try:
-
         studyplan_service = ServiceFactory.get_studyplan_service()
         studyprogram_service = ServiceFactory.get_studyprogram_service()
 
@@ -321,10 +317,6 @@ def get_full_sp(studyprogram_id):
         return jsonify({"error": str(e)}), 404
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
-
-
-
 
 
 @studyplan_bp.route('/<int:studyplan_id>/sem', methods=['GET'])

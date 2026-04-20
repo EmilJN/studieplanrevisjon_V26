@@ -7,6 +7,8 @@ prerequisites = db.Table(
     db.Column('course_id', db.Integer, db.ForeignKey('course.id'), primary_key=True),
     db.Column('prerequisite_id', db.Integer, db.ForeignKey('course.id'), primary_key=True)
 )
+
+
 # Model for Emne
 class Course(db.Model):
     __tablename__ = 'course'
@@ -20,6 +22,7 @@ class Course(db.Model):
     credits = db.Column(db.Integer, nullable=False)
     is_active = db.Column(db.Boolean, default=False)  #nullable=False
     degree = db.Column(db.String(80), nullable=True)
+
     semester_courses = db.relationship('SemesterCourses', back_populates='course')
     prerequisites = db.relationship('Course',secondary=prerequisites,
                                     primaryjoin=(id == prerequisites.c.course_id),
@@ -71,6 +74,7 @@ class Course(db.Model):
     def __repr__(self):
         return f"<Course {self.courseCode} v{self.version}>"
 
+
 # Model for studieprogram
 class Studyprogram(db.Model):
     __tablename__ = 'studyprogram'
@@ -82,7 +86,7 @@ class Studyprogram(db.Model):
     is_active = db.Column(db.Boolean, default=True)
     program_code = db.Column(db.String(80), nullable=False)
     program_ansvarlig_id = db.Column(db.String(128), db.ForeignKey('user.feide_id', ondelete='SET NULL'), nullable=True )
-    # Relationship 
+    
     program_ansvarlig = db.relationship('User', back_populates='studyprograms',lazy='joined')
     institute = db.relationship('Institute', back_populates='studyprograms', lazy='joined')
     studyplans = db.relationship('Studyplan', back_populates='studyprogram', cascade='all, delete-orphan')
@@ -97,7 +101,7 @@ class Studyprogram(db.Model):
             "is_active": self.is_active,
             "program_code": self.program_code,
             "program_ansvarlig": {
-                "id":self.program_ansvarlig.id,
+                "id":self.program_ansvarlig.feide_id,
                 "name" : self.program_ansvarlig.name,
                 "email" : self.program_ansvarlig.email
             } if self.program_ansvarlig else None
@@ -112,6 +116,7 @@ class Studyprogram(db.Model):
         self.institute_id = institute_id
         self.semester_number = semester_number
         self.program_code = program_code
+
 
 # Model for institutt
 class Institute(db.Model):
@@ -146,7 +151,6 @@ class Studyplan(db.Model):
 
     semesters = db.relationship('Semester', back_populates='studyplan', cascade='all, delete-orphan', lazy='joined')
     studyprogram = db.relationship('Studyprogram', back_populates='studyplans', lazy='joined')
-    
     __table_args__ = (
         db.UniqueConstraint('year', 'studyprogram_id', name='unique_year_studyprogram'),
     )
@@ -157,7 +161,6 @@ class Studyplan(db.Model):
             "year": self.year, 
             "studyprogram_id": self.studyprogram_id, 
             "semesters": [semester.serialize() for semester in self.semesters],
-
         }
     
     def __repr__(self):
@@ -168,7 +171,6 @@ class Studyplan(db.Model):
         self.studyprogram_id = studyprogram_id
 
 
-
 # Model for bruker
 class User(db.Model):
     __tablename__ = 'user'
@@ -176,6 +178,7 @@ class User(db.Model):
     email = db.Column(db.String(80), nullable=False)
     name = db.Column(db.String(80), nullable=False)
     role = db.Column(db.Enum('user', 'admin', 'ansvarlig', name='role_type'), nullable=False)
+
     studyprograms = db.relationship('Studyprogram', back_populates='program_ansvarlig')
 
     def serialize(self):
@@ -218,7 +221,6 @@ class Notifications(db.Model):
     recipient = db.relationship('User', foreign_keys=[recipient_id], backref='notifications')
     sender = db.relationship('User', foreign_keys=[sender_id])
 
-
     def serialize(self):
         result = {
             "id": self.id, 
@@ -246,7 +248,6 @@ class Notifications(db.Model):
                 "sender_id": self.sender_id,
                 "is_read": self.is_read
             })
-            
         return result
     
     def __repr__(self):
@@ -291,8 +292,6 @@ class SemesterCourses(db.Model):
     semester = db.relationship('Semester', back_populates='semester_courses')
     course = db.relationship('Course', back_populates='semester_courses', lazy='joined')
     category = db.relationship('ElectiveGroup', backref='semester_courses', lazy='joined')
-
-
     __table_args__ = (
         db.UniqueConstraint('semester_id', 'course_id', name='uix_semester_course'),
     )
@@ -318,14 +317,13 @@ class SemesterCourses(db.Model):
         self.semester_id = semester_id
         self.course_id = course_id
         self.is_elective = is_elective
-
-        
         if is_elective:
             if not category_id:
                 raise ValueError("Category must be provided for elective courses.")
             self.category_id = category_id
         else:
             self.category_id = None
+
 
 class ElectiveGroup(db.Model):
     __tablename__ = 'elective_groups'
@@ -341,6 +339,7 @@ class ElectiveGroup(db.Model):
     def __init__(self, category):
         self.name = category
         
+
 class Semester(db.Model):
     __tablename__ = 'semester'
     id = db.Column(db.Integer, primary_key=True)
@@ -372,11 +371,11 @@ class Semester(db.Model):
     def __repr__(self):
         return f'<Semester {self.semester_number} ({self.term}) - Studyplan {self.studyplan_id}>'
 
-
     def __init__(self, semester_number, studyplan_id, term=None):
         self.semester_number = semester_number
         self.studyplan_id = studyplan_id
         self.term = term or ('H' if semester_number % 2 == 1 else 'V')
+
 
 class Log(db.Model):
     __tablename__ = 'log'
@@ -384,9 +383,7 @@ class Log(db.Model):
     time = db.Column(db.DateTime, default=datetime.timezone.utc, nullable=False)
     message = db.Column(db.String(100), nullable=False)
 
-    
     def serialize(self):
-
         self.time = pytz.UTC.localize(self.time)
         self.time = self.time.astimezone(pytz.timezone('Europe/Oslo'))
         print(self)
@@ -395,12 +392,10 @@ class Log(db.Model):
             "time" : self.time.strftime('%Y-%m-%d %H:%M:%S %Z'),
             "message" : self.message
         }
+
     def __repr__(self):
         return f'<Log at {self.time}>'
 
     def __init__(self, message):
         self.time = datetime.datetime.now(datetime.timezone.utc)
         self.message = message
-        
-
-

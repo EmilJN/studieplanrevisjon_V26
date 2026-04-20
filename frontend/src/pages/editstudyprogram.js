@@ -79,8 +79,13 @@ const EditStudyProgram = () => {
       try {
         api
           .put(`/studyprograms/${editingID}/update`, editingProgram)
-          .then((response) => {
-            program = editingProgram;
+          .then(() => {
+            setStudyPrograms((prev) =>
+              prev.map((p) =>
+                p.id === editingID ? {...p, ...editingProgram, 
+                  institute: institutes.find((i) => i.id === Number(editingProgram.institute)) || p.institute,
+                  }: p
+              ));
             setEditingId(null);
           })
           .catch((error) => {
@@ -93,6 +98,7 @@ const EditStudyProgram = () => {
       setErrors(err);
     }
   };
+
   const validateForm = () => {
     const formErrors = {};
     if (!editingProgram.name) formErrors.name = "Vennligst skriv noe her";
