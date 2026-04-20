@@ -1,7 +1,6 @@
 import api from "../api";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../styles/Forms.css";
 
 
 export default function CreateStudyProgramForm() {
@@ -79,45 +78,49 @@ export default function CreateStudyProgramForm() {
 
 
   return (
-    <div className="form-container">
-      <h2>Nytt studieprogram</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="studyprogram_name">Studieprogram navn: </label>
-          <input name="studyprogram_name" onChange={handleFieldChange}></input>
-          {errors.studyprogram_name && <div className="form-error"> {errors.studyprogram_name} </div>}
-        </div>
-        <div>
-          <label htmlFor="degree">Hvilket Nivå </label>
-          <select name="degree" onChange={handleFieldChange}>
-            <option value="">Velg en</option>
-            <option value="Bachelor">Bachelor</option>
-            <option value="Master">Master</option>
-          </select>
-          {errors.degree && <div className="form-error"> {errors.degree} </div>}
-        </div>
-        <div>
-          <label htmlFor="institute">Hvilket institutt er programmet en del av</label>
-          <select name="institute" onChange={handleFieldChange}>
-            <option value="">Velg en</option>
-            {institutes && institutes.map(inst => (
-              <option key={inst.id} value={inst.id}>{inst.name}</option>)
-            )}
-          </select>
-          {errors.institute && <div className="form-error"> {errors.institute} </div>}
-        </div>
-        <div>
-          <label htmlFor="semester_number">Antall Semester</label>
-          <input name="semester_number" type="number" onChange={handleFieldChange}></input>
-          {errors.semester_number && <div className="form-error"> {errors.semester_number} </div>}
-        </div>
-        <div>
-          <label htmlFor="program_code">Studieprogramkode</label>
-          <input type="text" name="program_code" onChange={handleFieldChange} ></input>
-          {errors.program_code && <div className="form-error"> {errors.program_code} </div>}
-          <button type="submit">Send inn</button>
-        </div>
-      </form>
-    </div>
+    <form onSubmit={handleSubmit} className="row g-3">
+      <div className="col-md-6">
+        <label htmlFor="studyprogram_name" className="form-label fw-semibold">Studieprogram navn:</label>
+        <input name="studyprogram_name" id="studyprogram_name" className="form-control" onChange={handleFieldChange} />
+        {errors.studyprogram_name && <div className="text-danger small">{errors.studyprogram_name}</div>}
+      </div>
+
+      <div className="col-md-6">
+        <label htmlFor="program_code" className="form-label fw-semibold">Studieprogramkode:</label>
+        <input type="text" name="program_code" id="program_code" className="form-control" onChange={handleFieldChange} />
+        {errors.program_code && <div className="text-danger small">{errors.program_code}</div>}
+      </div>
+
+      <div className="col-md-6">
+        <label htmlFor="degree" className="form-label fw-semibold">Nivå:</label>
+        <select name="degree" id="degree" className="form-select" onChange={handleFieldChange}>
+          <option value="">Velg en</option>
+          <option value="Bachelor">Bachelor</option>
+          <option value="Master">Master</option>
+        </select>
+        {errors.degree && <div className="text-danger small">{errors.degree}</div>}
+      </div>
+
+      <div className="col-md-6">
+        <label htmlFor="institute" className="form-label fw-semibold">Institutt:</label>
+        <select name="institute" id="institute" className="form-select" onChange={handleFieldChange}>
+          <option value="">Velg en</option>
+          {institutes && institutes.map(inst => (
+            <option key={inst.id} value={inst.id}>{inst.name}</option>
+          ))}
+        </select>
+        {errors.institute && <div className="text-danger small">{errors.institute}</div>}
+      </div>
+
+      <div className="col-md-6">
+        <label htmlFor="semester_number" className="form-label fw-semibold">Antall Semester:</label>
+        <input name="semester_number" id="semester_number" type="number" className="form-control" onChange={handleFieldChange} />
+        {errors.semester_number && <div className="text-danger small">{errors.semester_number}</div>}
+      </div>
+
+      <div className="col-12">
+        <button type="submit" className="btn btn-success">Send inn</button>
+      </div>
+    </form>
   );
 }

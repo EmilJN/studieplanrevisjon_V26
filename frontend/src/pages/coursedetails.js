@@ -197,12 +197,15 @@ function CourseDetails() {
               </div>
               <div className="col-md-6">
                 <label className="form-label fw-semibold">Nivå</label>
-                <input
-                  className="form-control"
+                <select
+                  className="form-select"
                   name="degree"
                   value={subject.degree}
                   onChange={handleFieldChange}
-                />
+                >
+                  <option value="Bachelor">Bachelor</option>
+                  <option value="Master">Master</option>
+                </select>
               </div>
             </div>
 
@@ -350,7 +353,7 @@ function CourseDetails() {
           <h5 className="fw-semibold">Forkunnskaper</h5>
           <ul className="list-group mb-4">
             {subject.prerequisites !== undefined &&
-            subject.prerequisites.length > 0 ? (
+              subject.prerequisites.length > 0 ? (
               subject.prerequisites.map((element) => (
                 <li
                   key={element.id}

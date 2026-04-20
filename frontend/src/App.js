@@ -9,7 +9,6 @@ import {
 } from "react-router-dom";
 import React from "react";
 import Home from "./pages/home";
-import CreateStudyProgram from "./pages/createstudyprogram";
 import Courses from "./pages/courses";
 import EditStudyProgram from "./pages/editstudyprogram";
 import StudyProgramDetail from "./pages/studyprogramdetail";
@@ -34,10 +33,6 @@ function App() {
             <Routes>
               <Route element={<ProtectedRoute />}>
                 <Route path="/" element={<Home />} />
-                <Route
-                  path="/createstudyprogram"
-                  element={<CreateStudyProgram />}
-                />
                 <Route path="/courses" element={<Courses />} />
                 <Route
                   path="/courses/details/:id"

@@ -12,6 +12,7 @@ import {
 import { useAuth } from "../components/validateuser";
 import api from "../api";
 import { useNavigate } from "react-router-dom";
+import CreateStudyProgramForm from "../components/createstudyprogramform";
 
 const EditStudyProgram = () => {
   const [studyPrograms, setStudyPrograms] = useState([]); // Fetched study programs
@@ -19,6 +20,7 @@ const EditStudyProgram = () => {
   const [selectedProgram, setSelectedProgram] = useState(null);
   const [editingID, setEditingId] = useState(null);
   const [editingProgram, setEditingProgram] = useState({});
+  const [showCreateForm, setShowCreateForm] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [errorMessageSearch, setErrorMessageSearch] = useState("");
   const [institutes, setInstitutes] = useState({});
@@ -154,7 +156,20 @@ const EditStudyProgram = () => {
 
   return (
     <div className="container py-4" style={{ maxWidth: "900px" }}>
-      <h1 className="mb-4">Rediger et studieprogram</h1>
+      <h1 className="mb-4">Oversikt over studieprogram</h1>
+      <button
+        className="btn btn-primary mb-3"
+        onClick={() => setShowCreateForm((prev) => !prev)}
+      >
+        {showCreateForm ? "Lukk skjema" : "Legg til nytt studieprogram"}
+      </button>
+
+      {showCreateForm && (
+        <div className="border rounded p-4 mb-3">
+          <h5 className="mb-3">Legg til nytt studieprogram</h5>
+          <CreateStudyProgramForm onSuccess={() => setShowCreateForm(false)} />
+        </div>
+      )}
 
       <input
         type="text"
