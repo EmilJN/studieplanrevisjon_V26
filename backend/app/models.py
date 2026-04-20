@@ -67,7 +67,7 @@ class Studyprogram(db.Model):
             "is_active": self.is_active,
             "program_code": self.program_code,
             "program_ansvarlig": {
-                "id":self.program_ansvarlig.id,
+                "id":self.program_ansvarlig.feide_id,
                 "name" : self.program_ansvarlig.name,
                 "email" : self.program_ansvarlig.email
             } if self.program_ansvarlig else None
