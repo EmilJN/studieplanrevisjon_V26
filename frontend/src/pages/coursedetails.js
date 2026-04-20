@@ -5,6 +5,7 @@ import AddPrerequisites from "../components/addprerequisites";
 import { Link } from "react-router-dom";
 
 function CourseDetails() {
+  const [editAsNewVersion, setEditAsNewVersion] = useState(false);
   const { id } = useParams();
   const [subject, setSubject] = useState({}); // spesifik emne
   const [editingActive, setEditingActive] = useState(false);
@@ -79,7 +80,7 @@ function CourseDetails() {
 
   const handleSave = () => {
     api
-      .put(`/courses/${subject.id}`, subject)
+      .put(`/courses/${subject.id}`, { ...subject, editAsNewVersion })
       .then((response) => {
         if (response) {
           alert("Suksess");
@@ -164,7 +165,6 @@ function CourseDetails() {
                 onChange={handleFieldChange}
               />
             </h2>
-
             <div className="row g-3 mb-4">
               <div className="col-md-6">
                 <label className="form-label fw-semibold">Emnekode</label>
@@ -237,6 +237,22 @@ function CourseDetails() {
                 <li className="list-group-item text-muted">Ingen</li>
               )}
             </ul>
+            <div className="form-check mb-3">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                id="editAsNewVersion"
+                checked={editAsNewVersion}
+                onChange={() => setEditAsNewVersion((prev) => !prev)}
+              />
+              <label className="form-check-label" htmlFor="editAsNewVersion">
+                Lagre som ny variant av emnet
+              </label>
+              <div className="form-text">
+                Lagre emnet som en ny variant, slik at den gamle versjonen
+                fortsatt er tilgjengelig.
+              </div>
+            </div>
             <div className="d-flex gap-2">
               <button className="btn btn-success" onClick={handleSave}>
                 Lagre

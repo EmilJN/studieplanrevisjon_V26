@@ -74,8 +74,25 @@ class CourseService:
     
     # Oppdater eksisterende emne
     def update_course(self, course_id, name, courseCode, semester, credits, degree):
-        old_course = self.get_course_by_id(course_id)
+        course_to_update = self.get_course_by_id(course_id)
+        if not course_to_update:
+            raise ValueError(f"Course with ID {course_id} not found")
+        
+        course_to_update.name = name if name is not None else course_to_update.name
+        course_to_update.courseCode = courseCode if courseCode is not None else course_to_update.courseCode
+        course_to_update.semester = semester if semester is not None else course_to_update.semester
+        course_to_update.credits = credits if credits is not None else course_to_update.credits
+        course_to_update.degree = degree if degree is not None else course_to_update.degree
 
+        log = Log(f"Emne oppdatert {course_to_update.courseCode}")
+        self.db.add(log)
+        self.db.commit()
+
+        return course_to_update
+
+        
+    def new_course_version(self, course_id, name, courseCode, semester, credits, degree):
+        old_course = self.get_course_by_id(course_id)
         if not old_course:
             raise ValueError(f"Course with ID {course_id} not found")
 
