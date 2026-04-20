@@ -9,11 +9,9 @@ import {
 } from "react-router-dom";
 import React from "react";
 import Home from "./pages/home";
-import CreateCourse from "./pages/createcourse";
 import CreateStudyProgram from "./pages/createstudyprogram";
 import Courses from "./pages/courses";
 import EditStudyProgram from "./pages/editstudyprogram";
-import StudyProgram from "./pages/studyprogram";
 import StudyProgramDetail from "./pages/studyprogramdetail";
 import GenerateStudyplan from "./pages/generatestudyplan";
 import CourseDetails from "./pages/coursedetails";
@@ -36,7 +34,6 @@ function App() {
             <Routes>
               <Route element={<ProtectedRoute />}>
                 <Route path="/" element={<Home />} />
-                <Route path="/createcourse" element={<CreateCourse />} />
                 <Route
                   path="/createstudyprogram"
                   element={<CreateStudyProgram />}
@@ -50,7 +47,6 @@ function App() {
                   path="/editstudyprogram"
                   element={<EditStudyProgram />}
                 />
-                <Route path="/studyprogram" element={<StudyProgram />} />
                 <Route
                   path="/studyprograms/:id"
                   element={<StudyProgramDetail />}
