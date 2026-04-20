@@ -1,5 +1,6 @@
 from app import db
 from app.models import Course, Studyprogram, Studyplan, Institute, Semester, SemesterCourses, Log
+import uuid
 from services.prerequisite import PrerequisiteService
 from sqlalchemy import func, and_, or_, union, literal, text, literal_column
 from sqlalchemy.orm import joinedload
@@ -65,6 +66,10 @@ class CourseService:
             courseCode=course_code,
             semester=semester,
             credits=credits,
+            degree=degree,
+            version=1,
+            course_group_id=uuid.uuid4().int,
+
         )
         print(course)
         self.db.add(course)

@@ -7,11 +7,13 @@ export default function CreateCourseForm() {
     const coursename = formData.get("coursename");
     const coursesemester = formData.get("coursesemester");
     const coursecredits = formData.get("coursecredits");
+    const coursedegree = formData.get("coursedegree");
     const data = {
       code: coursecode,
       name: coursename,
       semester: coursesemester,
       credits: coursecredits,
+      degree: coursedegree,
     };
     api
       .post("/courses/create", data, { withCredentials: true })
@@ -32,6 +34,10 @@ export default function CreateCourseForm() {
       </select>
       <label htmlFor="coursecredits">Antall studiepoeng emne gir: </label>
       <input name="coursecredits"></input>
+      <select id="coursedegree" name="coursedegree">
+        <option value="Bachelor">Bachelor</option>
+        <option value="Master">Master</option>
+      </select>
       <button type="submit">Send inn</button>
     </form>
   );

@@ -1,5 +1,3 @@
-import uuid
-
 from flask import Flask, jsonify, request, Blueprint
 from app.models import Course, Studyprogram, Institute, Studyplan
 from app import db
@@ -42,9 +40,6 @@ def create_course():
 
         course_service = ServiceFactory.get_course_service()
         course = course_service.add_course(
-            course_group_id=uuid.uuid4().int,
-            version=1,
-            is_current=True,
             name=name,
             course_code=course_code,
             semester=semester,
