@@ -49,6 +49,11 @@ const Courses = () => {
   return (
     <div className="container py-4">
       <h1 className="mb-4">Oversikt over emner</h1>
+      <button className="btn btn-primary mb-3">
+        <Link to="/createcourse" className="btn btn-primary">
+          Legg til nytt emne
+        </Link>
+      </button>
 
       <input
         type="text"
