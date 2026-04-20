@@ -21,19 +21,12 @@ const NavBar = () => {
             <NavLink className="btn btn-outline-light" to="/courses">
               Emner
             </NavLink>
-
-            <div className="nav-item dropdown">
-              <button className="dropdown-toggle btn btn-outline-light" data-bs-toggle="dropdown">
-                Studieplaner
-              </button>
-              <ul className="dropdown-menu">
-                <li><NavLink className="dropdown-item" to="/createstudyprogram">Lag nytt studieprogram</NavLink></li>
-                <li><NavLink className="dropdown-item" to="/editstudyprogram">Rediger et studieprogram</NavLink></li>
-              </ul>
-            </div>
+            <NavLink className="btn btn-outline-light" to="/editstudyprogram">
+              Studieprogram
+            </NavLink>
 
             {currentUser.role === "admin" && (
-              <NavLink className="nav-link" to="/admin">Admin</NavLink>
+              <NavLink className="btn btn-outline-danger" to="/admin">Admin</NavLink>
             )}
           </div>
           <div className="d-flex align-items-center gap-3">
