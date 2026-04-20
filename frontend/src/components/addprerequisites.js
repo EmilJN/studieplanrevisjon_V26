@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import api from "../api";
 
-function AddPrerequisites(parentSubject) {
+function AddPrerequisites({ parentSubject, onPrereqsAdded }) {
   const [subjects, setSubjects] = useState([]); // All subjects fetched from the backend
   const [filteredSubjects, setFilteredSubjects] = useState([]); // filtersøk på emne
   const [searchTerm, setSearchTerm] = useState(""); // søkeord
@@ -36,11 +36,21 @@ function AddPrerequisites(parentSubject) {
     if (prerequisiteList.some((prereq) => prereq.id === subject.id)) {
       return false;
     }
-    setPrerequisiteList((prev) => {
-      const updated = [...prev, subject];
-      setFilteredSubjects((curr) => curr.filter((s) => s.id !== subject.id));
-      return updated;
-    });
+    const updated = [...prerequisiteList, subject];
+    setPrerequisiteList(updated);
+    setFilteredSubjects((curr) => curr.filter((s) => s.id !== subject.id));
+    // Send inn automatisk
+    const parentSubjectId = parentSubject.id;
+    api
+      .post(`/prerequisites/add/${parentSubjectId}`, [subject])
+      .then((response) => {
+        if (response && response.data) {
+          if (onPrereqsAdded) onPrereqsAdded();
+        }
+      })
+      .catch((error) => {
+        console.error("Klarte ikke å legge til emnet som forkunnskap.", error);
+      });
   };
 
   const handleRemovePreRequisite = (subject) => {
@@ -56,14 +66,16 @@ function AddPrerequisites(parentSubject) {
     });
   };
   const handleSubmitPreRequisite = () => {
-    const parentSubjectId = parentSubject.parentSubject.id;
+    const parentSubjectId = parentSubject.id;
     api
       .post(`/prerequisites/add/${parentSubjectId}`, prerequisiteList)
       .then((response) => {
-        if (response) {
-          alert("Emnene ble lagt til");
+        if (response && response.data) {
+          alert(
+            "Emnene ble lagt til!\n" + JSON.stringify(response.data, null, 2),
+          );
           setPrerequisiteList([]);
-          window.location.reload();
+          if (onPrereqsAdded) onPrereqsAdded();
         }
       })
       .catch((error) => {
@@ -73,41 +85,6 @@ function AddPrerequisites(parentSubject) {
 
   return (
     <div className="mt-3">
-      <table className="table table-bordered table-hover">
-        <thead className="table-dark">
-          <tr>
-            <th>Emnekode</th>
-            <th>Emnenavn</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {prerequisiteList.length
-            ? prerequisiteList.map((subject) => (
-                <tr key={subject.id}>
-                  <td>{subject.courseCode}</td>
-                  <td>{subject.name}</td>
-                  <td>
-                    <button
-                      className="btn btn-sm btn-outline-danger"
-                      onClick={() => handleRemovePreRequisite(subject)}
-                    >
-                      Fjern
-                    </button>
-                  </td>
-                </tr>
-              ))
-            : null}
-        </tbody>
-      </table>
-      {prerequisiteList.length ? (
-        <button
-          className="btn btn-success mb-2"
-          onClick={handleSubmitPreRequisite}
-        >
-          Send inn emner
-        </button>
-      ) : null}
       <input
         className="form-control mb-3"
         type="text"
@@ -129,8 +106,13 @@ function AddPrerequisites(parentSubject) {
           {filteredSubjects
             .filter(
               (subject) =>
-                subject.id !== parentSubject.parentSubject.id &&
-                !parentSubject.parentSubject.prereqs.includes(subject.name),
+                subject.id !== parentSubject.id &&
+                !(
+                  Array.isArray(parentSubject.prerequisites) &&
+                  parentSubject.prerequisites
+                    .map((p) => p.name)
+                    .includes(subject.name)
+                ),
             )
             .map((subject) => (
               <tr key={subject.id}>

@@ -129,8 +129,9 @@ function CourseDetails() {
   const handleRemovePreRequisite = (e) => {
     api
       .delete(`/prerequisites/remove/${subject.id}/${e.id}`)
-      .then((response) => {
-        window.location.reload();
+      .then(() => {
+        // Last inn data på nytt uten reload
+        api.get("/courses/" + id).then((response) => setSubject(response.data));
       })
       .catch((error) => {
         console.error("Klarte ikke å slette emnet");
@@ -205,39 +206,6 @@ function CourseDetails() {
               </div>
             </div>
 
-            <h5 className="fw-semibold">Forkunnskaper</h5>
-            <ul className="list-group mb-4">
-              {subject.prereqs !== undefined && subject.prereqs.length > 0 ? (
-                subject.prereqs.map((element) => (
-                  <li
-                    key={element.id}
-                    className="list-group-item d-flex justify-content-between align-items-center"
-                  >
-                    {element.name}
-                    <button
-                      className="btn btn-sm btn-outline-danger"
-                      onClick={() => handleRemovePreRequisite(element)}
-                    >
-                      Fjern
-                    </button>
-                  </li>
-                ))
-              ) : (
-                <li className="list-group-item text-muted">Ingen</li>
-              )}
-            </ul>
-            <button
-              className="btn btn-outline-secondary mb-2"
-              onClick={handlePrerequisiteVisible}
-            >
-              {isPreReqVisible ? "Avbryt" : "Legg til forkunnskaper"}
-            </button>
-            {isPreReqVisible && (
-              <div className="mt-3">
-                <AddPrerequisites parentSubject={subject} />
-              </div>
-            )}
-
             <h5 className="fw-semibold">Blir brukt i:</h5>
             <ul className="list-group mb-4">
               {studyPrograms && studyPrograms.length > 0 ? (
@@ -269,13 +237,20 @@ function CourseDetails() {
                 <li className="list-group-item text-muted">Ingen</li>
               )}
             </ul>
-
             <div className="d-flex gap-2">
               <button className="btn btn-success" onClick={handleSave}>
                 Lagre
               </button>
-              <button className="btn btn-outline-danger" onClick={handleEdit}>
-                Avbryt
+              <button
+                className="btn btn-outline-danger"
+                onClick={() => {
+                  handleEdit();
+                  api
+                    .get("/courses/" + id)
+                    .then((response) => setSubject(response.data));
+                }}
+              >
+                Lukk
               </button>
             </div>
           </div>
@@ -358,16 +333,44 @@ function CourseDetails() {
 
           <h5 className="fw-semibold">Forkunnskaper</h5>
           <ul className="list-group mb-4">
-            {subject.prereqs !== undefined && subject.prereqs.length > 0 ? (
-              subject.prereqs.map((element) => (
-                <li key={element.id} className="list-group-item">
+            {subject.prerequisites !== undefined &&
+            subject.prerequisites.length > 0 ? (
+              subject.prerequisites.map((element) => (
+                <li
+                  key={element.id}
+                  className="list-group-item d-flex justify-content-between align-items-center"
+                >
                   {element.name}
+                  <button
+                    className="btn btn-sm btn-outline-danger"
+                    onClick={() => handleRemovePreRequisite(element)}
+                  >
+                    Fjern
+                  </button>
                 </li>
               ))
             ) : (
               <li className="list-group-item text-muted">Ingen</li>
             )}
           </ul>
+          <button
+            className="btn btn-outline-secondary mb-2"
+            onClick={handlePrerequisiteVisible}
+          >
+            {isPreReqVisible ? "Lukk" : "Legg til forkunnskaper"}
+          </button>
+          {isPreReqVisible && (
+            <div className="mt-3">
+              <AddPrerequisites
+                parentSubject={subject}
+                onPrereqsAdded={() => {
+                  api
+                    .get("/courses/" + id)
+                    .then((response) => setSubject(response.data));
+                }}
+              />
+            </div>
+          )}
 
           <h5 className="fw-semibold">Blir brukt i:</h5>
           <ul className="list-group mb-4">

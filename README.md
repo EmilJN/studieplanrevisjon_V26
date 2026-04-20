@@ -8,7 +8,7 @@ Et system for håndtering og revisjon av studieplaner.
 
 ### 1. Klargjør miljøet
 
-1. Kopier `env_example` til `.env` i rotmappen (eller opprett `.env` selv).
+1. Kopier `env_example` til `.env` i rotmappen
 2. Fyll inn nødvendige miljøvariabler i `.env`.
 
 ### 2. Bygg og start med Docker Compose
@@ -43,17 +43,14 @@ studieplanrevisjon_V26/
 
 ---
 
-
 ## Nyttige kommandoer
 
-| Handling              | Kommando                 |
-| --------------------- | ------------------------ |
-| Bygg alle tjenester   | `docker compose build`   |
-| Start alle tjenester  | `docker compose up`      |
-| Stoppe alle tjenester | `docker compose down`    |
-| Sletter database volumet | `docker compose down`    |
-| Se logger             | `docker compose logs -f` |
+| Handling                 | Kommando                 |
+| ------------------------ | ------------------------ |
+| Bygg alle tjenester      | `docker compose build`   |
+| Start alle tjenester     | `docker compose up`      |
+| Stoppe alle tjenester    | `docker compose down`    |
+| Sletter database volumet | `docker compose down -v` |
+| Se logger                | `docker compose logs -f` |
 
 ---
-
-
