@@ -80,7 +80,7 @@ class Studyprogram(db.Model):
     __tablename__ = 'studyprogram'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
-    degree_type = db.Column(db.Enum('Bachelor', 'Master', name='degree_type'), nullable=False)
+    degree_type = db.Column(db.String(80), nullable=False)
     institute_id = db.Column(db.Integer, db.ForeignKey('institute.id'), nullable=False)
     semester_number = db.Column(db.Integer, nullable=False) # Antall semestre studieprogrammet går over
     is_active = db.Column(db.Boolean, default=True)
