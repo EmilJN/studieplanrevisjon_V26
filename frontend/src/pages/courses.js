@@ -2,10 +2,12 @@ import React, { useState, useEffect, useCallback, use } from "react";
 import { Link } from "react-router-dom";
 import { useCourses } from "../utils/CoursesContext";
 import { useNavigate } from "react-router-dom";
+import CreateCourseForm from "../components/createcourseform";
 
 const Courses = () => {
   const { courses } = useCourses();
   const navigate = useNavigate();
+  const [showCreateCourseForm, setShowCreateCourseForm] = useState(false);
   const [filteredCourses, setFilteredCourses] = useState(courses);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterOpen, setFilterOpen] = useState(false);
@@ -49,11 +51,18 @@ const Courses = () => {
   return (
     <div className="container py-4">
       <h1 className="mb-4">Oversikt over emner</h1>
-      <button className="btn btn-primary mb-3">
-        <Link to="/createcourse" className="btn btn-primary">
-          Legg til nytt emne
-        </Link>
+      <button
+        className="btn btn-primary mb-3"
+        onClick={() => setShowCreateCourseForm((prev) => !prev)}
+      >
+        {showCreateCourseForm ? "Lukk skjema" : "Legg til nytt emne"}
       </button>
+      {showCreateCourseForm && (
+        <div className="border rounded p-4 mb-3">
+          <h5 className="mb-3">Legg til nytt emne</h5>
+          <CreateCourseForm onSuccess={() => setShowCreateCourseForm(false)} />
+        </div>
+      )}
 
       <input
         type="text"

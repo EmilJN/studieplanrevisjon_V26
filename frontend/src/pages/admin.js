@@ -4,6 +4,7 @@ import AdminUserList from "../components/adminuserlist";
 import AdminLogPage from "../components/adminlogpage";
 import AdminProgramList from "../components/adminprogrampage";
 import AdminOverload from "../components/adminoverload";
+import ValgemneKategoriForm from "../components/valgemnekategoriform";
 
 const Admin = () => {
 
@@ -29,6 +30,10 @@ const Admin = () => {
                                 className={`btn ${activePage === 'programs' ? 'btn-primary' : 'btn-outline-secondary'}`}
                                 onClick={() => setActivePage('programs')}>
                                 Studieprogramliste</button>
+                            <button
+                                className={`btn ${activePage === 'valgemneKategorier' ? 'btn-primary' : 'btn-outline-secondary'}`}
+                                onClick={() => setActivePage('valgemneKategorier')}>
+                                Valgemne kategorier</button>
                         </div>
                     </div>
                     <div className="col-12 col-md-9">
@@ -37,6 +42,7 @@ const Admin = () => {
                         {activePage === 'logs' && <AdminLogPage />}
                         {activePage === 'programs' && <AdminProgramList />}
                         {activePage === 'overloadedprograms' && <AdminOverload />}
+                        {activePage === 'valgemneKategorier' && <ValgemneKategoriForm />}
                     </div>
                 </div>
             ) :

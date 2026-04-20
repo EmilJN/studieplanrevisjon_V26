@@ -38,11 +38,11 @@ const SemesterDisplay = ({
       console.error("VALGEMNE course not found.");
       return;
     }
-
     const updatedSemesters = addValgemneToSemester(semesterNumber, semesters, fetchedValgemneCourse);
     console.log("Updated semesters after adding valgemne:", updatedSemesters);
     setSemesters(updatedSemesters);
     setHasValgemne(true);
+    onAdministrerValgemner();
   }
 
   const handleRemoveValgemne = () => {
@@ -71,16 +71,29 @@ const SemesterDisplay = ({
   };
 
 
-
   return (
     <div className="semester-details">
       <div className="semester-header">
         <h3>{semesterTitle}</h3>
         {!readOnly && (
           <>
-            <button onClick={() => hasValgemne ? handleRemoveValgemne() : handleAddValgemne()} className="add-valgemne-button">
-              {hasValgemne ? 'Remove Valgemne' : 'Add Valgemne'}
+            <button
+              onClick={() => {
+                if (hasValgemne) {
+                  onAdministrerValgemner(); // ← manage existing valgemne
+                } else {
+                  handleAddValgemne(); // ← add + open overlay
+                }
+              }}
+              className="add-valgemne-button"
+            >
+              {hasValgemne ? 'Administrer Valgemne' : 'Add Valgemne'}
             </button>
+            {hasValgemne && (
+              <button onClick={handleRemoveValgemne} className="remove-valgemne-button">
+                Remove Valgemne
+              </button>
+            )}
           </>
         )}
       </div>

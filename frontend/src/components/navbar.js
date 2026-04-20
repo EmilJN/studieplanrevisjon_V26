@@ -18,22 +18,15 @@ const NavBar = () => {
         <>
           <div className="navbar-nav me-auto ms-3 gap-2">
 
-            <div className="nav-item dropdown">
-              <button className="dropdown-toggle btn btn-outline-light" data-bs-toggle="dropdown">
-                Emner
-              </button>
-              <ul className="dropdown-menu">
-                <li><NavLink className="dropdown-item" to="/courses">Oversikt over emner</NavLink></li>
-                <li><NavLink className="dropdown-item" to="/createcourse">Lag nytt emne</NavLink></li>
-              </ul>
-            </div>
+            <NavLink className="btn btn-outline-light" to="/courses">
+              Emner
+            </NavLink>
 
             <div className="nav-item dropdown">
               <button className="dropdown-toggle btn btn-outline-light" data-bs-toggle="dropdown">
                 Studieplaner
               </button>
               <ul className="dropdown-menu">
-                <li><NavLink className="dropdown-item" to="/studyprogram">Studieplaner</NavLink></li>
                 <li><NavLink className="dropdown-item" to="/createstudyprogram">Lag nytt studieprogram</NavLink></li>
                 <li><NavLink className="dropdown-item" to="/editstudyprogram">Rediger et studieprogram</NavLink></li>
               </ul>

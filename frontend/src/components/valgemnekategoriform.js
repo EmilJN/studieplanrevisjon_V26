@@ -100,48 +100,63 @@ const ValgemneKategoriForm = () => {
 
     return (
         <div>
-            <h2>Lag, endre eller fjern kategorier for valgemner</h2>
-            {Loading && <p>Loading categories...</p>}
-            {error && <p style={{ color: "red" }}>{error}</p>}
-            <div className="add-category">
+            <h2 className="mb-4">Lag, endre eller fjern kategorier for valgemner</h2>
+
+            {Loading && <p className="text-muted">Loading categories...</p>}
+            {error && <div className="alert alert-danger">{error}</div>}
+
+            <div className="input-group mb-4">
                 <input
                     type="text"
                     id="addingCategory"
                     name="addingCategory"
-                    placeholder="Enter category name"
+                    placeholder="Skriv kategorinavn..."
                     value={categoryName}
                     onChange={(e) => setCategoryName(e.target.value)}
+                    className="form-control"
                 />
-                <button onClick={handleAddCategory}>Add Category</button>
+                <button onClick={handleAddCategory} className="btn btn-success">
+                    Legg til kategori
+                </button>
             </div>
-            <ul>
+
+            <ul className="list-group mb-2">
                 {categories.map((category) => (
-                    <li key={category.id}>
+                    <li key={category.id} className="list-group-item">
                         {editingCategory && editingCategory.id === category.id ? (
-                            <div className="edit-category">
+                            <div className="input-group">
                                 <input
                                     type="text"
                                     id="editCategory"
                                     name="editCategory"
                                     value={editingCategory.name}
                                     onChange={(e) => handleEditCategory(category.id, e.target.value)}
+                                    className="form-control"
                                 />
-                                <button onClick={() => handleSaveCategory(category.id)}>Save</button>
-                                <button onClick={() => setEditingCategory(null)}>Cancel</button>
+                                <button onClick={() => handleSaveCategory(category.id)} className="btn btn-success">
+                                    Lagre
+                                </button>
+                                <button onClick={() => setEditingCategory(null)} className="btn btn-outline-secondary">
+                                    Avbryt
+                                </button>
                             </div>
                         ) : (
-                            <div className="category-item" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                            <div className="d-flex justify-content-between align-items-center">
                                 <span>{category.name}</span>
-                                <div style={{ display: "flex", gap: "10px" }}>
-                                    <button onClick={() => handleEditCategory(category.id, category.name)}>Rediger</button>
-                                    <button onClick={() => handleDeleteCategory(category.id)}>Slett</button>
+                                <div className="d-flex gap-2">
+                                    <button onClick={() => handleEditCategory(category.id, category.name)} className="btn btn-sm btn-outline-primary">
+                                        Rediger
+                                    </button>
+                                    <button onClick={() => handleDeleteCategory(category.id)} className="btn btn-sm btn-outline-danger">
+                                        Slett
+                                    </button>
                                 </div>
                             </div>
                         )}
                     </li>
                 ))}
-                <p>Kategorier med emner i en studieplan kan ikke slettes</p>
             </ul>
+            <p className="text-muted small">Kategorier med emner i en studieplan kan ikke slettes</p>
         </div>
     );
 };

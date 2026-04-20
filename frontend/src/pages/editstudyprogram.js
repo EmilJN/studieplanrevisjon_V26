@@ -11,6 +11,7 @@ import {
 } from "../utils/fetchHelpers";
 import { useAuth } from "../components/validateuser";
 import api from "../api";
+import { useNavigate } from "react-router-dom";
 
 const EditStudyProgram = () => {
   const [studyPrograms, setStudyPrograms] = useState([]); // Fetched study programs
@@ -24,6 +25,7 @@ const EditStudyProgram = () => {
   const [errors, setErrors] = useState({});
   const { currentUser } = useAuth;
   const [filterOpen, setFilterOpen] = useState(false);
+  const navigate = useNavigate();
   const [filters, setFilters] = useState({
     degree_type: "",
     institute_id: "",
@@ -82,9 +84,10 @@ const EditStudyProgram = () => {
           .then(() => {
             setStudyPrograms((prev) =>
               prev.map((p) =>
-                p.id === editingID ? {...p, ...editingProgram, 
+                p.id === editingID ? {
+                  ...p, ...editingProgram,
                   institute: institutes.find((i) => i.id === Number(editingProgram.institute)) || p.institute,
-                  }: p
+                } : p
               ));
             setEditingId(null);
           })
@@ -413,10 +416,16 @@ const EditStudyProgram = () => {
                       </div>
                       <div className="mt-3">
                         <button
-                          className="btn btn-primary"
+                          className="btn btn-outline-primary"
                           onClick={() => handleEditClick(program)}
                         >
                           Rediger studieprogram
+                        </button>
+                        <button
+                          className="btn btn-outline-primary"
+                          onClick={() => navigate(`/studyprograms/${program.id}`)}
+                        >
+                          Rediger studieplan
                         </button>
                       </div>
                     </td>
