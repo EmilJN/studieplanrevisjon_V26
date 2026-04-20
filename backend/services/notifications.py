@@ -47,7 +47,7 @@ class NotificationService:
             )
             print(f"Creating notification for program_id={program_id}, noti_id={noti_id}, group_id={notification_group_id}")
             self.db.add(notification)
-            self.send_send_email(program_id,source_program_id,message)
+            #self.send_send_email(program_id,source_program_id,message)
             self.db.commit()
             return notification.serialize()
         except Exception as e:

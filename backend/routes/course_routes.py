@@ -76,7 +76,6 @@ def delete_course(course_id):
 def update_course(course_id):
     try:
         data = request.json
-
         course_service = ServiceFactory.get_course_service()
         edit_as_new = data.get("editAsNewVersion", False)
         if edit_as_new:
@@ -88,7 +87,6 @@ def update_course(course_id):
                 credits=data.get("credits"),
                 degree=data.get("degree"),
             )
-            
         else:
             new_course = course_service.update_course(
                 course_id=course_id,
@@ -215,8 +213,6 @@ def update_subject(course_id):
     course.semester = data.get("semester", course.semester)
     course.credits = data.get("credits", course.credits)
     course.is_active = data.get("is_active", course.is_active)
-
-
     db.session.commit()
     return jsonify({"message": "Subject edited successfully"})
 

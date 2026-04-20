@@ -79,22 +79,41 @@ class CourseService:
         return course
     
     # Oppdater eksisterende emne
+    
     def update_course(self, course_id, name, courseCode, semester, credits, degree):
         course_to_update = self.get_course_by_id(course_id)
         if not course_to_update:
             raise ValueError(f"Course with ID {course_id} not found")
+        changes = []
+        def track_change(field_name, old_value, new_value):
+            if new_value is not None and old_value != new_value:
+                changes.append({
+                    "field": field_name,
+                    "old": old_value,
+                    "new": new_value
+                })
+                return new_value
+            return old_value
+
+        course_to_update.name = track_change("name", course_to_update.name, name)
+        course_to_update.courseCode = track_change("courseCode", course_to_update.courseCode, courseCode)
+        course_to_update.semester = track_change("semester", course_to_update.semester, semester)
+        course_to_update.credits = track_change("credits", course_to_update.credits, credits)
+        course_to_update.degree = track_change("degree", course_to_update.degree, degree)
+
+        log_text = f"Emne oppdatert {course_to_update.courseCode}"
+        if changes:
+            change_details = ", ".join(
+                f"{c['field']}: '{c['old']}' → '{c['new']}'" for c in changes
+            )
+            changes_string = f" | Endringer: {change_details}"
+            log_text += changes_string
+
         
-        course_to_update.name = name if name is not None else course_to_update.name
-        course_to_update.courseCode = courseCode if courseCode is not None else course_to_update.courseCode
-        course_to_update.semester = semester if semester is not None else course_to_update.semester
-        course_to_update.credits = credits if credits is not None else course_to_update.credits
-        course_to_update.degree = degree if degree is not None else course_to_update.degree
-
-        log = Log(f"Emne oppdatert {course_to_update.courseCode}")
-        self.db.add(log)
         self.db.commit()
+        
 
-        return course_to_update
+        return course_to_update, changes
 
         
     def new_course_version(self, course_id, name, courseCode, semester, credits, degree):
