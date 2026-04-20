@@ -93,6 +93,7 @@ def update_course(course_id):
                 credits=data.get("credits"),
                 degree=data.get("degree"),
             )
+            
         else:
             new_course = course_service.update_course(
                 course_id=course_id,

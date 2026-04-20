@@ -1,5 +1,6 @@
 from app import db
 from app.models import Course, Studyprogram, Studyplan, Institute, Semester, SemesterCourses, Log
+from services.prerequisite import PrerequisiteService
 from sqlalchemy import func, and_, or_, union, literal, text, literal_column
 from sqlalchemy.orm import joinedload
 from flask import jsonify, request
@@ -114,9 +115,8 @@ class CourseService:
 
         log = Log(f"Ny versjon av emne {new_course.courseCode} v{new_course.version}")
         self.db.add(log)
-
         self.db.commit()
-
+        PrerequisiteService.transfer_prerequisites(course_id, new_course.id)
         return new_course
     
     # Slett emne
@@ -212,7 +212,6 @@ class CourseService:
             .join(Studyplan, Studyplan.id == Semester.studyplan_id) \
             .join(Studyprogram, Studyprogram.id == Studyplan.studyprogram_id) \
             .all()
-            # Organize the results into a dictionary
             course_usage = {}
             for row in results:
                 if row.course_id not in course_usage:
