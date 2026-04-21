@@ -49,11 +49,11 @@ const DraggableCourse = ({
 
               className="remove-button"
             >
-              Remove
+              Fjern
             </button>
           )}
 
-          {isValgemne && semesterNumber && (
+          {isValgemne && (
             <button
               onClick={() => onAdministrerValgemner()}
               className="manage-valgemner-button"

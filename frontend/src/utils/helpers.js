@@ -42,77 +42,57 @@ export const handleBecomeNotInCharge = async (studyProgramId) => {
 
 // Used in studyprogramDetails.js(With Generate button) and used in generatestudyplan.js (without generate button)
 // Header func for "info at the top" of the study program detail and generate studyplan pages.
-export const StudyProgramHeader = ({ studyProgram, baseYear, onGenerate, setNotificationsRef }) => (
-  <div>
-    <h1>Studieprogram: {studyProgram.name}</h1>
-    <div className="header-actions">
+export const StudyProgramHeader = ({ studyProgram, baseYear, setNotificationsRef }) => (
+  <div className="d-flex justify-content-between align-items-start mb-4">
+    <div className="d-flex flex-column gap-1">
+      <h1 className="mb-0">Studieplaner for: {studyProgram.name}</h1>
       <Notifications
         programId={studyProgram.id}
         setNotificationsRef={setNotificationsRef}
       />
-      {onGenerate && (
-        <button onClick={onGenerate} className="generate-studyplan-button">
-          Generer ny studieplan
-        </button>
-      )}
-    </div>
-    <div className="studyprogram-columns">
-      <div className="studyprogram-column">
-        <strong>Inneværende år:</strong> {baseYear || "N/A"}
+      <div className="d-flex flex-column text-muted mt-1">
+        <span><strong>Grad type:</strong> {studyProgram.degree_type}</span>
+        <span><strong>Institutt:</strong> {studyProgram.institute_name}</span>
+        <span>
+          <strong>Ansvarlig:</strong>{" "}
+          {studyProgram.program_ansvarlig ? (
+            studyProgram.program_ansvarlig.name
+          ) : (
+            <button onClick={() => handleBecomeInCharge(studyProgram.id, studyProgram)} className="btn btn-sm btn-outline-secondary ms-1">
+              Bli Ansvarlig
+            </button>
+          )}
+        </span>
       </div>
-      <div className="studyprogram-column">
-        <strong>Grad type:</strong> {studyProgram.degree_type}
-      </div>
-      <div className="studyprogram-column">
-        <strong>Institutt:</strong> {studyProgram.institute_name}
-      </div>
-      {studyProgram.program_ansvarlig ?
-        <div className="studyprogram-column">
-          <strong>Ansvarlig:</strong> {studyProgram.program_ansvarlig.name}
-        </div> :
-        <div className="studyprogram-column">
-          <strong>Ansvarlig:</strong><button onClick={() => handleBecomeInCharge(studyProgram.id, studyProgram)}>
-            Bli Ansvarlig
-          </button>
-        </div>}
     </div>
   </div>
 );
-
-
 
 export const calculatedYear = (baseYear, semesterNumber, term) => {
   return parseInt(baseYear) + Math.floor((semesterNumber - 1) / 2) + (term === "V" ? 1 : 0);
 };
 
-
-
 // Used in studyprogramdetail.js for å lista opp tidligere studieplaner.
 export const PreviousStudyPlans = ({ plans, latestPlanId, studyprogramId, onViewPlan, currentPlanId }) => (
   <div>
-    <h2>Tidligere studieplaner</h2>
+    <h5 className="fw-semibold">Tidligere studieplaner</h5>
     {plans.length > 0 ? (
-      <ul className="previous-studyplans-list">
+      <div className="d-flex flex-column gap-2">
         {plans.slice(0, 8).map((plan) => (
-          <li key={plan.id} className="studyplan-list-item">
-            <span className={plan.id === latestPlanId ? "current-plan" : ""}>
-              Year: {plan.year} {plan.id === latestPlanId ? "(Current)" : ""}
-            </span>
-            <button
-              onClick={() => onViewPlan(plan.id)}
-              disabled={plan.id === currentPlanId}
-            >
-              {plan.id === currentPlanId ? "Currently Viewing" : "View"}
-            </button>
-          </li>
+          <button
+            key={plan.id}
+            className={`btn ${plan.id === currentPlanId ? "btn-primary" : "btn-outline-secondary"}`}
+            onClick={() => onViewPlan(plan.id)}
+            disabled={plan.id === currentPlanId}>
+            Year: {plan.year} {plan.id === latestPlanId ? "(Valgt)" : ""}
+          </button>
         ))}
-      </ul>
+      </div>
     ) : (
-      <p>Ingen tidligere studieplaner funnet.</p>
+      <p className="text-muted small">Ingen tidligere studieplaner funnet.</p>
     )}
   </div>
 );
-
 
 // used in valgemne.js, reuseable if needed.
 // Displaying search bar and autocomplete dropdown for subjects.

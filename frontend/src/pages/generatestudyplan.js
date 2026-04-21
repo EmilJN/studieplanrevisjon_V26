@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import api from "../api.js";
 import { useParams, useNavigate } from "react-router-dom";
-import "../styles/generatestudyplan.css";
 import "../styles/dragdrop.css";
 import ValgemneOverlay from "../components/valgemne.js";
 import {
@@ -131,7 +130,7 @@ const GenerateStudyplan = () => {
         })
       }
     >
-      <div>
+      <div className="container py-4">
         <StudyProgramHeader
           studyProgram={studyProgram}
           baseYear={newYear}
@@ -152,49 +151,56 @@ const GenerateStudyplan = () => {
           fetchedNotifications={fetchedNotifications}
         />
 
-
-
-        <div className="edit-toolbar">
-          <SearchCourses
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-            maxResults={10}
-            onResultsChange={setSearchResults}
-            allCourses={courses}
-            semesters={semesters}
-          />
+        {/* Action buttons */}
+        <div className="d-flex gap-2 mt-4 justify-content-end">
+          <button onClick={() => navigate(`/studyprograms/${id}`)} className="btn btn-outline-secondary">
+            Avbryt
+          </button>
+          <button onClick={handleSaveNewPlan} className="btn btn-success">
+            Lagre ny studieplan
+          </button>
         </div>
 
+        <div className="row">
+          <div className="col-12 col-md-12">
+            <div className="mb-3">
+              <SearchCourses
+                searchTerm={searchTerm}
+                setSearchTerm={setSearchTerm}
+                maxResults={10}
+                onResultsChange={setSearchResults}
+                allCourses={courses}
+                semesters={semesters}
+              />
+            </div>
 
-        <div className="semesters-section">
-          <h2>Semester Overview</h2>
-
-          <div className="semester-columns-container">
-            {semesterPairs.map((pair, pairIndex) => (
-              <div key={pairIndex} className="semester-pair">
-                {pair.map(semester => (
-                  <div key={`semester-${semester.semester_number}`} className="semester-box">
-                    <SemesterDisplay
-                      semesterId={semester.id}
-                      semesterNumber={semester.semester_number}
-                      courses={semester.semester_courses}
-                      year={calculatedYear(newYear, semester.semester_number, semester.term)}
-                      term={semester.term}
-                      onAdministrerValgemner={() => handleVisValgemner(semester.id, semester.semester_number)}
-                      readOnly={isEditMode}
-                      semesters={semesters}
-                      setSemesters={setSemesters}
-                      setFormattedValgemner={setFormattedValgemner}
-                      valgemneCourse={valgemneCourse}
-                      setSearchTerm={setSearchTerm}
-                    />
-                  </div>
-                ))}
-              </div>
-            ))}
+            <h5 className="fw-semibold mb-3">Semester Oversikt</h5>
+            <div className="d-flex flex-column gap-3">
+              {semesterPairs.map((pair, pairIndex) => (
+                <div key={pairIndex} className="row g-3">
+                  {pair.map(semester => (
+                    <div key={`semester-${semester.semester_number}`} className="col-md-6">
+                      <SemesterDisplay
+                        semesterId={semester.id}
+                        semesterNumber={semester.semester_number}
+                        courses={semester.semester_courses}
+                        year={calculatedYear(newYear, semester.semester_number, semester.term)}
+                        term={semester.term}
+                        onAdministrerValgemner={() => handleVisValgemner(semester.id, semester.semester_number)}
+                        readOnly={isEditMode}
+                        semesters={semesters}
+                        setSemesters={setSemesters}
+                        setFormattedValgemner={setFormattedValgemner}
+                        valgemneCourse={valgemneCourse}
+                        setSearchTerm={setSearchTerm}
+                      />
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-
         <ValgemneOverlay
           isOpen={showOverlay}
           closeOverlay={() => setShowOverlay(false)}
@@ -206,21 +212,6 @@ const GenerateStudyplan = () => {
           allCourses={courses}
           readOnly={false}
         />
-
-        <div className="action-buttons">
-          <button
-            onClick={() => navigate(`backend/studyprograms/${id}`)}
-            className="cancel-button"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleSaveNewPlan}
-            className="save-button"
-          >
-            Generate New Study Plan
-          </button>
-        </div>
       </div>
     </DragDropContext>
   );
