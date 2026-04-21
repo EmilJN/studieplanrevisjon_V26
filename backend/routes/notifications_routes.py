@@ -4,14 +4,11 @@ from app import db
 from services import ServiceFactory
 
 
-# http://localhost:5000/backend/notifications/
-# LA LINJÅ OPPFOR STÅ - brukan te å lett henta URLen te POSTMAN.
 
-# Create a Blueprint
+
 notification_bp = Blueprint('notifications', __name__)
 
-# Notification
-# get notifications
+
 @notification_bp.route("/", methods=["GET"])
 def get_notifications():
     try:
@@ -20,11 +17,11 @@ def get_notifications():
             return jsonify({"error": "Program ID is required"}), 400
 
         notifications = Notifications.query.filter_by(program_id=program_id).order_by(Notifications.created_at.desc()).all()
-
-        # Add term details if applicable
+        if notifications is None:
+            return jsonify({"error": "No notifications"}), 200
         for notification in notifications:
             if notification.noti_type == "course":
-                course = Course.query.get(notification.noti_id)
+                course = Course.query.get(notification.id)
                 if course:
                     semester_course = SemesterCourses.query.filter_by(course_id=course.id).first()
                     if semester_course:
@@ -35,7 +32,23 @@ def get_notifications():
         print(f"Error fetching notifications: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
+@notification_bp.route('/acknowledge', methods=['POST'])
+def acknowledge_notification():
+    try:
+        data = request.json
+        notification_id_list = data.get('notification_id_list')
 
+        if not notification_id_list:
+            return jsonify({"message": "No notifications to acknowledge"}), 200
+
+        notification_service = ServiceFactory.get_notification_service()
+        for notification_id in notification_id_list:
+            notification_service.acknowledge_notification(notification_id)
+
+        return jsonify({"success": True, "message": "Notification acknowledged"}), 200
+    except Exception as e:
+        print(f"Error acknowledging notification: {str(e)}")
+        return jsonify({"error": str(e)}), 500
 
 @notification_bp.route('/create-noti/prog', methods=['POST'])
 def create_prog_notification():
