@@ -1,5 +1,6 @@
 import api from "../api";
 import { useEffect, useState } from "react";
+import { useAuth } from "../components/validateuser";
 import { useLocation, useParams } from "react-router-dom";
 import AddPrerequisites from "../components/addprerequisites";
 import { Link } from "react-router-dom";
@@ -31,6 +32,7 @@ function CollapsibleSection({ title, children, defaultCollapsed = true }) {
 function CourseDetails() {
   const [editAsNewVersion, setEditAsNewVersion] = useState(false);
   const { id } = useParams();
+  const { isAuthenticated, logout, currentUser } = useAuth();
   const [subject, setSubject] = useState({});
   const [editingActive, setEditingActive] = useState(false);
   const [isPreReqVisible, setIsPreReqVisible] = useState(false);
@@ -103,10 +105,14 @@ function CourseDetails() {
 
   const handleSave = () => {
     api
-      .put(`/courses/${subject.id}`, { ...subject, editAsNewVersion })
+      .put(`/courses/${subject.id}`, {
+        ...subject,
+        editAsNewVersion,
+        user_id: currentUser.feide_id,
+      })
       .then((response) => {
         if (response) {
-          alert("Suksess");
+          alert(response.data.message);
         }
         Promise.all([
           api.get("/courses/" + subject.id),
@@ -389,7 +395,7 @@ function CourseDetails() {
           <h5 className="fw-semibold">Forkunnskaper</h5>
           <ul className="list-group mb-4">
             {subject.prerequisites !== undefined &&
-              subject.prerequisites.length > 0 ? (
+            subject.prerequisites.length > 0 ? (
               subject.prerequisites.map((element) => (
                 <li
                   key={element.id}

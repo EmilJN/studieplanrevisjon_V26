@@ -1,5 +1,5 @@
 from app import db
-from app.models import Course, Studyprogram, Studyplan, Institute, Semester, SemesterCourses, Log
+from app.models import Course, Studyprogram, Studyplan, Institute, Semester, SemesterCourses, Log, Notifications
 import uuid
 from services.prerequisite import PrerequisiteService
 from sqlalchemy import func, and_, or_, union, literal, text, literal_column
@@ -81,6 +81,7 @@ class CourseService:
     # Oppdater eksisterende emne
     
     def update_course(self, course_id, name, courseCode, semester, credits, degree):
+        
         course_to_update = self.get_course_by_id(course_id)
         if not course_to_update:
             raise ValueError(f"Course with ID {course_id} not found")
@@ -101,19 +102,16 @@ class CourseService:
         course_to_update.credits = track_change("credits", course_to_update.credits, credits)
         course_to_update.degree = track_change("degree", course_to_update.degree, degree)
 
-        log_text = f"Emne oppdatert {course_to_update.courseCode}"
+        log_text = f"Emne {course_to_update.courseCode} har blitt oppdatert "
         if changes:
             change_details = ", ".join(
                 f"{c['field']}: '{c['old']}' → '{c['new']}'" for c in changes
             )
             changes_string = f" | Endringer: {change_details}"
             log_text += changes_string
-
-        
         self.db.commit()
         
-
-        return course_to_update, changes
+        return course_to_update,log_text
 
         
     def new_course_version(self, course_id, name, courseCode, semester, credits, degree):
@@ -136,12 +134,12 @@ class CourseService:
         )
 
         self.db.add(new_course)
-
         log = Log(f"Ny versjon av emne {new_course.courseCode} v{new_course.version}")
         self.db.add(log)
         self.db.commit()
         PrerequisiteService.transfer_prerequisites(course_id, new_course.id)
-        return new_course
+        log_text = f"Ny versjon av emne {new_course.courseCode} har blitt opprettet"
+        return new_course,log_text
     
     # Slett emne
     def delete_course(self, course_id):
@@ -218,6 +216,18 @@ class CourseService:
         except Exception as e:
             print(f"Error getting VALGEMNE courses: {str(e)}")
             return None
+        
+    def get_studyprograms_by_course(self, course_id):
+        studyprograms = (
+            self.db.query(Studyprogram)
+            .join(Studyplan, Studyprogram.id == Studyplan.studyprogram_id)
+            .join(Semester, Studyplan.id == Semester.studyplan_id)
+            .join(SemesterCourses, Semester.id == SemesterCourses.semester_id)
+            .filter(SemesterCourses.course_id == course_id)
+            .distinct()
+            .all()
+        )
+        return studyprograms
 
     def get_course_usage(self):
         try:

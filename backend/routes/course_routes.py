@@ -77,9 +77,13 @@ def update_course(course_id):
     try:
         data = request.json
         course_service = ServiceFactory.get_course_service()
+        notifcation_service = ServiceFactory.get_notification_service()
         edit_as_new = data.get("editAsNewVersion", False)
+        editor_id = data.get("user_id")
+        
+        affected_studyprograms = course_service.get_studyprograms_by_course(course_id)
         if edit_as_new:
-            new_course = course_service.new_course_version(
+            new_course,log_text = course_service.new_course_version(
                 course_id=course_id,
                 name=data.get("name"),
                 courseCode=data.get("courseCode"),
@@ -88,7 +92,7 @@ def update_course(course_id):
                 degree=data.get("degree"),
             )
         else:
-            new_course = course_service.update_course(
+            new_course,log_text = course_service.update_course(
                 course_id=course_id,
                 name=data.get("name"),
                 courseCode=data.get("courseCode"),
@@ -96,9 +100,20 @@ def update_course(course_id):
                 credits=data.get("credits"),
                 degree=data.get("degree"),
             )
+        notification_group_id = notifcation_service.generate_notification_group_id()
+        for studyprogram in affected_studyprograms:
+            notifcation_service.create_course_notification(
+                program_id = studyprogram.id,
+                sender_id=editor_id,
+                recipient_id=studyprogram.program_ansvarlig_id,
+                reason="Emnet oppdatert" if not edit_as_new else "Ny emneversjon opprettet",
+                message=log_text,
+                course_id=course_id,
+                notification_group_id=notification_group_id,
+            )
 
         return jsonify({
-            "message": "New course version created" if edit_as_new else "Course updated",
+            "message": "Ny emneversjon opprettet" if edit_as_new else "Emnet oppdatert",
             "course": new_course.serialize(),
             "version": new_course.version,
             "course_group_id": new_course.course_group_id
