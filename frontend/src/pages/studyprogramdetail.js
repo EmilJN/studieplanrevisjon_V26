@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import "../styles/studyprogramdetail.css";
 import "../styles/dragdrop.css";
 import ValgemneOverlay from "../components/valgemne.js";
 import {
@@ -124,8 +123,8 @@ const StudyProgramDetail = () => {
   };
 
   const handleDeleteStudyPlan = (e) => {
-      api.delete("/studyplans/"+e)
-      .then(() => window.location.reload() )
+    api.delete("/studyplans/" + e)
+      .then(() => window.location.reload())
   }
 
   if (loading) return <p>Loading...</p>;
@@ -152,7 +151,7 @@ const StudyProgramDetail = () => {
         });
       }}
     >
-      <div>
+      <div className="container py-4">
         <StudyProgramHeader
           studyProgram={studyProgram}
           baseYear={latestStudyPlan?.year}
@@ -178,53 +177,91 @@ const StudyProgramDetail = () => {
           onCancel={() => setShowConflictSummary(false)}
           sourceProgram={studyProgram}
           fetchedNotifications={fetchedNotifications}
-
         />
 
-        {/* Search bar if in edit mode */}
-        {isEditMode && (
-          <div className="edit-toolbar">
-            <SearchCourses
-              searchTerm={searchTerm}
-              setSearchTerm={setSearchTerm}
-              maxResults={10}
-              onResultsChange={setSearchResults}
-              allCourses={courses}
-              semesters={semesters}
-            />
+        {/* Action buttons */}
+        <div className="d-flex gap-2 mt-4 justify-content-end">
+          <button
+            onClick={() => navigate(`/generatestudyplan/${id}`, { state: { studyProgram, year: latestStudyPlan?.year + 1 } })}
+            className="btn btn-outline-primary">
+            Lag ny studieplan
+          </button>
+          <button
+            onClick={() => setIsEditMode(!isEditMode)}
+            className={`btn ${isEditMode ? "btn-outline-danger" : "btn-primary"}`}>
+            {isEditMode ? "Avbryt" : "Rediger"}
+          </button>
+          {!isEditMode && (
+            <button
+              className="btn btn-outline-danger"
+              onClick={() => { if (window.confirm(`Er du sikker på at du vil slette denne studieplanen?`)) handleDeleteStudyPlan(latestStudyPlan.id) }} >Slett studieplanen</button>
+          )}
+          {isEditMode && (
+            <button
+              onClick={handleUpdateStudyPlan}
+              className="btn btn-success">
+              Lagre studieplanen
+            </button>
+          )}
+          <button className="btn btn-outline-secondary" onClick={() => exportStudyPlan(studyProgram.id)}>
+            Eksporter til word
+          </button>
+        </div>
+        <div className="row">
+          <div className="col-12 col-md-3">
+            {/* Previous study plans */}
+            {previousStudyPlans.length > 0 && (
+              <PreviousStudyPlans
+                plans={previousStudyPlans}
+                latestPlanId={latestStudyPlan?.id}
+                studyprogramId={id}
+                onViewPlan={handleViewPlan}
+                currentPlanId={selectedPlanId}
+              />
+            )}
           </div>
-        )}
-
-        <div className="semesters-section">
-          <h2>Semester Overview</h2>
-
-          <div className="semester-columns-container">
-            {semesterPairs.map((pair, pairIndex) => (
-              <div key={pairIndex} className="semester-pair">
-                {pair.map((semester) => (
-                  <div key={`semester-${semester.semester_number}`} className="semester-box">
-                    <SemesterDisplay
-                      semesterId={semester.id}
-                      semesterNumber={semester.semester_number}
-                      courses={semester.semester_courses}
-                      year={calculatedYear(latestStudyPlan?.year, semester.semester_number, semester.term)}
-                      term={semester.term}
-                      onAdministrerValgemner={() => handleVisValgemner(semester.id, semester.semester_number)}
-                      readOnly={!isEditMode}
-                      setFormattedValgemner={setFormattedValgemner}
-                      semesters={semesters}
-                      setSemesters={setSemesters}
-                      valgemneCourse={valgemneCourse}
-                      setSearchTerm={setSearchTerm}
-                    />
-                  </div>
-                ))}
+          <div className="col-12 col-md-9">
+            {/* Search bar if in edit mode */}
+            {isEditMode && (
+              <div className="mb-3">
+                <SearchCourses
+                  searchTerm={searchTerm}
+                  setSearchTerm={setSearchTerm}
+                  maxResults={10}
+                  onResultsChange={setSearchResults}
+                  allCourses={courses}
+                  semesters={semesters}
+                />
               </div>
-            ))}
+            )}
+
+            <h5 className="fw-semibold mb-3">Semester Oversikt</h5>
+            <div className="d-flex flex-column gap-3">
+              {semesterPairs.map((pair, pairIndex) => (
+                <div key={pairIndex} className="row g-3">
+                  {pair.map((semester) => (
+                    <div key={`semester-${semester.semester_number}`} className="col-md-6">
+                      <SemesterDisplay
+                        semesterId={semester.id}
+                        semesterNumber={semester.semester_number}
+                        courses={semester.semester_courses}
+                        year={calculatedYear(latestStudyPlan?.year, semester.semester_number, semester.term)}
+                        term={semester.term}
+                        onAdministrerValgemner={() => handleVisValgemner(semester.id, semester.semester_number)}
+                        readOnly={!isEditMode}
+                        setFormattedValgemner={setFormattedValgemner}
+                        semesters={semesters}
+                        setSemesters={setSemesters}
+                        valgemneCourse={valgemneCourse}
+                        setSearchTerm={setSearchTerm}
+                      />
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-
-
         {/* Valgemne overlay */}
         <ValgemneOverlay
           isOpen={showOverlay}
@@ -237,45 +274,8 @@ const StudyProgramDetail = () => {
           allCourses={courses}
           readOnly={!isEditMode}
         />
-
-        {/* Action buttons */}
-        <div className="action-buttons">
-          <button onClick={() => exportStudyPlan(studyProgram.id)}>
-            Eksporter til word
-          </button>
-
-          <button
-            onClick={() => setIsEditMode(!isEditMode)}
-            className={isEditMode ? "edit-button active" : "edit-button"}
-          >
-            {isEditMode ? "Avbryt" : "Rediger"}
-          </button>
-
-            {!isEditMode &&(
-          <button onClick={() => { if (window.confirm(`Er du sikker på at du vil slette denne studieplanen?`)) handleDeleteStudyPlan(latestStudyPlan.id) } } >Slett studieplanen</button>
-            )}
-          {isEditMode && (
-            <button
-              onClick={handleUpdateStudyPlan}
-              className="save-button"
-            >
-              Lagre studieplanen
-            </button>
-          )}
-        </div>
-
-        {/* Previous study plans */}
-        {previousStudyPlans.length > 0 && (
-          <PreviousStudyPlans
-            plans={previousStudyPlans}
-            latestPlanId={latestStudyPlan?.id}
-            studyprogramId={id}
-            onViewPlan={handleViewPlan}
-            currentPlanId={selectedPlanId}
-          />
-        )}
       </div>
-    </DragDropContext>
+    </DragDropContext >
   );
 };
 

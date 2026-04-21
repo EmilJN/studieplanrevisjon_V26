@@ -23,7 +23,7 @@ const SemesterDisplay = ({
   const [hasValgemne, setHasValgemne] = useState(false);
   const semesterTitle = `Semester ${semesterNumber}: ${year}-${term}`;
   const displayCourses = courses || [];
-  const regularCourses = displayCourses.filter((course) => !course.is_elective);
+  const regularCourses = displayCourses.filter((course) => !course.is_elective || course.courseCode === 'VALGEMNE');
   const fetchedValgemneCourse = valgemneCourse || allCourses.find((course) => course.courseCode === 'VALGEMNE');
 
 
@@ -72,11 +72,11 @@ const SemesterDisplay = ({
 
 
   return (
-    <div className="semester-details">
-      <div className="semester-header">
-        <h3>{semesterTitle}</h3>
+    <div className="border rounded p-3 mb-3">
+      <div className="d-flex justify-content-between align-items-center mb-2">
+        <h6 className="mb-0 fw-semibold">{semesterTitle}</h6>
         {!readOnly && (
-          <>
+          <div className="d-flex gap-2">
             <button
               onClick={() => {
                 if (hasValgemne) {
@@ -85,16 +85,16 @@ const SemesterDisplay = ({
                   handleAddValgemne(); // ← add + open overlay
                 }
               }}
-              className="add-valgemne-button"
+              className="btn btn-sm btn-secondary"
             >
-              {hasValgemne ? 'Administrer Valgemne' : 'Add Valgemne'}
+              {hasValgemne ? 'Administrer Valgemne' : 'Legg til Valgemne'}
             </button>
             {hasValgemne && (
-              <button onClick={handleRemoveValgemne} className="remove-valgemne-button">
-                Remove Valgemne
+              <button onClick={handleRemoveValgemne} className="btn btn-sm btn-outline-danger">
+                Fjern Valgemne
               </button>
             )}
-          </>
+          </div>
         )}
       </div>
       <DroppableSemester
@@ -105,8 +105,8 @@ const SemesterDisplay = ({
         onAdministrerValgemner={onAdministrerValgemner}
         readOnly={readOnly}
       />
-      <div className="semester-credits">
-        Total Credits: {regularCourses.reduce((sum, course) => sum + (course.credits || 0), 0)}
+      <div className="text-muted small mt-2 text-end">
+        Antall studiepoeng: {regularCourses.reduce((sum, course) => sum + (course.credits || 0), 0)}
       </div>
     </div>
   );
