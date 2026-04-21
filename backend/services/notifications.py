@@ -32,22 +32,41 @@ class NotificationService:
         except Exception as e:
             print(f"Error finding notification group ID: {str(e)}")
             return None
+        
+    def create_course_notification(self,program_id,sender_id,recipient_id,reason, message, course_id,notification_group_id):
+        try:
+            notification = Notifications(
+                recipient_id=recipient_id,
+                sender_id=sender_id,
+                program_id=program_id,
+                course_id=course_id,
+                reason=reason,
+                message=message,
+                noti_type="course",  
+                notification_group_id=notification_group_id,
+            )
+            self.db.add(notification)
+            self.db.commit()
+            return notification.serialize()
+        except Exception as e:
+            self.db.rollback()
+            return (f"Error creating course notification: {str(e)}")
 
-    def create_prog_notification(self, program_id, source_program_id, message, noti_type, noti_id, notification_group_id, target_term):
+        
+    def create_prog_notification(self, program_id, source_program_id, message, noti_type, notification_group_id, target_term):
         try:
             notification = Notifications(
                 program_id=program_id,
                 source_program_id=source_program_id,
                 message=message,
                 noti_type=noti_type,
-                noti_id=noti_id,
-                notification_group_id=notification_group_id,
+                notification_group_id=self.generate_notification_group_id(),
                 target_term=target_term,
-                # created_at=datetime.now(),
+                created_at=datetime.now()
             )
             print(f"Creating notification for program_id={program_id}, noti_id={noti_id}, group_id={notification_group_id}")
             self.db.add(notification)
-            self.send_send_email(program_id,source_program_id,message)
+            #self.send_send_email(program_id,source_program_id,message)
             self.db.commit()
             return notification.serialize()
         except Exception as e:

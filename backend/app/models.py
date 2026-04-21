@@ -1,5 +1,5 @@
 from app import db
-from datetime import timezone
+import datetime
 import datetime
 import pytz
 prerequisites = db.Table(
@@ -202,17 +202,17 @@ class Notifications(db.Model):
     __tablename__ = 'notifications'
     id = db.Column(db.Integer, primary_key=True)
     program_id = db.Column(db.Integer, db.ForeignKey('studyprogram.id'), nullable=True)
+    course_id = db.Column(db.Integer, db.ForeignKey('course.id'), nullable=True)
     source_program_id = db.Column(db.Integer, db.ForeignKey('studyprogram.id'), nullable=True)
     recipient_id = db.Column(db.String(128), db.ForeignKey('user.feide_id'), nullable=True)
     sender_id = db.Column(db.String(128), db.ForeignKey('user.feide_id'), nullable=True)
     message = db.Column(db.String(200), nullable=False)
-    # reason = db.Column(db.String(200), nullable=True)
+    reason = db.Column(db.String(200), nullable=True)
     is_acknowledged = db.Column(db.Boolean, default=False)
     is_solved = db.Column(db.Boolean, default=False, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.datetime.now(datetime.timezone.utc), nullable=False)
     email_sent = db.Column(db.Boolean, default=False)
     noti_type = db.Column(db.Enum('studyprogram', 'studyplan', 'course', 'user', 'institute', name='noti_type'), nullable=False)
-    noti_id = db.Column(db.Integer, nullable=False)
     notification_group_id = db.Column(db.String(100), nullable=True)
     target_term = db.Column(db.Enum('H', 'V', name='semester_type'), nullable=True)
 
@@ -224,11 +224,11 @@ class Notifications(db.Model):
     def serialize(self):
         result = {
             "id": self.id, 
+            "reason": self.reason,
             "message": self.message,
             "notification_group_id": self.notification_group_id,
             "created_at": self.created_at.isoformat(),
             "noti_type": self.noti_type,
-            "noti_id": self.noti_id,
             "is_solved": self.is_solved,
             "target_term": self.target_term,
         }
@@ -256,15 +256,16 @@ class Notifications(db.Model):
         else:
             return f'<User Notification {self.id}>'
     
-    def __init__(self, message, noti_type, noti_id, is_acknowledged=False, is_solved=False, program_id=None, source_program_id=None, recipient_id=None, sender_id=None, notification_group_id=None, target_term=None):
+    def __init__(self, course_id=None,notification_group_id = None, message=None, noti_type=None, reason=None, is_acknowledged=False, is_solved=False, program_id=None, source_program_id=None, recipient_id=None, sender_id=None,  target_term=None):
         self.notification_group_id = notification_group_id
         self.message = message
+        self.reason = reason
         self.noti_type = noti_type
-        self.noti_id = noti_id
-        self.is_acknowledged = is_acknowledged
+        self.is_acknowledged = is_acknowledged 
         self.is_solved = is_solved
         self.target_term = target_term
-        # self.created_at = datetime.utcnow()
+        self.course_id = course_id
+
         
         if program_id is not None:
             self.program_id = program_id
@@ -278,7 +279,6 @@ class Notifications(db.Model):
         if sender_id is not None:
             self.sender_id = sender_id
 
-        # self.created_at = datetime.now
 
 
 class SemesterCourses(db.Model):
@@ -288,7 +288,6 @@ class SemesterCourses(db.Model):
     course_id = db.Column(db.Integer, db.ForeignKey('course.id'), nullable=False)
     is_elective = db.Column(db.Boolean, default=False)
     category_id = db.Column(db.Integer, db.ForeignKey('elective_groups.id'), nullable=True)
-
     semester = db.relationship('Semester', back_populates='semester_courses')
     course = db.relationship('Course', back_populates='semester_courses', lazy='joined')
     category = db.relationship('ElectiveGroup', backref='semester_courses', lazy='joined')

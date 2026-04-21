@@ -1,13 +1,39 @@
 import api from "../api";
 import { useEffect, useState } from "react";
+import { useAuth } from "../components/validateuser";
 import { useLocation, useParams } from "react-router-dom";
 import AddPrerequisites from "../components/addprerequisites";
 import { Link } from "react-router-dom";
 
+function CollapsibleSection({ title, children, defaultCollapsed = true }) {
+  const [collapsed, setCollapsed] = useState(defaultCollapsed);
+
+  return (
+    <div className="card mb-3 shadow-sm">
+      <div className="card-header bg-light">
+        <button
+          className="btn btn-sm w-100 text-start d-flex justify-content-between align-items-center"
+          type="button"
+          onClick={() => setCollapsed((c) => !c)}
+          aria-expanded={!collapsed}
+        >
+          <span className="fw-semibold">{title}</span>
+          <span>{collapsed ? ">" : "v"}</span>
+        </button>
+      </div>
+
+      <div className={`collapse ${!collapsed ? "show" : ""}`}>
+        <div className="card-body">{children}</div>
+      </div>
+    </div>
+  );
+}
+
 function CourseDetails() {
   const [editAsNewVersion, setEditAsNewVersion] = useState(false);
   const { id } = useParams();
-  const [subject, setSubject] = useState({}); // spesifik emne
+  const { isAuthenticated, logout, currentUser } = useAuth();
+  const [subject, setSubject] = useState({});
   const [editingActive, setEditingActive] = useState(false);
   const [isPreReqVisible, setIsPreReqVisible] = useState(false);
   const [studyPrograms, setStudyPrograms] = useState([]);
@@ -69,7 +95,6 @@ function CourseDetails() {
     }
   }
 
-  //endrer verdiene når de blir endret
   const handleFieldChange = (e) => {
     const { name, value } = e.target;
     setSubject((prev) => ({
@@ -80,10 +105,14 @@ function CourseDetails() {
 
   const handleSave = () => {
     api
-      .put(`/courses/${subject.id}`, { ...subject, editAsNewVersion })
+      .put(`/courses/${subject.id}`, {
+        ...subject,
+        editAsNewVersion,
+        user_id: currentUser.feide_id,
+      })
       .then((response) => {
         if (response) {
-          alert("Suksess");
+          alert(response.data.message);
         }
         Promise.all([
           api.get("/courses/" + subject.id),
@@ -131,7 +160,6 @@ function CourseDetails() {
     api
       .delete(`/prerequisites/remove/${subject.id}/${e.id}`)
       .then(() => {
-        // Last inn data på nytt uten reload
         api.get("/courses/" + id).then((response) => setSubject(response.data));
       })
       .catch((error) => {
@@ -209,37 +237,44 @@ function CourseDetails() {
               </div>
             </div>
 
-            <h5 className="fw-semibold">Blir brukt i:</h5>
-            <ul className="list-group mb-4">
-              {studyPrograms && studyPrograms.length > 0 ? (
-                studyPrograms.map((element) => (
-                  <li
-                    key={element.name + element.year}
-                    className="list-group-item"
-                  >
-                    {element.name} - Årskull: {element.year} -
-                    {element.mandatory ? "Obligatorisk" : "Valgemne"}
-                  </li>
-                ))
-              ) : (
-                <li className="list-group-item text-muted">Ingen</li>
-              )}
-            </ul>
-
-            <h5 className="fw-semibold">Overlapper med:</h5>
-            <ul className="list-group mb-4">
-              {overlappingCourses && overlappingCourses.length > 0 ? (
-                overlappingCourses.map((element) => (
-                  <li key={element.id} className="list-group-item">
-                    <a href={`/courses/details/${element.id}`}>
-                      {element.name}
-                    </a>
-                  </li>
-                ))
-              ) : (
-                <li className="list-group-item text-muted">Ingen</li>
-              )}
-            </ul>
+            <CollapsibleSection
+              title={`Blir brukt i (${studyPrograms.length})`}
+              defaultCollapsed={true}
+            >
+              <ul className="list-group mb-4">
+                {studyPrograms && studyPrograms.length > 0 ? (
+                  studyPrograms.map((element) => (
+                    <li
+                      key={element.name + element.year}
+                      className="list-group-item"
+                    >
+                      {element.name} - Årskull: {element.year} -
+                      {element.mandatory ? "Obligatorisk" : "Valgemne"}
+                    </li>
+                  ))
+                ) : (
+                  <li className="list-group-item text-muted">Ingen</li>
+                )}
+              </ul>
+            </CollapsibleSection>
+            <CollapsibleSection
+              title={`Overlappende (${overlappingCourses.length})`}
+              defaultCollapsed={true}
+            >
+              <ul className="list-group mb-4">
+                {overlappingCourses && overlappingCourses.length > 0 ? (
+                  overlappingCourses.map((element) => (
+                    <li key={element.id} className="list-group-item">
+                      <a href={`/courses/details/${element.id}`}>
+                        {element.name}
+                      </a>
+                    </li>
+                  ))
+                ) : (
+                  <li className="list-group-item text-muted">Ingen</li>
+                )}
+              </ul>
+            </CollapsibleSection>
             <div className="form-check mb-3">
               <input
                 className="form-check-input"
@@ -255,6 +290,13 @@ function CourseDetails() {
                 Lagre emnet som en ny variant, slik at den gamle versjonen
                 fortsatt er tilgjengelig.
               </div>
+              {studyPrograms.length > 0 && (
+                <div className="alert alert-warning mt-2">
+                  Dette emnet brukes i {studyPrograms.length} studieprogrammer.
+                  Hvis du gjør endringer uten å opprette en ny versjon, vil det
+                  sendes e-post til alle berørte programmeransvarlige.
+                </div>
+              )}
             </div>
             <div className="d-flex gap-2">
               <button className="btn btn-success" onClick={handleSave}>
@@ -353,7 +395,7 @@ function CourseDetails() {
           <h5 className="fw-semibold">Forkunnskaper</h5>
           <ul className="list-group mb-4">
             {subject.prerequisites !== undefined &&
-              subject.prerequisites.length > 0 ? (
+            subject.prerequisites.length > 0 ? (
               subject.prerequisites.map((element) => (
                 <li
                   key={element.id}
@@ -390,71 +432,86 @@ function CourseDetails() {
               />
             </div>
           )}
-
-          <h5 className="fw-semibold">Blir brukt i:</h5>
-          <ul className="list-group mb-4">
-            {studyPrograms && studyPrograms.length > 0 ? (
-              studyPrograms.map((element) => (
-                <li
-                  key={element.name + element.year}
-                  className="list-group-item"
-                >
-                  {element.name} - Årskull: {element.year} -
-                  {element.mandatory ? "Obligatorisk" : "Valgemne"}
-                </li>
-              ))
-            ) : (
-              <li className="list-group-item text-muted">Ingen</li>
-            )}
-          </ul>
-          <h5 className="fw-semibold">Tidligere versjoner:</h5>
-          <ul className="list-group mb-4">
-            {previousCourses.length > 0 ? (
-              previousCourses.map((c) => (
-                <li key={c.id} className="list-group-item">
-                  <Link
-                    to={`/courses/details/${c.id}`}
-                    className="stretched-link text-decoration-none"
+          <CollapsibleSection
+            title={`Blir brukt i (${studyPrograms.length})`}
+            defaultCollapsed={true}
+          >
+            <ul className="list-group mb-4">
+              {studyPrograms && studyPrograms.length > 0 ? (
+                studyPrograms.map((element) => (
+                  <li
+                    key={element.name + element.year}
+                    className="list-group-item"
                   >
-                    {c.name} - Versjon: {c.version}
-                  </Link>
-                </li>
-              ))
-            ) : (
-              <li className="list-group-item text-muted">Ingen</li>
-            )}
-          </ul>
-
-          <h5 className="fw-semibold">Nyere versjoner:</h5>
-          <ul className="list-group mb-4">
-            {newerCourses.length > 0 ? (
-              newerCourses.map((c) => (
-                <li key={c.id} className="list-group-item">
-                  <Link
-                    to={`/courses/details/${c.id}`}
-                    className="stretched-link text-decoration-none"
-                  >
-                    {c.name} - Versjon: {c.version}
-                  </Link>
-                </li>
-              ))
-            ) : (
-              <li className="list-group-item text-muted">Ingen</li>
-            )}
-          </ul>
-
-          <h5 className="fw-semibold">Overlapper med:</h5>
-          <ul className="list-group mb-4">
-            {overlappingCourses && overlappingCourses.length > 0 ? (
-              overlappingCourses.map((element) => (
-                <li key={element.id} className="list-group-item">
-                  <a href={`/courses/details/${element.id}`}>{element.name}</a>
-                </li>
-              ))
-            ) : (
-              <li className="list-group-item text-muted">Ingen</li>
-            )}
-          </ul>
+                    {element.name} - Årskull: {element.year} -
+                    {element.mandatory ? "Obligatorisk" : "Valgemne"}
+                  </li>
+                ))
+              ) : (
+                <li className="list-group-item text-muted">Ingen</li>
+              )}
+            </ul>
+          </CollapsibleSection>
+          <CollapsibleSection
+            title={`Overlapper med (${overlappingCourses.length})`}
+            defaultCollapsed={true}
+          >
+            <ul className="list-group mb-4">
+              {overlappingCourses && overlappingCourses.length > 0 ? (
+                overlappingCourses.map((element) => (
+                  <li key={element.id} className="list-group-item">
+                    <a href={`/courses/details/${element.id}`}>
+                      {element.name}
+                    </a>
+                  </li>
+                ))
+              ) : (
+                <li className="list-group-item text-muted">Ingen</li>
+              )}
+            </ul>
+          </CollapsibleSection>
+          <CollapsibleSection
+            title={`Tidligere versjoner (${previousCourses.length})`}
+            defaultCollapsed={true}
+          >
+            <ul className="list-group mb-4">
+              {previousCourses.length > 0 ? (
+                previousCourses.map((c) => (
+                  <li key={c.id} className="list-group-item">
+                    <Link
+                      to={`/courses/details/${c.id}`}
+                      className="stretched-link text-decoration-none"
+                    >
+                      {c.name} - Versjon: {c.version}
+                    </Link>
+                  </li>
+                ))
+              ) : (
+                <li className="list-group-item text-muted">Ingen</li>
+              )}
+            </ul>
+          </CollapsibleSection>
+          <CollapsibleSection
+            title={`Nyere versjoner (${newerCourses.length})`}
+            defaultCollapsed={true}
+          >
+            <ul className="list-group mb-4">
+              {newerCourses.length > 0 ? (
+                newerCourses.map((c) => (
+                  <li key={c.id} className="list-group-item">
+                    <Link
+                      to={`/courses/details/${c.id}`}
+                      className="stretched-link text-decoration-none"
+                    >
+                      {c.name} - Versjon: {c.version}
+                    </Link>
+                  </li>
+                ))
+              ) : (
+                <li className="list-group-item text-muted">Ingen</li>
+              )}
+            </ul>
+          </CollapsibleSection>
         </div>
       </div>
     </div>

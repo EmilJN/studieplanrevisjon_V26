@@ -112,7 +112,7 @@ function AddPrerequisites({ parentSubject, onPrereqsAdded }) {
                   parentSubject.prerequisites
                     .map((p) => p.name)
                     .includes(subject.name)
-                ),
+                )
             )
             .map((subject) => (
               <tr key={subject.id}>

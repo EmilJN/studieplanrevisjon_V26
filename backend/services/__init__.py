@@ -8,3 +8,4 @@ from services.notifications import NotificationService
 from services.user import UserService
 from services.semester import SemesterService
 from services.semestercourses import SemesterCoursesService
+
