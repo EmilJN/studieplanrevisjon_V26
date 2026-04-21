@@ -1,6 +1,7 @@
 from app import db
 from services.studyplan import StudyplanService
 from services.studyprogram import StudyprogramService
+from services.coursepackage import CoursePackageService
 from services.course import CourseService
 from services.notifications import NotificationService
 from services.user import UserService
@@ -18,6 +19,12 @@ class ServiceFactory:
             cls._instances['course'] = CourseService(db_session=db.session)
 
         return cls._instances['course']
+    
+    @classmethod
+    def get_coursepackage_service(cls):
+        if 'coursepackage' not in cls._instances:
+            cls._instances['coursepackage'] = CoursePackageService(db_session=db.session)
+        return cls._instances['coursepackage']
     
     @classmethod
     def get_studyprogram_service(cls):

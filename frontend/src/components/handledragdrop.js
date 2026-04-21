@@ -139,7 +139,7 @@ export const handleDragEnd = async ({
 
         const courseToMove = sourceSemester.semester_courses[source.index];
 
-        if (courseToMove && courseToMove.courseCode === "VALGEMNE") {
+        if (courseToMove && courseToMove.courseCode.includes("VALGEMNE")) {
             setErrorMessage("Valgemne cannot be moved between semesters.");
             return;
         }

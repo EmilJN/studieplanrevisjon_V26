@@ -200,12 +200,16 @@ class CourseService:
     def get_valgemne_course(self):
         try:
             valgemne_course = self.db.query(Course).filter(
-                and_(Course.courseCode == 'VALGEMNE', Course.credits == 0)
+                and_(
+                    Course.courseCode.ilike('%VALGEMNE%'),
+                    Course.credits == 0
+                )
             ).first()
-            return valgemne_course if valgemne_course else None
+            return valgemne_course
         except Exception as e:
             print(f"Error getting VALGEMNE course: {str(e)}")
             return None
+    
     def get_all_valgemner(self):
         try:
             valgemne_courses = self.db.query(Course).filter(Course.courseCode == 'VALGEMNE').all()

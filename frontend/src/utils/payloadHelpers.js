@@ -6,7 +6,7 @@ export const createNewStudyplanPayload = (semesters, formattedValgemner) => {
         const semesterNumber = semester.semester_number;
 
         semesterCoursesData[semesterNumber] = semester.semester_courses
-            .filter((course) => course.courseCode !== "VALGEMNE")
+            .filter((course) => !course.courseCode.includes("VALGEMNE"))
             .map((course) => ({
                 course_id: course.id,
                 is_elective: false,
@@ -34,7 +34,7 @@ export const updateStudyPlanPayload = (studyPlanId, semesters, formattedValgemne
         const semesterNumber = semester.semester_number;
 
         semesterCoursesData[semesterNumber] = semester.semester_courses
-            .filter((course) => course.courseCode !== "VALGEMNE")
+            .filter((course) => !course.courseCode.includes("VALGEMNE"))
             .map((course) => ({
                 course_id: course.id,
                 is_elective: course.is_elective || false,
@@ -79,7 +79,7 @@ export const generateStudyPlanPayload = (semesters, formattedValgemner = {}) => 
         const semesterNumber = semester.semester_number;
 
         semesterCoursesData[semesterNumber] = semester.semester_courses
-            .filter((course) => course.courseCode !== "VALGEMNE")
+            .filter((course) => !course.courseCode.includes("VALGEMNE"))
             .map((course) => ({
                 course_id: course.id,
                 is_elective: course.is_elective || false,

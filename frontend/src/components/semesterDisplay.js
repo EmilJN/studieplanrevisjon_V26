@@ -1,8 +1,12 @@
-import React from 'react';
-import { useState, useEffect } from 'react';
-import DroppableSemester from './DroppableSemester.js';
-import { addValgemneToSemester, removeValgemneFromSemester, removeCourses } from '../utils/courseHelpers.js';
-import '../styles/dragdrop.css';
+import React from "react";
+import { useState, useEffect } from "react";
+import DroppableSemester from "./DroppableSemester.js";
+import {
+  addValgemneToSemester,
+  removeValgemneFromSemester,
+  removeCourses,
+} from "../utils/courseHelpers.js";
+import "../styles/dragdrop.css";
 
 const SemesterDisplay = ({
   semesterId,
@@ -19,34 +23,44 @@ const SemesterDisplay = ({
   valgemneCourse,
   setSearchTerm,
 }) => {
-
   const [hasValgemne, setHasValgemne] = useState(false);
   const semesterTitle = `Semester ${semesterNumber}: ${year}-${term}`;
   const displayCourses = courses || [];
-  const regularCourses = displayCourses.filter((course) => !course.is_elective || course.courseCode === 'VALGEMNE');
-  const fetchedValgemneCourse = valgemneCourse || allCourses.find((course) => course.courseCode === 'VALGEMNE');
-
+  const regularCourses = displayCourses.filter(
+    (course) => !course.is_elective || course.courseCode?.includes("VALGEMNE"),
+  );
+  const fetchedValgemneCourse =
+    valgemneCourse ||
+    allCourses.find((course) => course.courseCode?.includes("VALGEMNE"));
 
   useEffect(() => {
-    const valgemnePresent = courses.some((course) => course.courseCode === 'VALGEMNE');
+    const valgemnePresent = courses.some((course) =>
+      course.courseCode?.includes("VALGEMNE"),
+    );
     setHasValgemne(valgemnePresent);
   }, [courses]);
-
 
   const handleAddValgemne = () => {
     if (!fetchedValgemneCourse) {
       console.error("VALGEMNE course not found.");
       return;
     }
-    const updatedSemesters = addValgemneToSemester(semesterNumber, semesters, fetchedValgemneCourse);
+    const updatedSemesters = addValgemneToSemester(
+      semesterNumber,
+      semesters,
+      fetchedValgemneCourse,
+    );
     console.log("Updated semesters after adding valgemne:", updatedSemesters);
     setSemesters(updatedSemesters);
     setHasValgemne(true);
     onAdministrerValgemner();
-  }
+  };
 
   const handleRemoveValgemne = () => {
-    const updatedSemesters = removeValgemneFromSemester(semesterNumber, semesters);
+    const updatedSemesters = removeValgemneFromSemester(
+      semesterNumber,
+      semesters,
+    );
     setSemesters(updatedSemesters);
 
     setFormattedValgemner((prev) => {
@@ -55,21 +69,23 @@ const SemesterDisplay = ({
     });
 
     setHasValgemne(false);
-  }
+  };
 
   const handleRemoveCourse = (courseId) => {
     setTimeout(() => {
-      const updatedSemesters = removeCourses(semesterNumber, semesters, courseId);
+      const updatedSemesters = removeCourses(
+        semesterNumber,
+        semesters,
+        courseId,
+      );
       console.log("Updated semesters after removing course:", updatedSemesters);
       setSemesters(updatedSemesters);
 
-
-      if (typeof setSearchTerm === 'function') {
+      if (typeof setSearchTerm === "function") {
         setSearchTerm("");
       }
     }, 0);
   };
-
 
   return (
     <div className="border rounded p-3 mb-3">
@@ -87,10 +103,13 @@ const SemesterDisplay = ({
               }}
               className="btn btn-sm btn-secondary"
             >
-              {hasValgemne ? 'Administrer Valgemne' : 'Legg til Valgemne'}
+              {hasValgemne ? "Administrer Valgemne" : "Legg til Valgemne"}
             </button>
             {hasValgemne && (
-              <button onClick={handleRemoveValgemne} className="btn btn-sm btn-outline-danger">
+              <button
+                onClick={handleRemoveValgemne}
+                className="btn btn-sm btn-outline-danger"
+              >
                 Fjern Valgemne
               </button>
             )}
@@ -106,7 +125,8 @@ const SemesterDisplay = ({
         readOnly={readOnly}
       />
       <div className="text-muted small mt-2 text-end">
-        Antall studiepoeng: {regularCourses.reduce((sum, course) => sum + (course.credits || 0), 0)}
+        Antall studiepoeng:{" "}
+        {regularCourses.reduce((sum, course) => sum + (course.credits || 0), 0)}
       </div>
     </div>
   );
