@@ -14,7 +14,7 @@ const DraggableCourse = ({
 }) => {
 
   // valgemne er ikke draggable
-  const isValgemne = course.courseCode === "VALGEMNE";
+  const isValgemne = course.courseCode?.includes("VALGEMNE");
   const courseDragDisabled = readOnly || isValgemne || isDragDisabled;
 
   return (

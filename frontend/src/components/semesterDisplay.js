@@ -23,12 +23,12 @@ const SemesterDisplay = ({
   const [hasValgemne, setHasValgemne] = useState(false);
   const semesterTitle = `Semester ${semesterNumber}: ${year}-${term}`;
   const displayCourses = courses || [];
-  const regularCourses = displayCourses.filter((course) => !course.is_elective || course.courseCode === 'VALGEMNE');
-  const fetchedValgemneCourse = valgemneCourse || allCourses.find((course) => course.courseCode === 'VALGEMNE');
+  const regularCourses = displayCourses.filter((course) => !course.is_elective || course.courseCode?.includes("VALGEMNE"));
+  const fetchedValgemneCourse = valgemneCourse || allCourses.find((course) => course.courseCode?.includes("VALGEMNE"));
 
 
   useEffect(() => {
-    const valgemnePresent = courses.some((course) => course.courseCode === 'VALGEMNE');
+    const valgemnePresent = courses.some((course) => course.courseCode?.includes("VALGEMNE"));
     setHasValgemne(valgemnePresent);
   }, [courses]);
 

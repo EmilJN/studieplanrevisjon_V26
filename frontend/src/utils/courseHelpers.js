@@ -13,7 +13,7 @@ export const addValgemneToSemester = (semesterNumber, semesters, valgemneCourse)
     if (!semester.semester_courses) {
         semester.semester_courses = [];
     }
-    const valgemneExists = semester.semester_courses.some((c) => c.courseCode === "VALGEMNE");
+    const valgemneExists = semester.semester_courses.some((c) => c.courseCode?.includes("VALGEMNE"));
     if (valgemneExists) {
         console.warn(`VALGEMNE already exists in semester ${semesterNumber}.`);
         return semesters;
@@ -38,7 +38,7 @@ export const removeValgemneFromSemester = (semesterNumber, semesters) => {
     const updatedSemester = {
         ...semester,
         semester_courses: semester.semester_courses.filter(
-            (course) => course.courseCode !== "VALGEMNE" && !course.is_elective
+            (course) => !course.courseCode?.includes("VALGEMNE") && !course.is_elective
         ),
     };
     return {

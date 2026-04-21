@@ -95,7 +95,7 @@ export function useStudyPlanData(programId) {
 
         if (hasElectives && fetchedValgemneCourse) {
           const alreadyHasValgemne = semester.semester_courses.some(
-            (course) => course.courseCode === "VALGEMNE"
+            (course) => course.courseCode?.includes("VALGEMNE")
           );
 
           if (!alreadyHasValgemne) {
