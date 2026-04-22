@@ -13,6 +13,7 @@ const DraggableCourse = ({
   packageColorMap,
   isDragDisabled = false,
   readOnly,
+  onRemoveValgemne,
   onAdministrerValgemner,
   semesterNumber = null,
   semesterId = null,
@@ -34,13 +35,11 @@ const DraggableCourse = ({
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
-          className={`course-item ${snapshot.isDragging ? "dragging" : ""} ${
-            isValgemne ? "valgemne-item" : ""
-          } ${courseDragDisabled ? "disabled" : ""}`}
+          className={`course-item ${snapshot.isDragging ? "dragging" : ""} ${isValgemne ? "valgemne-item" : ""
+            } ${courseDragDisabled ? "disabled" : ""}`}
           style={{
-            borderLeft: `5px solid ${
-              currentPackageId ? packageColorMap?.[currentPackageId] : "#d9d9d9"
-            }`,
+            borderLeft: `5px solid ${currentPackageId ? packageColorMap?.[currentPackageId] : "#d9d9d9"
+              }`,
             ...provided.draggableProps.style,
             background: snapshot.isDragging ? "#e6f7ff" : "white",
             borderTop: snapshot.isDragging
@@ -125,10 +124,10 @@ const DraggableCourse = ({
 
           {isValgemne && (
             <button
-              onClick={() => onAdministrerValgemner()}
-              className="manage-valgemner-button"
+              onClick={onRemoveValgemne}
+              className="btn btn-sm btn-outline-danger"
             >
-              {readOnly ? "Vis valgemner" : "Administrer valgemner"}
+              Fjern
             </button>
           )}
         </div>

@@ -13,6 +13,7 @@ const DroppableSemester = ({
   semesterId,
   courses,
   onRemove,
+  onRemoveValgemne,
   onAdministrerValgemner,
   readOnly,
 }) => {
@@ -51,6 +52,7 @@ const DroppableSemester = ({
               semesterNumber={semesterNumber}
               semesterId={semesterId}
               packageColorMap={packageColorMap}
+              onRemoveValgemne={onRemoveValgemne}
             />
           ))}
           {provided.placeholder}

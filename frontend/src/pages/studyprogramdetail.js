@@ -336,7 +336,7 @@ const StudyProgramDetail = () => {
                 state: { studyProgram, year: latestStudyPlan?.year + 1 },
               })
             }
-            className="btn btn-outline-primary"
+            className="btn btn-primary"
           >
             Lag ny studieplan
           </button>
@@ -348,7 +348,7 @@ const StudyProgramDetail = () => {
           </button>
           {!isEditMode && (
             <button
-              className="btn btn-outline-danger"
+              className="btn btn-danger"
               onClick={() => {
                 if (
                   window.confirm(
@@ -367,7 +367,7 @@ const StudyProgramDetail = () => {
             </button>
           )}
           <button
-            className="btn btn-outline-secondary"
+            className="btn btn-secondary"
             onClick={() => exportStudyPlan(studyProgram.id)}
           >
             Eksporter til word
