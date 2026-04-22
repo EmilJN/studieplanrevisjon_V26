@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import api from "../api";
 
 function AddPrerequisites({ parentSubject, onPrereqsAdded }) {
-  const [subjects, setSubjects] = useState([]); // All subjects fetched from the backend
-  const [filteredSubjects, setFilteredSubjects] = useState([]); // filtersøk på emne
-  const [searchTerm, setSearchTerm] = useState(""); // søkeord
+  const [subjects, setSubjects] = useState([]);
+  const [filteredSubjects, setFilteredSubjects] = useState([]); 
+  const [searchTerm, setSearchTerm] = useState(""); 
   const [prerequisiteList, setPrerequisiteList] = useState([]);
 
   // Henta emner
@@ -53,35 +53,6 @@ function AddPrerequisites({ parentSubject, onPrereqsAdded }) {
       });
   };
 
-  const handleRemovePreRequisite = (subject) => {
-    setPrerequisiteList((oldList) => {
-      const updated = oldList.filter((s) => s.id !== subject.id);
-      if (
-        subject.name.toLowerCase().includes(searchTerm) ||
-        subject.courseCode.toLowerCase().includes(searchTerm)
-      ) {
-        setFilteredSubjects((curr) => [subject, ...curr]);
-      }
-      return updated;
-    });
-  };
-  const handleSubmitPreRequisite = () => {
-    const parentSubjectId = parentSubject.id;
-    api
-      .post(`/prerequisites/add/${parentSubjectId}`, prerequisiteList)
-      .then((response) => {
-        if (response && response.data) {
-          alert(
-            "Emnene ble lagt til!\n" + JSON.stringify(response.data, null, 2),
-          );
-          setPrerequisiteList([]);
-          if (onPrereqsAdded) onPrereqsAdded();
-        }
-      })
-      .catch((error) => {
-        console.error("Klarte ikke å legge til emnene, prøv igjen.", error);
-      });
-  };
 
   return (
     <div className="mt-3">
