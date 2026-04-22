@@ -440,7 +440,7 @@ const EditStudyProgram = () => {
                           className="btn btn-outline-primary"
                           onClick={() => navigate(`/studyprograms/${program.id}`)}
                         >
-                          Rediger studieplan
+                          Rediger studieplaner
                         </button>
                       </div>
                     </td>
