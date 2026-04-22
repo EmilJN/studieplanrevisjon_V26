@@ -16,7 +16,6 @@ import { useStudyPlanData } from "../hooks/studyplanData.js";
 import SemesterDisplay from "../components/semesterDisplay.js";
 import { DragDropContext } from "@hello-pangea/dnd";
 import SearchCourses from "../components/searchCourses.js";
-import Notifications from "../components/notifications.js";
 import ConflictSummary from "../components/conflictsummary.js";
 import { handleDragEnd } from "../components/handledragdrop.js";
 import { groupSemestersIntoPairs } from "../utils/helpers.js";
@@ -54,8 +53,7 @@ const StudyProgramDetail = () => {
   const [showConflictSummary, setShowConflictSummary] = useState(false);
   const [formattedValgemner, setFormattedValgemner] = useState({});
   const { courses = [] } = useCourses() || {};
-  const [studyplanId, setStudyPlanId] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [studyplanId] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [fetchedNotifications, setFetchedNotifications] = useState([]);
@@ -252,7 +250,6 @@ const StudyProgramDetail = () => {
         setShowConflictSummary(true);
         return;
       }
-      setIsLoading(true);
       setErrorMessage("");
 
       const payload = updateStudyPlanPayload(

@@ -1,7 +1,7 @@
 import api from "../api";
 import { useEffect, useState } from "react";
 import { useAuth } from "../components/validateuser";
-import { useLocation, useParams } from "react-router-dom";
+import {useParams } from "react-router-dom";
 import AddPrerequisites from "../components/addprerequisites";
 import { Link } from "react-router-dom";
 
@@ -32,7 +32,7 @@ function CollapsibleSection({ title, children, defaultCollapsed = true }) {
 function CourseDetails() {
   const [editAsNewVersion, setEditAsNewVersion] = useState(false);
   const { id } = useParams();
-  const { isAuthenticated, logout, currentUser } = useAuth();
+  const {currentUser } = useAuth();
   const [subject, setSubject] = useState({});
   const [editingActive, setEditingActive] = useState(false);
   const [isPreReqVisible, setIsPreReqVisible] = useState(false);

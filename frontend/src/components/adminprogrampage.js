@@ -1,7 +1,5 @@
-import React, { useContext, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import api from "../api";
-import { useAuth } from "./validateuser";
 
 const AdminProgramList = () => {
   const [studyPrograms, setStudyPrograms] = useState([]);
@@ -36,12 +34,12 @@ const AdminProgramList = () => {
             <th>Id</th>
             <th>Navn</th>
             <th>Ansvarlig</th>
-            <th>Handlnger</th>
+            <th>Handlinger</th>
           </tr>
         </thead>
         <tbody>
           {studyPrograms.map((studyprogram) => (
-            <tr>
+            <tr key={studyprogram.id}>
               <td>{studyprogram.id}</td>
               <td>{studyprogram.name}</td>
               <td>

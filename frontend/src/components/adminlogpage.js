@@ -1,8 +1,5 @@
-import React, { useContext, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import api from "../api";
-import { useAuth } from "./validateuser";
-import Admin from "../pages/admin";
 
 const AdminLogPage = () => {
   const [logs, setLogs] = useState([]);

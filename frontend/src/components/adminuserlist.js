@@ -1,7 +1,6 @@
-import React, { useContext, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import api from "../api";
-import { useAuth } from "./validateuser";
+
 
 const AdminUserList = () => {
   const [users, setUsers] = useState([]);

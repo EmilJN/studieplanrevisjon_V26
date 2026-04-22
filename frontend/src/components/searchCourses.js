@@ -27,7 +27,7 @@ const SearchCourses = ({
   maxResults = 10,
   allCourses,
   semesters,
-  onResultsChange = () => { },
+  onResultsChange = () => {},
 }) => {
   const [isDragging] = useState(false);
 
@@ -36,13 +36,14 @@ const SearchCourses = ({
 
     const isInSemester = (courseId) =>
       Object.values(semesters).some((semester) =>
-        (semester.semester_courses || []).some((c) => c.id === courseId)
+        (semester.semester_courses || []).some((c) => c.id === courseId),
       );
 
-    const results = allCourses.filter((course) =>
-      course.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      !isInSemester(course.id) || course.courseCode.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      !isInSemester(course.id)
+    const results = allCourses.filter(
+      (course) =>
+        (course.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          course.courseCode.toLowerCase().includes(searchTerm.toLowerCase())) &&
+        !isInSemester(course.id),
     );
 
     return results.slice(0, maxResults);
@@ -52,16 +53,14 @@ const SearchCourses = ({
     onResultsChange(filteredCourses);
   }, [filteredCourses, onResultsChange]);
 
-
   return (
     <div className="search-courses-container">
       <h3>Søk etter emner...</h3>
-      <SearchBar
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-      />
+      <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
-      <div className={`search-results-container ${isDragging ? 'dragging' : ''}`}>
+      <div
+        className={`search-results-container ${isDragging ? "dragging" : ""}`}
+      >
         <h3>Search Results ({filteredCourses.length})</h3>
         <Droppable
           droppableId="search-results" //mode="virtual"
@@ -73,9 +72,9 @@ const SearchCourses = ({
               className="search-results-list"
               ref={provided.innerRef}
               {...provided.droppableProps}
-
-
-            > {/*max10 søk*/}
+            >
+              {" "}
+              {/*max10 søk*/}
               {filteredCourses.map((course, index) => (
                 <DraggableCourse
                   key={course.id}
@@ -84,7 +83,6 @@ const SearchCourses = ({
                   readOnly={false}
                 />
               ))}
-
               {provided.placeholder}
             </div>
           )}

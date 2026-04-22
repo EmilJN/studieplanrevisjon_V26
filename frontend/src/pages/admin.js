@@ -9,7 +9,7 @@ import ValgemneKategoriForm from "../components/valgemnekategoriform";
 const Admin = () => {
 
     const [activePage, setActivePage] = useState('welcome');
-    const { currentUser, isAuthenticated } = useAuth()
+    const {isAuthenticated } = useAuth()
 
     return (
         <div className="container py-4">

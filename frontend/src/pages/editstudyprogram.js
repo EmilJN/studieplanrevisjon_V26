@@ -1,7 +1,6 @@
 import React, { useState, useEffect, Fragment } from "react";
 //import "../styles/EditStudyprogram.css";
 import {
-  handleBecomeInCharge,
   handleBecomeNotInCharge,
 } from "../utils/helpers";
 import {
