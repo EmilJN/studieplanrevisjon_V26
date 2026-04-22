@@ -174,7 +174,19 @@ class NotificationService:
             print(f"Error deleting notification: {str(e)}")
             return False
 
-        
+    def acknowledge_notification(self, notification_id):
+        try:
+            notification = self.db.query(Notifications).get(notification_id)
+            if not notification:
+                return False
+            
+            notification.is_acknowledged = True
+            self.db.commit()
+            return True
+        except Exception as e:
+            print(f"Error acknowledging notification: {str(e)}")
+            return False
+
     # get all notifications for a studyprogram
     def get_notifications_by_program(self, program_id):
         
@@ -227,6 +239,8 @@ class NotificationService:
         except Exception as e:
             print(f"Error deleting all notifications: {str(e)}")
             return False
+    
+    
     
 
     def send_send_email(self, recipient_program_id, sender_program_id, message):
