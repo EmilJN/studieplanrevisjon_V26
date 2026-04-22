@@ -49,7 +49,7 @@ const AdminProgramList = () => {
               </td>
               <td>
                 <button
-                  className="btn btn-sm btn-outline-danger"
+                  className="btn btn-sm btn-danger"
                   onClick={() => {
                     if (
                       window.confirm(

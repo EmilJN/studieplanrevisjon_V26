@@ -120,14 +120,6 @@ const SemesterDisplay = ({
             >
               {hasValgemne ? "Administrer Valgemne" : "Legg til Valgemne"}
             </button>
-            {hasValgemne && (
-              <button
-                onClick={handleRemoveValgemne}
-                className="btn btn-sm btn-outline-danger"
-              >
-                Fjern Valgemne
-              </button>
-            )}
           </div>
         )}
       </div>
@@ -141,6 +133,7 @@ const SemesterDisplay = ({
         semesterId={semesterId}
         courses={regularCourses}
         onRemove={handleRemoveCourse}
+        onRemoveValgemne={handleRemoveValgemne}
         onAdministrerValgemner={onAdministrerValgemner}
         readOnly={readOnly}
       />

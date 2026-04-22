@@ -97,22 +97,25 @@ export const PreviousStudyPlans = ({ plans, latestPlanId, studyprogramId, onView
 // used in valgemne.js, reuseable if needed.
 // Displaying search bar and autocomplete dropdown for subjects.
 export const SearchBar = ({ searchTerm, setSearchTerm, filteredCourses, onCourseSelect }) => (
-  <div className="search-bar">
+  <div className="position-relative">
     <input
       type="text"
-      placeholder="Search courses..."
+      placeholder="Søk etter emner..."
       value={searchTerm}
       onChange={(e) => setSearchTerm(e.target.value)}
+      className="form-control"
     />
     {searchTerm && filteredCourses.length > 0 && (
-      <ul className="autocomplete-dropdown">
+      <ul className="list-group position-absolute w-100" style={{ zIndex: 1100 }}>
         {filteredCourses.map((course) => (
           <li
             key={course.id}
             onClick={() => onCourseSelect(course)}
-            className="autocomplete-item"
+            className="list-group-item list-group-item-action"
+            style={{ cursor: "pointer" }}
           >
-            {course.name} ({course.courseCode})
+            <div className="fw-semibold">{course.name}</div>
+            <div className="text-muted small">{course.courseCode}</div>
           </li>
         ))}
       </ul>

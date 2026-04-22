@@ -212,7 +212,7 @@ class CourseService:
     
     def get_all_valgemner(self):
         try:
-            valgemne_courses = self.db.query(Course).filter(Course.courseCode == 'VALGEMNE').all()
+            valgemne_courses = self.db.query(Course).filter(Course.courseCode.ilike('%VALGEMNE%')).all()
             if not valgemne_courses:
                 return None
             return[valgemne.serialize() for valgemne in valgemne_courses]

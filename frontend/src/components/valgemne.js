@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { SearchBar, filterCourses } from "../utils/helpers.js";
 import { getElectiveGroups } from "../utils/categoryHelpers.js";
-import "../styles/valgemne.css";
 
 const ValgemneOverlay = ({
   isOpen,
@@ -146,99 +145,101 @@ const ValgemneOverlay = ({
 
   if (!isOpen) return null;
   return (
-    <div className="overlay">
-      <div className="overlay-content">
-        <h2>
-          {readOnly ? "View Electives" : "Manage Electives"} (Semester{" "}
-          {semesterNumber})
-        </h2>
+    <div className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center" style={{ backgroundColor: "rgba(0,0,0,0.5)", zIndex: 1050 }}>
+      <div className="bg-white rounded p-4" style={{ width: "600px", maxHeight: "80vh", overflowY: "auto" }}>
+        <h5 className="fw-semibold mb-3">
+          {readOnly ? "Vis valgemner" : "Administrer valgemner"} — Semester {semesterNumber}
+        </h5>
 
         {!readOnly && (
           <>
-            <h3>Select Category</h3>
+            <label className="form-label fw-semibold">Velg kategori</label>
             {categories.length > 0 ? (
               <select
                 value={selectedGroup}
                 onChange={(e) => setSelectedGroup(e.target.value)}
-                className="category-dropdown"
+                className="form-select mb-3"
               >
-                <option value="" disabled>
-                  -- Select a Category --
-                </option>
+                <option value="" disabled>-- Velg en kategori --</option>
                 {categories.map((category) => (
-                  <option key={category.id} value={category.id}>
-                    {category.name}
-                  </option>
+                  <option key={category.id} value={category.id}>{category.name}</option>
                 ))}
               </select>
             ) : (
-              <p>No categories available.</p>
+              <p className="text-muted">Ingen kategorier tilgjengelig.</p>
             )}
             {selectedGroup && (
-              <>
+              <div className="mb-3">
                 <SearchBar
                   searchTerm={searchTerm}
-                  setSearchTerm={(term) => {
-                    setSearchTerm(term);
-                    setSelectedCourse(null);
-                  }}
+                  setSearchTerm={(term) => { setSearchTerm(term); setSelectedCourse(null); }}
                   filteredCourses={filteredCourses}
-                  onCourseSelect={(course) => {
-                    setSelectedCourse(course);
-                    setSearchTerm(`${course.name} (${course.courseCode})`);
-                  }}
+                  onCourseSelect={(course) => { setSelectedCourse(course); setSearchTerm(`${course.name} (${course.courseCode})`); }}
                 />
-                <button onClick={addCourseToGroup} disabled={!selectedCourse}>
-                  Add to Category
+                <button
+                  onClick={addCourseToGroup}
+                  disabled={!selectedCourse}
+                  className="btn btn-primary mt-2"
+                >
+                  Legg til i kategori
                 </button>
-              </>
+              </div>
             )}
           </>
         )}
-
-
 
         {Object.keys(currentValgemne).length > 0 ? (
           Object.entries(currentValgemne).map(([categoryId, courses]) => {
             const categoryName = resolveCategoryName(categoryId, courses);
             const totalCredits = courses.reduce((sum, course) => sum + course.credits, 0);
             return (
-              <div key={categoryId} className="category-section">
-                <h4>{categoryName}</h4>
+              <div key={categoryId} className="mb-3">
+                <h6 className="fw-semibold">{categoryName}</h6>
                 {courses.length > 0 ? (
                   <>
-                    <ul>
+                    <ul className="list-group list-group-flush mb-2">
                       {courses.map((course) => (
-                        <li key={course.id} className="valgemne">
-                          {course.name} ({course.courseCode}) - {course.credits} credits
+                        <li
+                          key={course.id}
+                          className="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-2"
+                        >
+                          <div>
+                            <div className="fw-semibold">{course.name}</div>
+                            <div className="text-muted small">{course.courseCode} — {course.credits} sp</div>
+                          </div>
                           {!readOnly && (
                             <button
-                              onClick={() =>
-                                removeCourseFromGroup(categoryId, course.id)
-                              }
+                              onClick={() => removeCourseFromGroup(categoryId, course.id)}
+                              className="btn btn-sm btn-outline-danger"
                             >
-                              Remove
+                              Fjern
                             </button>
                           )}
                         </li>
                       ))}
                     </ul>
-                    <p className="total-credits">Total Credits: {totalCredits}</p>
+                    <p className="text-muted small text-end">Totalt: {totalCredits} sp</p>
                   </>
                 ) : (
-                  <p>No courses in this category.</p>
+                  <p className="text-muted">Ingen emner i denne kategorien.</p>
                 )}
               </div>
             );
           })
         ) : (
-          <p>No electives added for this semester.</p>
+          <p className="text-muted">Ingen valgemner lagt til for dette semesteret.</p>
         )}
 
-        {!readOnly && (
-          <button onClick={handleConfirmValgemner}>Confirm Changes</button>
-        )}
-        <button onClick={closeOverlay}>Close</button>
+        <div className="d-flex justify-content-end gap-2 mt-3">
+          {!readOnly && (
+            <button onClick={handleConfirmValgemner} className="btn btn-success">
+              Lagre endringer
+            </button>
+          )}
+          <button onClick={closeOverlay} className="btn btn-outline-secondary">
+            Lukk
+          </button>
+        </div>
       </div>
     </div>
   );
