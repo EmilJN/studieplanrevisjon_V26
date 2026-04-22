@@ -1,38 +1,47 @@
-import React from 'react';
-import { Droppable } from '@hello-pangea/dnd';
-import DraggableCourse from './DraggableCourse';
+import React from "react";
+import { Droppable } from "@hello-pangea/dnd";
+import DraggableCourse from "./DraggableCourse";
 import "../styles/dragdrop.css";
-
-
 
 const DroppableSemester = ({
   semesterNumber,
+  setCourseToPackageMap,
+  courseToPackageMap,
+  handleAssignCoursePackage,
+  coursepackages,
+  packageColorMap,
   semesterId,
   courses,
   onRemove,
   onAdministrerValgemner,
-  readOnly
+  readOnly,
 }) => {
-
   return (
-    <Droppable droppableId={`semester-${semesterNumber}`} isDropDisabled={readOnly}>
+    <Droppable
+      droppableId={`semester-${semesterNumber}`}
+      isDropDisabled={readOnly}
+    >
       {(provided, snapshot) => (
         <div
           ref={provided.innerRef}
           {...provided.droppableProps}
-          className={`semester-box ${snapshot.isDraggingOver ? 'drag-over' : ''}`}
+          className={`semester-box ${snapshot.isDraggingOver ? "drag-over" : ""}`}
           style={{
-            minHeight: snapshot.isDraggingOver ? '350px' : '200px',
-            transition: 'all 0.2s ease',
-            background: snapshot.isDraggingOver ? '#e6f7ff' : 'white',
-            border: snapshot.isDraggingOver ? '2px dashed #1890ff' : '1px solid #eee',
-            boxSizing: 'border-box',
+            minHeight: snapshot.isDraggingOver ? "350px" : "200px",
+            transition: "all 0.2s ease",
+            background: snapshot.isDraggingOver ? "#e6f7ff" : "white",
+            border: snapshot.isDraggingOver
+              ? "2px dashed #1890ff"
+              : "1px solid #eee",
+            boxSizing: "border-box",
           }}
         >
-
-
-          {courses.map((course, index) => (
+          {courses?.map((course, index) => (
             <DraggableCourse
+              courseToPackageMap={courseToPackageMap}
+              setCourseToPackageMap={setCourseToPackageMap}
+              handleAssignCoursePackage={handleAssignCoursePackage}
+              coursepackages={coursepackages}
               key={course.id}
               course={course}
               index={index}
@@ -41,6 +50,7 @@ const DroppableSemester = ({
               onAdministrerValgemner={onAdministrerValgemner}
               semesterNumber={semesterNumber}
               semesterId={semesterId}
+              packageColorMap={packageColorMap}
             />
           ))}
           {provided.placeholder}
@@ -48,7 +58,7 @@ const DroppableSemester = ({
           {/* drop indikator (når tom) */}
           {courses.length === 0 && !snapshot.isDraggingOver && (
             <div className="empty-semester">
-              {readOnly ? 'No courses in this semester' : 'Drag courses here'}
+              {readOnly ? "No courses in this semester" : "Drag courses here"}
             </div>
           )}
 

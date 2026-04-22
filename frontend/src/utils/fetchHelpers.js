@@ -56,6 +56,17 @@ export const searchCourses = async (query) => {
   return response.data;
 };
 
+export const fetchprogramcoursepackages = async (studyplanId) => {
+  try {
+    const response = await api.get(`/coursepackage/GetCoursePackages/${studyplanId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch course packages:", error);
+    return ("Failed to load course packages. Please try again.");
+  }
+};
+
+
 export const fetchSemesterInfo = async (programId) => {
   try {
     const response = await api.get(`studyprograms/${programId}/semester-info`);

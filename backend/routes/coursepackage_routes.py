@@ -6,24 +6,26 @@ from services import ServiceFactory
 
 coursepackage_bp = Blueprint('coursepackage', __name__)
 
-@coursepackage_bp.route("/CreateCoursePackage/<int:program_id>", methods=["POST"])
-def create_coursepackage(program_id):
+@coursepackage_bp.route("/CreateCoursePackage/<int:studyplan_id>", methods=["POST"])
+def create_coursepackage(studyplan_id):
     try:
         coursepackage_service = ServiceFactory.get_coursepackage_service()
         data = request.get_json()
         name = data.get("name")
-        coursepackage = coursepackage_service.create_course_package(name, program_id)
+        coursepackage = coursepackage_service.create_course_package(name, studyplan_id)
         return jsonify(coursepackage.serialize()), 200
     except ValueError as e:
+        raise e
         return jsonify({"error": str(e)}), 404
     except Exception as e:
+        raise e
         return jsonify({"error": str(e)}), 500
     
-@coursepackage_bp.route("/GetCoursePackages/<int:program_id>", methods=["GET"])
-def get_coursepackages_by_program(program_id):
+@coursepackage_bp.route("/GetCoursePackages/<int:studyplan_id>", methods=["GET"])
+def get_coursepackages_by_plan(studyplan_id):
     try:
         coursepackage_service = ServiceFactory.get_coursepackage_service()
-        coursepackages = coursepackage_service.get_course_packages_by_program(program_id)
+        coursepackages = coursepackage_service.get_course_packages_by_studyplan(studyplan_id)
         return jsonify([cp.serialize() for cp in coursepackages]), 200
     except ValueError as e:
         return jsonify({"error": str(e)}), 404
@@ -63,7 +65,7 @@ def get_course_package(coursepackage_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
-@coursepackage_bp.route("/AddCourseToPackage/<string:coursepackage_id>", methods=["POST"])
+@coursepackage_bp.route("/AddCourseToPackage/<string:coursepackage_id>", methods=["PUT"])
 def add_course_to_package(coursepackage_id):
     try:
         coursepackage_service = ServiceFactory.get_coursepackage_service()

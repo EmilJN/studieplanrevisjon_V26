@@ -10,6 +10,7 @@ from routes.studyplan_routes import studyplan_bp
 from routes.exporttodocx_routes import exportdocx_bp
 from routes.user_routes import user_bp
 from routes.notifications_routes import notification_bp
+from routes.coursepackage_routes import coursepackage_bp
 from routes.institute_routes import institute_bp
 from routes.semestercourses_routes import semestercourses_bp
 import logging
@@ -30,6 +31,7 @@ app.register_blueprint(user_bp, url_prefix='/user/')
 app.register_blueprint(notification_bp, url_prefix='/notifications/')
 app.register_blueprint(institute_bp, url_prefix='/institutes')
 app.register_blueprint(semestercourses_bp, url_prefix='/semestercourses/')
+app.register_blueprint(coursepackage_bp, url_prefix='/coursepackage')
 
 
 logging.basicConfig(level=logging.INFO, 

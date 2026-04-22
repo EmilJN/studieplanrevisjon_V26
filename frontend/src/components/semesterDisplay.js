@@ -10,6 +10,11 @@ import "../styles/dragdrop.css";
 
 const SemesterDisplay = ({
   semesterId,
+  courseToPackageMap,
+  packageColorMap,
+  handleAssignCoursePackage,
+  setCourseToPackageMap,
+  coursepackages,
   semesterNumber,
   courses,
   year,
@@ -117,6 +122,11 @@ const SemesterDisplay = ({
         )}
       </div>
       <DroppableSemester
+        setCourseToPackageMap={setCourseToPackageMap}
+        courseToPackageMap={courseToPackageMap}
+        handleAssignCoursePackage={handleAssignCoursePackage}
+        packageColorMap={packageColorMap}
+        coursepackages={coursepackages}
         semesterNumber={semesterNumber}
         semesterId={semesterId}
         courses={regularCourses}

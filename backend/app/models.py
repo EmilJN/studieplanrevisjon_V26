@@ -10,26 +10,36 @@ prerequisites = db.Table(
 
 class Coursepackage(db.Model):
     __tablename__ = 'coursepackage'
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(120), primary_key=True)
     name = db.Column(db.String(80), nullable=False)
-    program_id = db.Column(db.Integer, nullable=False)
+    studyplan_id = db.Column(db.Integer, nullable=False)
+
+    courses = db.relationship(
+        'Course',
+        secondary='association',
+        back_populates='coursepackages'
+    )
 
     def serialize(self):
         return {
             "id": self.id,
             "name": self.name,
+            "studyplan_id": self.studyplan_id,
+            "courses": [course.id for course in self.courses]
         }
-    
+
     def __repr__(self):
         return f'<Coursepackage {self.name}>'
-    
-    def __init__(self, name, course_id):
+
+    def __init__(self, id, name, studyplan_id):
+        self.id = id
         self.name = name
+        self.studyplan_id = studyplan_id
 
 association = db.Table(
     'association',
     db.Column('course_id', db.Integer, db.ForeignKey('course.id')),
-    db.Column('coursepackage_id', db.Integer, db.ForeignKey('coursepackage.id'))
+    db.Column('coursepackage_id', db.String(120), db.ForeignKey('coursepackage.id'))
 )
 
 # Model for Emne
@@ -47,7 +57,11 @@ class Course(db.Model):
     degree = db.Column(db.String(80), nullable=True)
 
     semester_courses = db.relationship('SemesterCourses', back_populates='course')
-    coursepackages = db.relationship('Coursepackage', back_populates='course')
+    coursepackages = db.relationship(
+        'Coursepackage',
+        secondary='association',
+        back_populates='courses'
+    )
     prerequisites = db.relationship('Course',secondary=prerequisites,
                                     primaryjoin=(id == prerequisites.c.course_id),
                                     secondaryjoin=(id == prerequisites.c.prerequisite_id))

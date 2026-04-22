@@ -11,10 +11,10 @@ class CoursePackageService:
     def __init__(self, db_session=None):
         self.db = db_session or db.session
         
-    def create_course_package(self, name, program_id):
+    def create_course_package(self, name, studyplan_id):
         try: 
             course_package_id = str(uuid.uuid4())
-            new_course_package = Coursepackage(id=course_package_id, name=name, program_id=program_id)
+            new_course_package = Coursepackage(id=course_package_id, name=name, studyplan_id=studyplan_id)
             self.db.add(new_course_package)
             self.db.commit()
             return new_course_package
@@ -41,9 +41,9 @@ class CoursePackageService:
             print(f"Error fetching courses in package: {str(e)}")
             raise e
 
-    def get_course_packages_by_program(self, program_id):
+    def get_course_packages_by_studyplan(self, studyplan_id):
         try:
-            course_packages = Coursepackage.query.filter_by(program_id=program_id).all()
+            course_packages = Coursepackage.query.filter_by(studyplan_id=studyplan_id).all()
             return course_packages
         except Exception as e:
             print(f"Error fetching course packages: {str(e)}")
@@ -61,18 +61,33 @@ class CoursePackageService:
             print(f"Error deleting course package: {str(e)}")
             raise e
         
-    def add_course_to_package(self, course_package_id, course_id):
+    def add_course_to_package(self, package_id, course_id):
         try:
-            course_package = self.get_course_package(course_package_id)
+            package = Coursepackage.query.get(package_id)
+            if not package:
+                raise ValueError("Package not found")
+
             course = Course.query.get(course_id)
-            if not course_package or not course:
-                raise ValueError("Course package or course not found")
-            if course not in course_package.courses:
-                course_package.courses.append(course)
-                self.db.commit()
+            if not course:
+                raise ValueError("Course not found")
+
+            packages_in_plan = Coursepackage.query.filter_by(
+                studyplan_id=package.studyplan_id
+            ).all()
+
+            for cp in packages_in_plan:
+                if course in cp.courses:
+                    cp.courses.remove(course)
+
+            if course not in package.courses:
+                package.courses.append(course)
+
+            db.session.commit()
+            return package
+
         except Exception as e:
-            self.db.rollback()
-            print(f"Error adding course to package: {str(e)}")
+            db.session.rollback()
+            print("Error:", e)
             raise e
     
     def remove_course_from_package(self, course_package_id, course_id):

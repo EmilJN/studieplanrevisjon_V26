@@ -67,7 +67,6 @@ const EditStudyProgram = () => {
     setEditingId(program.id);
     setEditingProgram({ ...program }); // Lagra eksisterende verdier
   };
-
   const handleCancel = () => {
     setEditingId(null);
     setErrorMessage("");
@@ -86,11 +85,18 @@ const EditStudyProgram = () => {
           .then(() => {
             setStudyPrograms((prev) =>
               prev.map((p) =>
-                p.id === editingID ? {
-                  ...p, ...editingProgram,
-                  institute: institutes.find((i) => i.id === Number(editingProgram.institute)) || p.institute,
-                } : p
-              ));
+                p.id === editingID
+                  ? {
+                      ...p,
+                      ...editingProgram,
+                      institute:
+                        institutes.find(
+                          (i) => i.id === Number(editingProgram.institute),
+                        ) || p.institute,
+                    }
+                  : p,
+              ),
+            );
             setEditingId(null);
           })
           .catch((error) => {
@@ -414,18 +420,18 @@ const EditStudyProgram = () => {
                           <span className="fw-semibold">Ansvarlig:</span>{" "}
                           {program.program_ansvarlig
                             ? program.program_ansvarlig_id === currentUser && (
-                              <span>
-                                {program.program_ansvarlig.name}{" "}
-                                <button
-                                  className="btn btn-sm btn-outline-danger"
-                                  onClick={() =>
-                                    handleBecomeNotInCharge(program.id)
-                                  }
-                                >
-                                  Ikke vær ansvarlig
-                                </button>
-                              </span>
-                            )
+                                <span>
+                                  {program.program_ansvarlig.name}{" "}
+                                  <button
+                                    className="btn btn-sm btn-outline-danger"
+                                    onClick={() =>
+                                      handleBecomeNotInCharge(program.id)
+                                    }
+                                  >
+                                    Ikke vær ansvarlig
+                                  </button>
+                                </span>
+                              )
                             : "Ingen"}
                         </div>
                       </div>
@@ -438,7 +444,9 @@ const EditStudyProgram = () => {
                         </button>
                         <button
                           className="btn btn-outline-primary"
-                          onClick={() => navigate(`/studyprograms/${program.id}`)}
+                          onClick={() =>
+                            navigate(`/studyprograms/${program.id}`)
+                          }
                         >
                           Rediger studieplan
                         </button>
