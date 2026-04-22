@@ -124,10 +124,10 @@ const DraggableCourse = ({
 
           {isValgemne && (
             <button
-              onClick={onRemoveValgemne}
-              className="btn btn-sm btn-outline-danger"
+              onClick={readOnly ? () => onAdministrerValgemner() : onRemoveValgemne}
+              className={readOnly ? "manage-valgemner-button" : "remove-button"}
             >
-              Fjern
+              {readOnly ? "Vis valgemner" : "Fjern"}
             </button>
           )}
         </div>
