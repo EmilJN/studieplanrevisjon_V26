@@ -2,7 +2,7 @@
 import { useState, useCallback, useEffect } from "react";
 import api from "../api";
 import { calculatedYear } from "../utils/helpers";
-import { fetchValgemne, fetchAllValgemner } from "../utils/fetchHelpers";
+import { fetchValgemne} from "../utils/fetchHelpers";
 import "../styles/dragdrop.css";
 
 export function useStudyPlanData(programId) {
@@ -15,7 +15,7 @@ export function useStudyPlanData(programId) {
   const [semesters, setSemesters] = useState([]);
   const [valgemne, setValgemne] = useState({});
   const [latestStudyPlan, setLatestStudyPlan] = useState(null);
-  const [allCourses, setAllCourses] = useState([]);
+  const [allCourses] = useState([]);
   const [previousStudyPlans, setPreviousStudyPlans] = useState([]);
   const [selectedPlanId, setSelectedPlanId] = useState(null);
   const [valgemneCourse, setValgemneCourse] = useState(null);

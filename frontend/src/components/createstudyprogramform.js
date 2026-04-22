@@ -62,11 +62,9 @@ export default function CreateStudyProgramForm() {
       setErrors({})
       try {
         const response = await api.post("studyprograms/create", formData);
-        // window.location.href = `./studyprograms/${response.data.id}`
         const createdProgram = response.data;
         console.log("Program created:", createdProgram);
         navigate("/createSP", { state: { program: createdProgram } });
-        // window.location.href = `./createSP`
       } catch (error) {
         console.error("Failed to log in:", error);
       }

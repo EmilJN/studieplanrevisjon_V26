@@ -34,14 +34,13 @@ const CreateSP = () => {
   const [filteredPrograms, setFilteredPrograms] = useState([]);
   const [year, setYear] = useState(new Date().getFullYear());
   const [isInitialized, setIsInitialized] = useState(false);
-  const [studyplanId, setStudyplanId] = useState(null);
+  const [studyplanId] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const { courses } = useCourses();
   const { programs } = useStudyPrograms();
   const [searchResults, setSearchResults] = useState([]);
   const [semesters, setSemesters] = useState({});
   const [valgemneOverlayOpen, setValgemneOverlayOpen] = useState(false);
-  const [selectedSemesterId, setSelectedSemesterId] = useState(null);
   const [selectedSemesterNumber, setSelectedSemesterNumber] = useState(null);
   const [valgemne, setValgemne] = useState({});
   const [formattedValgemner, setFormattedValgemner] = useState({});
@@ -87,8 +86,6 @@ const CreateSP = () => {
       ...prev,
       [semesterNumber]: prev[semesterNumber] || {},
     }));
-
-    setSelectedSemesterId(semesterId);
     setSelectedSemesterNumber(semesterNumber);
     setValgemneOverlayOpen(true);
   };

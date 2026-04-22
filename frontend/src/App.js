@@ -4,8 +4,6 @@ import {
   BrowserRouter as Router,
   Routes,
   Route,
-  Navigate,
-  Outlet,
 } from "react-router-dom";
 import React from "react";
 import Home from "./pages/home";

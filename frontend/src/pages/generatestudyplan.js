@@ -24,14 +24,11 @@ const GenerateStudyplan = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [showOverlay, setShowOverlay] = useState(false);
-  const [overlaySemester, setOverlaySemester] = useState(null);
   const [overlaySemesterNumber, setOverlaySemesterNumber] = useState(null);
   const { courses } = useCourses();
   const [confirmedConflicts, setConfirmedConflicts] = useState([]);
   const [showConflictSummary, setShowConflictSummary] = useState(false);
   const [formattedValgemner, setFormattedValgemner] = useState({});
-  const [errorMessage, setErrorMessage] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
   const [fetchedNotifications, setFetchedNotifications] = useState([]);
 
   const {
@@ -68,7 +65,6 @@ const GenerateStudyplan = () => {
 
   const handleVisValgemner = (semesterId, semesterNumber) => {
     console.log("Opening ValgemneOverlayGENERATE for:", { semesterId, semesterNumber });
-    setOverlaySemester(semesterId);
     setOverlaySemesterNumber(semesterNumber);
     setShowOverlay(true);
   };
@@ -118,8 +114,6 @@ const GenerateStudyplan = () => {
           result,
           semesters,
           setSemesters,
-          setErrorMessage,
-          setSuccessMessage,
           setConfirmedConflicts,
           setShowConflictSummary,
           studyplanId,
