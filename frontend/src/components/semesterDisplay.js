@@ -91,7 +91,17 @@ const SemesterDisplay = ({
       }
     }, 0);
   };
+  const creditsPerPackage = {};
 
+  regularCourses.forEach((course) => {
+    const pkgId = courseToPackageMap?.[course.id] || "none";
+
+    if (!creditsPerPackage[pkgId]) {
+      creditsPerPackage[pkgId] = 0;
+    }
+
+    creditsPerPackage[pkgId] += course.credits || 0;
+  });
   return (
     <div className="border rounded p-3 mb-3">
       <div className="d-flex justify-content-between align-items-center mb-2">
@@ -134,9 +144,28 @@ const SemesterDisplay = ({
         onAdministrerValgemner={onAdministrerValgemner}
         readOnly={readOnly}
       />
-      <div className="text-muted small mt-2 text-end">
-        Antall studiepoeng:{" "}
-        {regularCourses.reduce((sum, course) => sum + (course.credits || 0), 0)}
+      <div className="text-muted small mt-2">
+        {/* Faste emner først */}
+        {creditsPerPackage["none"] > 0 && (
+          <div className="d-flex justify-content-between fw-semibold">
+            <span>Faste emner</span>
+            <span>{creditsPerPackage["none"]} sp</span>
+          </div>
+        )}
+
+        {/* Pakkene */}
+        {Object.entries(creditsPerPackage)
+          .filter(([pkgId]) => pkgId !== "none")
+          .map(([pkgId, credits]) => {
+            const pkg = coursepackages.find((cp) => cp.id === pkgId);
+
+            return (
+              <div key={pkgId} className="d-flex justify-content-between">
+                <span>{pkg?.name || "Ukjent pakke"}</span>
+                <span>{credits} sp</span>
+              </div>
+            );
+          })}
       </div>
     </div>
   );
