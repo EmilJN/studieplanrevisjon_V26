@@ -12,13 +12,12 @@ def create_coursepackage(studyplan_id):
         coursepackage_service = ServiceFactory.get_coursepackage_service()
         data = request.get_json()
         name = data.get("name")
-        coursepackage = coursepackage_service.create_course_package(name, studyplan_id)
+        packagetype = data.get("packagetype")
+        coursepackage = coursepackage_service.create_course_package(name, studyplan_id, packagetype)
         return jsonify(coursepackage.serialize()), 200
     except ValueError as e:
-        raise e
         return jsonify({"error": str(e)}), 404
     except Exception as e:
-        raise e
         return jsonify({"error": str(e)}), 500
     
 @coursepackage_bp.route("/GetCoursePackages/<int:studyplan_id>", methods=["GET"])

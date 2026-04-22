@@ -13,6 +13,7 @@ class Coursepackage(db.Model):
     id = db.Column(db.String(120), primary_key=True)
     name = db.Column(db.String(80), nullable=False)
     studyplan_id = db.Column(db.Integer, nullable=False)
+    packagetype = db.Column(db.Enum('Emnepakke', 'Spesialisering', name='packagetype'), nullable=False)
 
     courses = db.relationship(
         'Course',
@@ -25,16 +26,18 @@ class Coursepackage(db.Model):
             "id": self.id,
             "name": self.name,
             "studyplan_id": self.studyplan_id,
-            "courses": [course.id for course in self.courses]
+            "courses": [course.id for course in self.courses],
+            "packagetype": self.packagetype
         }
 
     def __repr__(self):
         return f'<Coursepackage {self.name}>'
 
-    def __init__(self, id, name, studyplan_id):
+    def __init__(self, id, name, studyplan_id, packagetype):
         self.id = id
         self.name = name
         self.studyplan_id = studyplan_id
+        self.packagetype = packagetype
 
 association = db.Table(
     'association',

@@ -11,10 +11,10 @@ class CoursePackageService:
     def __init__(self, db_session=None):
         self.db = db_session or db.session
         
-    def create_course_package(self, name, studyplan_id):
+    def create_course_package(self, name, studyplan_id, packagetype):
         try: 
             course_package_id = str(uuid.uuid4())
-            new_course_package = Coursepackage(id=course_package_id, name=name, studyplan_id=studyplan_id)
+            new_course_package = Coursepackage(id=course_package_id, name=name, studyplan_id=studyplan_id, packagetype=packagetype)
             self.db.add(new_course_package)
             self.db.commit()
             return new_course_package

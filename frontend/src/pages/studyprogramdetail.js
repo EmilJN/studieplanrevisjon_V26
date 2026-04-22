@@ -40,6 +40,7 @@ const StudyProgramDetail = () => {
   const navigate = useNavigate();
   // const notificationsRef = useRef(null);
   const [courseToPackageMap, setCourseToPackageMap] = useState({});
+  const [newCoursePackageType, setNewCoursePackageType] = useState("Emnepakke");
   const [editingCoursePackagesID, setEditingCoursePackagesID] = useState(null);
   const [coursepackages, setCoursepackages] = useState([]);
   const [newCoursePackage, setNewCoursePackage] = useState("");
@@ -87,11 +88,11 @@ const StudyProgramDetail = () => {
 
   const fetchCoursePackagesAndMapping = async () => {
     try {
-      const packages = await fetchprogramcoursepackages(selectedPlanId);
+      const res = await fetchprogramcoursepackages(selectedPlanId);
+      const packages = res?.data || res || [];
+
       setCoursepackages(packages);
-
       const mapping = {};
-
       await Promise.all(
         packages.map(async (pkg) => {
           try {
@@ -115,7 +116,10 @@ const StudyProgramDetail = () => {
   };
 
   const packageColorMap = Object.fromEntries(
-    coursepackages.map((cp, index) => [cp.id, colors[index % colors.length]]),
+    (Array.isArray(coursepackages) ? coursepackages : []).map((cp, index) => [
+      cp.id,
+      colors[index % colors.length],
+    ]),
   );
 
   const {
@@ -150,8 +154,11 @@ const StudyProgramDetail = () => {
     const fetchData = async () => {
       if (studyProgram?.id) {
         try {
-          const packages = await fetchprogramcoursepackages(selectedPlanId);
+          const res = await fetchprogramcoursepackages(selectedPlanId);
+          const packages = res?.data || res || [];
+
           setCoursepackages(packages);
+
           const mapping = {};
 
           await Promise.all(
@@ -186,16 +193,18 @@ const StudyProgramDetail = () => {
     fetchData();
   }, [studyProgram, selectedPlanId]);
 
-  const handleAddCoursePackage = (program) => {
+  const handleAddCoursePackage = () => {
     api
       .post(`/coursepackage/CreateCoursePackage/${selectedPlanId}`, {
         name: newCoursePackage,
+        packagetype: newCoursePackageType,
       })
       .then((response) => {
         const createdCoursePackage = response.data;
 
         setCoursepackages((prev) => [...prev, createdCoursePackage]);
         setNewCoursePackage("");
+        setNewCoursePackageType("Emnepakke");
         setEditingCoursePackagesID(null);
       })
       .catch((error) => {
@@ -383,7 +392,7 @@ const StudyProgramDetail = () => {
             {/* Emnepakker */}
             <div className="card shadow-sm">
               <div className="card-body">
-                <h5 className="fw-semibold mb-3">Emnepakker</h5>
+                <h5 className="fw-semibold mb-3">Pakker</h5>
 
                 <button
                   className="btn btn-primary w-100 mb-3"
@@ -393,52 +402,72 @@ const StudyProgramDetail = () => {
                     )
                   }
                 >
-                  Opprett emnepakke
+                  Opprett pakke
                 </button>
 
                 {editingCoursePackagesID === studyProgram.id && (
-                  <div className="mb-3 d-flex gap-2">
+                  <div className="mb-3 d-flex flex-column gap-2">
                     <input
                       type="text"
                       className="form-control"
-                      placeholder="Navn på emnepakke"
+                      placeholder="Navn"
                       value={newCoursePackage}
                       onChange={(e) => setNewCoursePackage(e.target.value)}
                     />
+
+                    <select
+                      className="form-select w-auto"
+                      value={newCoursePackageType}
+                      onChange={(e) => setNewCoursePackageType(e.target.value)}
+                    >
+                      <option value="Emnepakke">Emnepakke</option>
+                      <option value="Spesialisering">Spesialisering</option>
+                    </select>
+
                     <button
                       className="btn btn-success btn-sm"
                       disabled={!newCoursePackage.trim()}
-                      onClick={() => handleAddCoursePackage(studyProgram)}
+                      onClick={() => handleAddCoursePackage()}
                     >
                       Legg til
                     </button>
                   </div>
                 )}
 
-                {coursepackages.length > 0 ? (
+                {Array.isArray(coursepackages) && coursepackages.length > 0 ? (
                   <ul className="list-group list-group-flush">
-                    {coursepackages.map((cp, index) => (
-                      <li
-                        key={cp.id}
-                        className="list-group-item d-flex justify-content-between align-items-center"
-                        style={{
-                          borderLeft: `5px solid ${colors[index % colors.length]}`,
-                        }}
-                      >
-                        {cp.name}
-
-                        <button
-                          className="btn btn-sm btn-outline-danger"
-                          onClick={() => handleDeleteCoursePackage(cp.id)}
+                    {Array.isArray(coursepackages) &&
+                      coursepackages.map((cp, index) => (
+                        <li
+                          key={cp.id}
+                          className="list-group-item d-flex justify-content-between align-items-center"
+                          style={{
+                            borderLeft: `5px solid ${
+                              colors[index % colors.length]
+                            }`,
+                          }}
                         >
-                          Slett
-                        </button>
-                      </li>
-                    ))}
+                          <div>
+                            <div className="fw-medium">{cp.name}</div>
+                            <div className="text-muted small">
+                              {cp.packagetype === "Spesialisering"
+                                ? "Spesialisering"
+                                : "Emnepakke"}
+                            </div>
+                          </div>
+
+                          <button
+                            className="btn btn-sm btn-outline-danger"
+                            onClick={() => handleDeleteCoursePackage(cp.id)}
+                          >
+                            Slett
+                          </button>
+                        </li>
+                      ))}
                   </ul>
                 ) : (
                   <div className="text-muted text-center py-2">
-                    Ingen emnepakker
+                    Ingen pakker
                   </div>
                 )}
               </div>
