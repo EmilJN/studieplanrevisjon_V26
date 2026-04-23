@@ -44,5 +44,5 @@ class UserService:
         return [user.serialize() for user in users]
 
     def get_logs(self):
-        logs = self.db.query(Log).all()
+        logs = self.db.query(Log).order_by(Log.id.desc()).limit(100).all()
         return [log.serialize() for log in logs]

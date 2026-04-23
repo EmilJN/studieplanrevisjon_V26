@@ -115,7 +115,7 @@ const ValgemneKategoriForm = () => {
                     onChange={(e) => setCategoryName(e.target.value)}
                     className="form-control"
                 />
-                <button onClick={handleAddCategory} className="btn btn-success">
+                <button onClick={handleAddCategory} className="btn btn-outline-success">
                     Legg til kategori
                 </button>
             </div>
@@ -133,10 +133,10 @@ const ValgemneKategoriForm = () => {
                                     onChange={(e) => handleEditCategory(category.id, e.target.value)}
                                     className="form-control"
                                 />
-                                <button onClick={() => handleSaveCategory(category.id)} className="btn btn-success">
+                                <button onClick={() => handleSaveCategory(category.id)} className="btn btn-outline-success">
                                     Lagre
                                 </button>
-                                <button onClick={() => setEditingCategory(null)} className="btn btn-outline-secondary">
+                                <button onClick={() => setEditingCategory(null)} className="btn btn-outline-danger">
                                     Avbryt
                                 </button>
                             </div>
