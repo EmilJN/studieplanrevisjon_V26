@@ -8,6 +8,7 @@ services:
       db:
         condition: service_healthy
     environment:
+      BACKUP_DIR: ${BACKUP_DIR:-./instance/backups}
       DEBUG: ${DEBUG}
       ADMIN_USERS: ${ADMIN_USERS}
       DB_HOST: db
@@ -20,6 +21,8 @@ services:
       FEIDE_CLIENT_SECRET: ${FEIDE_CLIENT_SECRET}
       BACKEND_URL: ${BACKEND_URL}
       FRONTEND_URL: ${FRONTEND_URL}
+    volumes:
+      - ./instance/backups:/app/instance/backups
 
   frontend:
     build: ./frontend

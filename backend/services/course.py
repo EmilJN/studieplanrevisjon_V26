@@ -109,6 +109,8 @@ class CourseService:
             )
             changes_string = f" | Endringer: {change_details}"
             log_text += changes_string
+        log = Log(f"Emne {course_to_update.courseCode} har blitt oppdatert.")
+        self.db.add(log)
         self.db.commit()
         
         return course_to_update,log_text
@@ -134,7 +136,7 @@ class CourseService:
         )
 
         self.db.add(new_course)
-        log = Log(f"Ny versjon av emne {new_course.courseCode} v{new_course.version}")
+        log = Log(f"Ny versjon av emne {new_course.courseCode}")
         self.db.add(log)
         self.db.commit()
         PrerequisiteService.transfer_prerequisites(course_id, new_course.id)

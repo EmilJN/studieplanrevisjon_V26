@@ -16,6 +16,8 @@ class CoursePackageService:
             course_package_id = str(uuid.uuid4())
             new_course_package = Coursepackage(id=course_package_id, name=name, studyplan_id=studyplan_id, packagetype=packagetype)
             self.db.add(new_course_package)
+            log = Log(f"Ny {packagetype} har blitt opprettet: '{name}' for studieplan {studyplan_id}")
+            self.db.add(log)
             self.db.commit()
             return new_course_package
         except Exception as e:
@@ -55,6 +57,8 @@ class CoursePackageService:
             if not course_package:
                 raise ValueError("Course package not found")
             self.db.delete(course_package)
+            log = Log(f"{course_package.packagetype}: '{course_package.name}' har blitt slettet fra studieplan {course_package.studyplan_id}")
+            self.db.add(log)
             self.db.commit()
         except Exception as e:
             self.db.rollback()
@@ -81,8 +85,7 @@ class CoursePackageService:
 
             if course not in package.courses:
                 package.courses.append(course)
-
-            db.session.commit()
+            self.db.commit()
             return package
 
         except Exception as e:

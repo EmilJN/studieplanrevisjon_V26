@@ -3,6 +3,7 @@ import { useAuth } from "../components/validateuser";
 import AdminUserList from "../components/adminuserlist";
 import AdminLogPage from "../components/adminlogpage";
 import AdminProgramList from "../components/adminprogrampage";
+import AdminDatabase from "../components/admindatabase";
 import AdminOverload from "../components/adminoverload";
 import ValgemneKategoriForm from "../components/valgemnekategoriform";
 
@@ -34,6 +35,10 @@ const Admin = () => {
                                 className={`btn ${activePage === 'valgemneKategorier' ? 'btn-primary' : 'btn-outline-secondary'}`}
                                 onClick={() => setActivePage('valgemneKategorier')}>
                                 Valgemne kategorier</button>
+                            <button
+                                className={`btn ${activePage === 'backups' ? 'btn-primary' : 'btn-outline-secondary'}`}
+                                onClick={() => setActivePage('backups')}>
+                                Database Backups</button>
                         </div>
                     </div>
                     <div className="col-12 col-md-9">
@@ -43,6 +48,7 @@ const Admin = () => {
                         {activePage === 'programs' && <AdminProgramList />}
                         {activePage === 'overloadedprograms' && <AdminOverload />}
                         {activePage === 'valgemneKategorier' && <ValgemneKategoriForm />}
+                        {activePage === 'backups' && <AdminDatabase />}
                     </div>
                 </div>
             ) :

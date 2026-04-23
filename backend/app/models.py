@@ -1,6 +1,5 @@
 from app import db
 import datetime
-import datetime
 import pytz
 prerequisites = db.Table(
     'prerequisites',

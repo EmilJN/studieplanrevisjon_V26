@@ -1,5 +1,5 @@
 from app import db
-from app.models import Course, Studyprogram, Studyplan, Institute, Notifications, Semester, SemesterCourses, ElectiveGroup
+from app.models import Course, Log, Studyprogram, Studyplan, Institute, Notifications, Semester, SemesterCourses, ElectiveGroup
 from sqlalchemy import func, and_, or_, literal_column
 from sqlalchemy.orm import joinedload
 
@@ -151,6 +151,8 @@ class SemesterCoursesService:
 
             elective_group = ElectiveGroup(category=new_category)
             self.db.add(elective_group)
+            log = Log(f"Ny Valgfag gruppe har blitt opprettet: '{new_category}'")
+            self.db.add(log)
             self.db.commit()
             return elective_group.serialize()
         except Exception as e:
@@ -176,6 +178,8 @@ class SemesterCoursesService:
                 raise ValueError(f"Cannot delete elective group '{elective_group.name}' because it has assigned courses.")
 
             self.db.delete(elective_group)
+            log = Log(f"Valgfag gruppe: '{elective_group.name}' har blitt slettet")
+            self.db.add(log)
             self.db.commit()
             return {"message": f"Elective group '{elective_group.name}' deleted successfully."}
         except ValueError as e:
@@ -198,6 +202,8 @@ class SemesterCoursesService:
                 raise ValueError(f"Category '{new_name}' already exists.")
 
             elective_group.name = new_name
+            log = Log(f"Valgfag gruppe: '{elective_group.name}' har blitt oppdatert")
+            self.db.add(log)
             self.db.commit()
             return elective_group.serialize()
         except Exception as e:

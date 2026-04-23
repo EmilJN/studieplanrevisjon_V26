@@ -21,7 +21,7 @@ import subprocess, sys
 app = create_app()
 
 # Register the blueprints
-app.register_blueprint(backup_bp, url_prefix='/db')
+app.register_blueprint(backup_bp, url_prefix='/db/')
 app.register_blueprint(courses_bp, url_prefix='/courses/')
 app.register_blueprint(prerequisites_bp, url_prefix='/prerequisites' )
 app.register_blueprint(studyprogram_bp, url_prefix='/studyprograms/')
