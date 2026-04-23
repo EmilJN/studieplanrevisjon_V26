@@ -28,33 +28,33 @@ const Notifications = ({ programId, setNotificationsRef }) => {
     fetchNotifications();
   }, [programId, setNotificationsRef]);
 
-const toggleNotifications = async () => {
+  const toggleNotifications = async () => {
     const opening = !isOpen;
     setIsOpen(opening);
 
     if (opening) {
-        const unread = notifications.filter(n => !n.is_acknowledged);
+      const unread = notifications.filter(n => !n.is_acknowledged);
 
-        if (unread.length === 0) return;
+      if (unread.length === 0) return;
 
-        try {
-            await api.post('/notifications/acknowledge', {
-                notification_id_list: unread.map(n => n.id)
-            });
+      try {
+        await api.post('/notifications/acknowledge', {
+          notification_id_list: unread.map(n => n.id)
+        });
 
-            setNotifications(prev =>
-                prev.map(n =>
-                    unread.some(u => u.id === n.id)
-                        ? { ...n, is_acknowledged: true }
-                        : n
-                )
-            );
+        setNotifications(prev =>
+          prev.map(n =>
+            unread.some(u => u.id === n.id)
+              ? { ...n, is_acknowledged: true }
+              : n
+          )
+        );
 
-        } catch (error) {
-            console.error('Failed to acknowledge notifications:', error);
-        }
+      } catch (error) {
+        console.error('Failed to acknowledge notifications:', error);
+      }
     }
-};
+  };
 
   const handleDeleteNotification = async (notificationId) => {
     try {
@@ -89,7 +89,7 @@ const toggleNotifications = async () => {
       {isOpen && (
         <div className="notification-overlay" ref={overlayRef}>
           <div className="notification-header">
-            <h3>Notifications</h3>
+            <h3>Notifikasjoner</h3>
             <button className="close-button" onClick={() => setIsOpen(false)}>
               ✕
             </button>
@@ -98,7 +98,7 @@ const toggleNotifications = async () => {
           <div className="notification-list">
             {notifications.length === 0 ? (
               <div className="no-notifications">
-                <p>No notifications</p>
+                <p>Ingen notifikasjoner</p>
               </div>
             ) : (
               notifications.map((notification, index) => (
@@ -108,18 +108,18 @@ const toggleNotifications = async () => {
                 >
                   <div className="notification-content">
                     <p>
-                      <strong>Message:</strong> {notification.message}
+                      <strong>Melding:</strong> {notification.message}
                     </p>
                     <div className="notification-meta">
                       {new Date(notification.created_at).toLocaleString()}
                     </div>
                   </div>
-                    <button
-                      className="solved-button"
-                      onClick={() => handleDeleteNotification(notification.id)}
-                    >
-                      Delete
-                    </button>
+                  <button
+                    className="btn btn-outline-danger"
+                    onClick={() => handleDeleteNotification(notification.id)}
+                  >
+                    Slett
+                  </button>
                 </div>
               ))
             )}
