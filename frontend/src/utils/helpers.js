@@ -50,7 +50,7 @@ export const StudyProgramHeader = ({ studyProgram, baseYear, setNotificationsRef
         programId={studyProgram.id}
         setNotificationsRef={setNotificationsRef}
       />
-      <div className="d-flex flex-column text-muted mt-1">
+      <div className="d-flex flex-row gap-4 text-muted mt-1">
         <span><strong>Grad type:</strong> {studyProgram.degree_type}</span>
         <span><strong>Institutt:</strong> {studyProgram.institute_name}</span>
         <span>
@@ -81,7 +81,7 @@ export const PreviousStudyPlans = ({ plans, latestPlanId, studyprogramId, onView
         {plans.slice(0, 8).map((plan) => (
           <button
             key={plan.id}
-            className={`btn ${plan.id === currentPlanId ? "btn-primary" : "btn-outline-secondary"}`}
+            className={`btn ${plan.id === currentPlanId ? "btn-secondary" : "btn-outline-secondary"}`}
             onClick={() => onViewPlan(plan.id)}
             disabled={plan.id === currentPlanId}>
             Year: {plan.year} {plan.id === latestPlanId ? "(Valgt)" : ""}

@@ -146,54 +146,52 @@ const GenerateStudyplan = () => {
         />
 
         {/* Action buttons */}
-        <div className="d-flex gap-2 mt-4 justify-content-end">
-          <button onClick={() => navigate(`/studyprograms/${id}`)} className="btn btn-outline-secondary">
+        <div className="d-flex gap-2 mb-4 justify-content-end">
+          <button onClick={() => navigate(`/studyprograms/${id}`)} className="btn btn-outline-danger">
             Avbryt
           </button>
-          <button onClick={handleSaveNewPlan} className="btn btn-success">
+          <button onClick={handleSaveNewPlan} className="btn btn-outline-success">
             Lagre ny studieplan
           </button>
         </div>
 
-        <div className="row">
-          <div className="col-12 col-md-12">
-            <div className="mb-3">
-              <SearchCourses
-                searchTerm={searchTerm}
-                setSearchTerm={setSearchTerm}
-                maxResults={10}
-                onResultsChange={setSearchResults}
-                allCourses={courses}
-                semesters={semesters}
-              />
-            </div>
+        <div className="row justify-content-center mb-3">
+          <div className="col-md-8">
+            <SearchCourses
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+              maxResults={10}
+              onResultsChange={setSearchResults}
+              allCourses={courses}
+              semesters={semesters}
+            />
+          </div>
+        </div>
 
-            <h5 className="fw-semibold mb-3">Semester Oversikt</h5>
-            <div className="d-flex flex-column gap-3">
-              {semesterPairs.map((pair, pairIndex) => (
-                <div key={pairIndex} className="row g-3">
-                  {pair.map(semester => (
-                    <div key={`semester-${semester.semester_number}`} className="col-md-6">
-                      <SemesterDisplay
-                        semesterId={semester.id}
-                        semesterNumber={semester.semester_number}
-                        courses={semester.semester_courses}
-                        year={calculatedYear(newYear, semester.semester_number, semester.term)}
-                        term={semester.term}
-                        onAdministrerValgemner={() => handleVisValgemner(semester.id, semester.semester_number)}
-                        readOnly={isEditMode}
-                        semesters={semesters}
-                        setSemesters={setSemesters}
-                        setFormattedValgemner={setFormattedValgemner}
-                        valgemneCourse={valgemneCourse}
-                        setSearchTerm={setSearchTerm}
-                      />
-                    </div>
-                  ))}
+        <h5 className="fw-semibold mb-3">Semester Oversikt</h5>
+        <div className="d-flex flex-column gap-3">
+          {semesterPairs.map((pair, pairIndex) => (
+            <div key={pairIndex} className="row g-3">
+              {pair.map(semester => (
+                <div key={`semester-${semester.semester_number}`} className="col-md-6">
+                  <SemesterDisplay
+                    semesterId={semester.id}
+                    semesterNumber={semester.semester_number}
+                    courses={semester.semester_courses}
+                    year={calculatedYear(newYear, semester.semester_number, semester.term)}
+                    term={semester.term}
+                    onAdministrerValgemner={() => handleVisValgemner(semester.id, semester.semester_number)}
+                    readOnly={isEditMode}
+                    semesters={semesters}
+                    setSemesters={setSemesters}
+                    setFormattedValgemner={setFormattedValgemner}
+                    valgemneCourse={valgemneCourse}
+                    setSearchTerm={setSearchTerm}
+                  />
                 </div>
               ))}
             </div>
-          </div>
+          ))}
         </div>
         <ValgemneOverlay
           isOpen={showOverlay}

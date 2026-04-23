@@ -179,7 +179,7 @@ const ValgemneOverlay = ({
                 <button
                   onClick={addCourseToGroup}
                   disabled={!selectedCourse}
-                  className="btn btn-primary mt-2"
+                  className="btn btn-outline-primary mt-2"
                 >
                   Legg til i kategori
                 </button>
@@ -232,7 +232,7 @@ const ValgemneOverlay = ({
 
         <div className="d-flex justify-content-end gap-2 mt-3">
           {!readOnly && (
-            <button onClick={handleConfirmValgemner} className="btn btn-success">
+            <button onClick={handleConfirmValgemner} className="btn btn-outline-success">
               Lagre endringer
             </button>
           )}

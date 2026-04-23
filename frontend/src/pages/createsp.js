@@ -4,7 +4,6 @@ import api from "../api.js";
 import { useNavigate, useLocation } from "react-router-dom";
 import { DragDropContext } from "@hello-pangea/dnd";
 import "../styles/dragdrop.css";
-import "../styles/createsp.css";
 import ValgemneOverlay from "../components/valgemne.js";
 import Notifications from "../components/notifications.js";
 import SemesterDisplay from "../components/semesterDisplay.js";
@@ -199,114 +198,121 @@ const CreateSP = () => {
         })
       }
     >
-      <h1>Lag ny studieplan</h1>
-      {selectedProgram && (
-        <div className="notifications-container">
-          <Notifications programId={selectedProgram.id} />
-        </div>
-      )}
-      {errorMessage && <div className="error-message">{errorMessage}</div>}
-      {successMessage && (
-        <div className="success-message">{successMessage}</div>
-      )}
-
-      <div className="setup-section">
-        <h2>Lag studieplan</h2>
-
-        <div className="form-group">
-          <label>Studieprogram:</label>
-          <div className="search-container">
-            <input
-              type="text"
-              value={programSearchQuery}
-              onChange={(e) => handleProgramSearch(e.target.value)}
-              placeholder="Søk etter studieprogram..."
-              disabled={isInitialized || isLoading}
-            />
-
-            {/* Show search results */}
-            {filteredPrograms.length > 0 && (
-              <ul className="search-resultsz">
-                {filteredPrograms.map((program) => (
-                  <li key={program.id} onClick={() => selectProgram(program)}>
-                    {program.name} ({program.degree_type})
-                  </li>
-                ))}
-              </ul>
-            )}
+      <div className="container py-4">
+        <h1 className="mb-4">Lag ny studieplan</h1>
+        {selectedProgram && (
+          <div className="mb-3">
+            <Notifications programId={selectedProgram.id} />
           </div>
+        )}
+        {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
+        {successMessage && (
+          <div className="alert alert-success">{successMessage}</div>
+        )}
 
-          {/* Display selected program */}
-          {selectedProgram && (
-            <div className="selected-program">
-              <p>
-                <strong>Valgt:</strong> {selectedProgram.name} (
-                {selectedProgram.degree_type})
-              </p>
+        <div className="border rounded p-4 mb-4">
+          <h5 className="fw-semibold mb-3">Lag studieplan</h5>
+          <div className="row g-3">
+            <div className="col-md-6">
+              <label className="form-label fw-semibold">Studieprogram</label>
+              <div className="position-relative">
+                <input
+                  type="text"
+                  className="form-control"
+                  value={programSearchQuery}
+                  onChange={(e) => handleProgramSearch(e.target.value)}
+                  placeholder="Søk etter studieprogram..."
+                  disabled={isInitialized || isLoading}
+                />
+
+                {/* Show search results */}
+                {filteredPrograms.length > 0 && (
+                  <ul className="list-group position-absolute w-100" style={{ zIndex: 1100 }}>
+                    {filteredPrograms.map((program) => (
+                      <li
+                        key={program.id}
+                        onClick={() => selectProgram(program)}
+                        className="list-group-item list-group-item-action"
+                        style={{ cursor: "pointer" }}
+                      >
+                        <div className="fw-semibold">{program.name}</div>
+                        <div className="text-muted small">{program.degree_type}</div>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+
+              {/* Display selected program */}
+              {selectedProgram && (
+                <div className="selected-program">
+                  <div className="mt-2 text-muted small">
+                    <strong>Valgt:</strong> {selectedProgram.name} (
+                    {selectedProgram.degree_type})
+                  </div>
+                </div>
+              )}
             </div>
-          )}
-        </div>
 
-        <div className="form-group">
-          <label>År:</label>
-          <input
-            type="number"
-            value={year}
-            onChange={(e) => setYear(e.target.value)}
-            min="2000"
-            disabled={isInitialized || isLoading}
-          />
-        </div>
-
-        <button
-          onClick={initializeStudyplan}
-          disabled={!selectedProgram || isInitialized || isLoading}
-          className="primary-button"
-        >
-          {isLoading
-            ? "Initializing..."
-            : `Initialize Study Plan for ${selectedProgram ? selectedProgram.name : ""} (${year})`}
-        </button>
-      </div>
-
-      <ConflictSummary
-        termConflicts={confirmedConflicts}
-        isOpen={showConflictSummary}
-        onClose={() => setShowConflictSummary(false)}
-        onConfirm={() => {
-          setShowConflictSummary(false);
-          saveStudyplan();
-        }}
-        onCancel={() => setShowConflictSummary(false)}
-        sourceProgram={selectedProgram}
-      />
-
-      {isInitialized && (
-        <>
-          <div className="add-courses-section">
-            <h2>Legg til med å dra emner</h2>
-            <div className="edit-toolbar">
-              <SearchCourses
-                searchTerm={searchTerm}
-                setSearchTerm={setSearchTerm}
-                maxResults={10}
-                onResultsChange={setSearchResults}
-                allCourses={courses}
-                semesters={semesters}
+            <div className="col-md-3">
+              <label className="form-label fw-semibold">År</label>
+              <input
+                type="number"
+                className="form-control"
+                value={year}
+                onChange={(e) => setYear(e.target.value)}
+                min="2000"
+                disabled={isInitialized || isLoading}
               />
             </div>
+
+            <div className="col-md-3 d-flex align-items-center">
+              <button
+                onClick={initializeStudyplan}
+                disabled={!selectedProgram || isInitialized || isLoading}
+                className="btn btn-outline-primary w-100"
+              >
+                {isLoading ? "Laster..." : "Initialiser studieplan"}
+              </button>
+            </div>
           </div>
+        </div>
 
-          <div className="semesters-section">
-            <h2>Semester overblikk</h2>
+        <ConflictSummary
+          termConflicts={confirmedConflicts}
+          isOpen={showConflictSummary}
+          onClose={() => setShowConflictSummary(false)}
+          onConfirm={() => {
+            setShowConflictSummary(false);
+            saveStudyplan();
+          }}
+          onCancel={() => setShowConflictSummary(false)}
+          sourceProgram={selectedProgram}
+        />
 
-            <div className="semester-columns-container">
+        {isInitialized && (
+          <>
+            <div className="row justify-content-center mb-3">
+              <div className="col-md-8">
+                <SearchCourses
+                  searchTerm={searchTerm}
+                  setSearchTerm={setSearchTerm}
+                  maxResults={10}
+                  onResultsChange={setSearchResults}
+                  allCourses={courses}
+                  semesters={semesters}
+                />
+              </div>
+            </div>
+
+            <h5 className="fw-semibold mb-3">Semesteroversikt</h5>
+            <div className="d-flex flex-column gap-3">
               {semesterPairs.map((pair, pairIndex) => (
-                <div key={pairIndex} className="semester-pair">
+                <div key={pairIndex} className="row g-3">
                   {pair.map((semester) => (
                     <div
                       key={`semester-${semester.semester_number}`}
-                      className="semester-box"
+                      className="col-md-6"
                     >
                       <SemesterDisplay
                         semesterId={semester.id}
@@ -332,33 +338,33 @@ const CreateSP = () => {
                 </div>
               ))}
             </div>
-          </div>
 
-          <div className="actions-section">
-            <button
-              onClick={saveStudyplan}
-              disabled={isLoading}
-              className="save-button"
-            >
-              {isLoading ? "Saving..." : "Save Study Plan"}
-            </button>
-          </div>
+            <div className="d-flex justify-content-end mt-4">
+              <button
+                onClick={saveStudyplan}
+                disabled={isLoading}
+                className="btn btn-outline-success"
+              >
+                {isLoading ? "Lagrer..." : "Lagre studieplan"}
+              </button>
+            </div>
 
-          {/* ValgemneOverlay */}
-          <ValgemneOverlay
-            isOpen={valgemneOverlayOpen}
-            closeOverlay={() => setValgemneOverlayOpen(false)}
-            semester={selectedSemesterNumber}
-            semesterNumber={selectedSemesterNumber}
-            valgemne={valgemne}
-            setValgemne={setValgemne}
-            setFormattedValgemner={setFormattedValgemner}
-            allCourses={courses}
-            readOnly={false}
-          />
-        </>
-      )}
-    </DragDropContext>
+            {/* ValgemneOverlay */}
+            <ValgemneOverlay
+              isOpen={valgemneOverlayOpen}
+              closeOverlay={() => setValgemneOverlayOpen(false)}
+              semester={selectedSemesterNumber}
+              semesterNumber={selectedSemesterNumber}
+              valgemne={valgemne}
+              setValgemne={setValgemne}
+              setFormattedValgemner={setFormattedValgemner}
+              allCourses={courses}
+              readOnly={false}
+            />
+          </>
+        )}
+      </div>
+    </DragDropContext >
   );
 };
 

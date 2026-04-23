@@ -116,7 +116,7 @@ const DraggableCourse = ({
           {!readOnly && semesterNumber && !isValgemne && (
             <button
               onClick={() => onRemove(course.id)}
-              className="remove-button"
+              className="btn btn-outline-danger"
             >
               Fjern
             </button>
@@ -125,7 +125,7 @@ const DraggableCourse = ({
           {isValgemne && (
             <button
               onClick={readOnly ? () => onAdministrerValgemner() : onRemoveValgemne}
-              className={readOnly ? "manage-valgemner-button" : "remove-button"}
+              className={readOnly ? "btn btn-outline-primary" : "btn btn-outline-danger"}
             >
               {readOnly ? "Vis valgemner" : "Fjern"}
             </button>

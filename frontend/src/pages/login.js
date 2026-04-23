@@ -26,11 +26,7 @@ const Login = () => {
         <p className="text-muted mb-4">Logg inn for å fortsette</p>
         <a
           href={`${process.env.REACT_APP_BACKEND_URL}/user/login`}
-          className="btn w-100"
-          style={{
-            backgroundColor: "var(--color-dark)",
-            color: "var(--color-white)",
-          }}
+          className="btn btn-outline-secondary w-100"
         >
           Logg inn med FEIDE
         </a>

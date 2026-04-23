@@ -55,7 +55,7 @@ export default function CreateCourseForm() {
       </div>
 
       <div className="col-12">
-        <button type="submit" className="btn btn-success">Send inn</button>
+        <button type="submit" className="btn btn-outline-success">Send inn</button>
       </div>
 
     </form>

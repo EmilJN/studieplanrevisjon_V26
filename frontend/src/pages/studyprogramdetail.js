@@ -336,19 +336,19 @@ const StudyProgramDetail = () => {
                 state: { studyProgram, year: latestStudyPlan?.year + 1 },
               })
             }
-            className="btn btn-primary"
+            className="btn btn-outline-primary"
           >
             Lag ny studieplan
           </button>
           <button
             onClick={() => setIsEditMode(!isEditMode)}
-            className={`btn ${isEditMode ? "btn-outline-danger" : "btn-primary"}`}
+            className={`btn ${isEditMode ? "btn-outline-danger" : "btn-outline-primary"}`}
           >
             {isEditMode ? "Avbryt" : "Rediger"}
           </button>
           {!isEditMode && (
             <button
-              className="btn btn-danger"
+              className="btn btn-outline-danger"
               onClick={() => {
                 if (
                   window.confirm(
@@ -362,12 +362,12 @@ const StudyProgramDetail = () => {
             </button>
           )}
           {isEditMode && (
-            <button onClick={handleUpdateStudyPlan} className="btn btn-success">
+            <button onClick={handleUpdateStudyPlan} className="btn btn-outline-success">
               Lagre studieplanen
             </button>
           )}
           <button
-            className="btn btn-secondary"
+            className="btn btn-outline-secondary"
             onClick={() => exportStudyPlan(studyProgram.id)}
           >
             Eksporter til word
@@ -391,16 +391,18 @@ const StudyProgramDetail = () => {
               <div className="card-body">
                 <h5 className="fw-semibold mb-3">Pakker</h5>
 
-                <button
-                  className="btn btn-primary w-100 mb-3"
-                  onClick={() =>
-                    setEditingCoursePackagesID(
-                      editingCoursePackagesID ? null : studyProgram.id,
-                    )
-                  }
-                >
-                  Opprett pakke
-                </button>
+                <div className="d-flex justify-content-center mb-3">
+                  <button
+                    className="btn btn-outline-primary"
+                    onClick={() =>
+                      setEditingCoursePackagesID(
+                        editingCoursePackagesID ? null : studyProgram.id,
+                      )
+                    }
+                  >
+                    Opprett pakke
+                  </button>
+                </div>
 
                 {editingCoursePackagesID === studyProgram.id && (
                   <div className="mb-3 d-flex flex-column gap-2">
@@ -422,7 +424,7 @@ const StudyProgramDetail = () => {
                     </select>
 
                     <button
-                      className="btn btn-success btn-sm"
+                      className="btn btn-outline-success btn-sm"
                       disabled={!newCoursePackage.trim()}
                       onClick={() => handleAddCoursePackage()}
                     >
@@ -439,9 +441,8 @@ const StudyProgramDetail = () => {
                           key={cp.id}
                           className="list-group-item d-flex justify-content-between align-items-center"
                           style={{
-                            borderLeft: `5px solid ${
-                              colors[index % colors.length]
-                            }`,
+                            borderLeft: `5px solid ${colors[index % colors.length]
+                              }`,
                           }}
                         >
                           <div>
