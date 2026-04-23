@@ -88,7 +88,7 @@ def get_notification_group(group_id):
         courses = []
         for notification in notifications:
             if notification.noti_type == "course":
-                course = Course.query.get(notification.noti_id)
+                course = Course.query.get(notification.course_id)
                 if course:
                     courses.append({
                         "course_id": course.id,
@@ -109,15 +109,15 @@ def find_notification_group():
     try:
         data = request.get_json()
         affected_programs = data.get('affected_programs', [])
-        noti_id = data.get('noti_id')
+        course_id = data.get('course_id')
         target_term = data.get('target_term')
 
-        if not affected_programs or not noti_id or not target_term:
+        if not affected_programs or not course_id or not target_term:
             return jsonify({"error": "Missing required fields"}), 400
 
         notification_service = ServiceFactory.get_notification_service()
 
-        group_id = notification_service.find_notification_group_id(affected_programs, noti_id, target_term)
+        group_id = notification_service.find_notification_group_id(affected_programs, course_id, target_term)
 
         if group_id:
             return jsonify({"notification_group_id": group_id}), 200

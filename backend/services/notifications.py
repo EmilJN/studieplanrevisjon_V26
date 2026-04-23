@@ -14,12 +14,12 @@ class NotificationService:
     def generate_notification_group_id(self):
         return str(uuid.uuid4())
 
-    def find_notification_group_id(self, affected_programs, noti_id, target_term):
+    def find_notification_group_id(self, affected_programs, course_id, target_term):
         try:
             for program_id in affected_programs:
                 existing_notification = self.db.query(Notifications).filter(
                     Notifications.program_id == program_id,
-                    Notifications.noti_id == noti_id,
+                    Notifications.course_id == course_id,
                     Notifications.target_term == target_term
                 ).first()
 
@@ -27,7 +27,7 @@ class NotificationService:
                     print(f"Found notification group in database for program_id={program_id}: group_id={existing_notification.notification_group_id}")
                     return existing_notification.notification_group_id
 
-            print(f"No notification group found for noti_id={noti_id}, target_term={target_term}")
+            print(f"No notification group found for course_id={course_id}, target_term={target_term}")
             return None
         except Exception as e:
             print(f"Error finding notification group ID: {str(e)}")
@@ -52,19 +52,19 @@ class NotificationService:
             self.db.rollback()
             return (f"Error creating course notification: {str(e)}")
 
-        
-    def create_prog_notification(self, program_id, source_program_id, message, noti_type, notification_group_id, target_term):
+    def create_prog_notification(self, program_id,source_program_id,message,course_id,reason, noti_type, target_term,notification_group_id):
         try:
             notification = Notifications(
                 program_id=program_id,
                 source_program_id=source_program_id,
                 message=message,
+                course_id=course_id,
+                reason=reason,
                 noti_type=noti_type,
-                notification_group_id=self.generate_notification_group_id(),
+                notification_group_id=notification_group_id,
                 target_term=target_term,
-                created_at=datetime.now()
             )
-            print(f"Creating notification for program_id={program_id}, noti_id={noti_id}, group_id={notification_group_id}")
+            print(f"Creating notification for program_id={program_id}, course_id={course_id}, group_id={notification.notification_group_id}")
             self.db.add(notification)
             #self.send_send_email(program_id,source_program_id,message)
             self.db.commit()
@@ -72,7 +72,7 @@ class NotificationService:
         except Exception as e:
             self.db.rollback()
             print(f"Error creating program notification: {str(e)}")
-            return None
+            return e
 
     def create_prog_notifications(self, source_program_id, term_conflicts):
         try:
@@ -80,29 +80,31 @@ class NotificationService:
 
             grouped_conflicts = {}
             for conflict in term_conflicts:
-                noti_id = conflict['noti_id']
+                course_id = conflict['course_id']
                 target_term = conflict['target_term']
-                if noti_id not in grouped_conflicts:
-                    grouped_conflicts[noti_id] = {
+                if course_id not in grouped_conflicts:
+                    grouped_conflicts[course_id] = {
                         "message": conflict['message'],
+                        "reason": conflict['reason'],
                         "target_term": target_term,
                         "affected_programs": []
                     }
-                grouped_conflicts[noti_id]["affected_programs"].append(conflict['affected_program_id'])
+                grouped_conflicts[course_id]["affected_programs"].append(conflict['affected_program_id'])
 
 
-            for noti_id, group_data in grouped_conflicts.items():
+            for course_id, group_data in grouped_conflicts.items():
                 message = group_data["message"]
+                reason = group_data["reason"]
                 target_term = group_data["target_term"]
                 affected_programs = group_data["affected_programs"]
 
-                notification_group_id = self.find_notification_group_id(affected_programs, noti_id, target_term)
+                notification_group_id = self.find_notification_group_id(affected_programs, course_id, target_term)
                 if notification_group_id:
-                    print(f"Notification group already exists for noti_id={noti_id}, target_term={target_term}.")
+                    print(f"Notification group already exists for course_id={course_id}, target_term={target_term}.")
 
                     source_notification = self.db.query(Notifications).filter(
                         Notifications.program_id == source_program_id,
-                        Notifications.noti_id == noti_id,
+                        Notifications.course_id == course_id,
                         Notifications.target_term == target_term,
                         Notifications.notification_group_id == notification_group_id
                     ).first()
@@ -110,9 +112,9 @@ class NotificationService:
                     if source_notification:
                         source_notification.is_solved = True
                         self.db.commit()
-                        print(f"Notification for source_program_id={source_program_id}, noti_id={noti_id} marked as solved.")
+                        print(f"Notification for source_program_id={source_program_id}, course_id={course_id} marked as solved.")
                     else:
-                        print(f"No notification for source_program_id={source_program_id}, noti_id={noti_id}. Nothing to solve.")
+                        print(f"No notification for source_program_id={source_program_id}, course_id={course_id}. Nothing to solve.")
                     continue
 
                 notification_group_id = self.generate_notification_group_id()
@@ -124,21 +126,22 @@ class NotificationService:
 
                     existing_notification = self.db.query(Notifications).filter(
                         Notifications.program_id == program_id,
-                        Notifications.noti_id == noti_id,
+                        Notifications.course_id == course_id,
                         Notifications.target_term == target_term,
                         Notifications.notification_group_id == notification_group_id
                     ).first()
 
                     if existing_notification:
-                        print(f"Notification already exists for program_id={program_id}, noti_id={noti_id}, target_term={target_term}")
+                        print(f"Notification already exists for program_id={program_id}, course_id={course_id}, target_term={target_term}")
                         continue
-
+                    
                     notification = self.create_prog_notification(
                         program_id=program_id,
                         source_program_id=source_program_id,
                         message=message,
+                        reason=reason,
                         noti_type="course",
-                        noti_id=noti_id,
+                        course_id=course_id,
                         notification_group_id=notification_group_id,
                         target_term=target_term
                     )

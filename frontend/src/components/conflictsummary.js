@@ -46,8 +46,9 @@ const ConflictSummary = ({
             const payload = {
                 source_program_id: sourceProgram.id,
                 term_conflicts: termConflicts.map(tc => ({
-                    noti_id: tc.course.id,
+                    course_id: tc.course.id,
                     message: tc.message,
+                    reason: tc.reason,
                     affected_program_id: tc.affectedProgram.id,
                     target_term: tc.new_term,
                 })),
