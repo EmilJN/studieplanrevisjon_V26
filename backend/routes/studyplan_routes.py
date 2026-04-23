@@ -275,7 +275,6 @@ def get_courses_by_studyplan(studyplan_id):
         return jsonify({"error": str(e)}), 404
     
     
-# brukes til å hente alle studieplaner for et studieprogram (nyeste først) og den nyeste studieplanen med detaljer
 @studyplan_bp.route('/studyprograms/<int:studyprogram_id>/fullsp', methods=['GET'])
 def get_full_sp(studyprogram_id):
     try:

@@ -286,7 +286,7 @@ class Notifications(db.Model):
             result.update({
                 "recipient_id": self.recipient_id,
                 "sender_id": self.sender_id,
-                "is_read": self.is_read
+                "is_read": self.is_acknowledged
             })
         return result
     

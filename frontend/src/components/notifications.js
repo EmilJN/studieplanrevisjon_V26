@@ -14,7 +14,7 @@ const Notifications = ({ programId, setNotificationsRef }) => {
       if (!programId) return;
       try {
         const response = await api.get(
-          `/notifications/?program_id=${programId}`,
+          `/notifications/${programId}`,
         );
         setNotifications(response.data);
         if (setNotificationsRef) {

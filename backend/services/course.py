@@ -1,6 +1,7 @@
 from app import db
-from app.models import Course, Studyprogram, Studyplan, Institute, Semester, SemesterCourses, Log, Notifications
+from app.models import Course, Semester, Studyprogram, Studyplan, Institute, Semester, SemesterCourses, Log, Notifications
 import uuid
+from services.semester import SemesterService
 from services.prerequisite import PrerequisiteService
 from sqlalchemy import func, and_, or_, union, literal, text, literal_column
 from sqlalchemy.orm import joinedload
@@ -78,11 +79,44 @@ class CourseService:
         self.db.commit()
         return course
     
-    # Oppdater eksisterende emne
+    def update_courses(self, formatted_courses):
+        semester_service = SemesterService(self.db)
+        try:
+            count = 0
+            for semester, courses in formatted_courses.items():
+                for course_data in courses:
+                    course_id = course_data.get("course_id")
+                    name = course_data.get("name")
+                    courseCode = course_data.get("courseCode")
+                    credits = course_data.get("credits")
+                    
+                    semester_info = semester_service.get_semester_by_id(semester)
+                    degree = course_data.get("degree")
+                    course_semester = semester_info.term
+                    course = self.get_course_by_id(course_id)
+                    if not course:
+                        raise ValueError(f"Course with ID {course_id} not found")
+
+                    self.update_course(
+                        course_id=course_id,
+                        name=name,
+                        courseCode=courseCode,
+                        semester=course_semester,
+                        credits=credits,
+                        degree=degree
+                    )
+                    count += 1
+
+            return {"message": f"Updated courses for {count} courses."}
+
+        except Exception as e:
+            self.db.rollback()
+            print(f"Error updating courses: {str(e)}. {formatted_courses}")
+            raise e
     
     def update_course(self, course_id, name, courseCode, semester, credits, degree):
-        
         course_to_update = self.get_course_by_id(course_id)
+        
         if not course_to_update:
             raise ValueError(f"Course with ID {course_id} not found")
         changes = []
@@ -109,8 +143,9 @@ class CourseService:
             )
             changes_string = f" | Endringer: {change_details}"
             log_text += changes_string
-        log = Log(f"Emne {course_to_update.courseCode} har blitt oppdatert.")
-        self.db.add(log)
+        if len(changes) > 0:
+            log = Log(f"Emne {course_to_update.courseCode} har blitt oppdatert. {changes_string}")
+            self.db.add(log)
         self.db.commit()
         
         return course_to_update,log_text
@@ -277,7 +312,6 @@ class CourseService:
             print(f"Error fetching course usage: {str(e)}")
             return []
         
-
     def get_courses_overlapping_with_course(self,course_id):
         target_semesters = db.session.query(SemesterCourses.semester_id) \
                 .filter(SemesterCourses.course_id == course_id).subquery()

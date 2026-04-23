@@ -78,7 +78,7 @@ class SemesterCoursesService:
 
 
             self.db.commit()
-            print(f"Updated11 courses for {len(formatted_courses)} semesters.")
+            print(f"Updated courses for {len(formatted_courses)} semesters.")
             return {"message": f"Updated courses for {len(formatted_courses)} semesters."}
         except Exception as e:
             self.db.rollback()

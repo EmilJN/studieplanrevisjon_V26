@@ -2,6 +2,8 @@ from app import db
 from app.models import Studyplan, Semester, SemesterCourses, Log
 from sqlalchemy import func, and_
 
+from services.course import CourseService
+
 
 class StudyplanService:
     def __init__(self, db_session=None, course_service=None, 
@@ -49,6 +51,7 @@ class StudyplanService:
 
     # update
     def update_semesters_courses(self, studyplan_id, semester_courses):
+        course_service = self.course_service or CourseService(self.db)
         try:
             semesters = self.semester_service.get_all_semesters_by_studyplan_id(studyplan_id)
             print(f"semesters: {semesters}")
@@ -57,10 +60,11 @@ class StudyplanService:
             formatted_courses = self.semesterCourses_service.format_courses_for_semesters(semester_courses, semester_mapping)
             print(f"formatted_courses: {formatted_courses}")
             result = self.semesterCourses_service.update_courses(formatted_courses)
+            course_service.update_courses(formatted_courses)
             print(f"Updated courses for studyplan {studyplan_id}: {result}")
-            # db.session.commit()
             log = Log(f"Studieplanen med id {studyplan_id} har blitt redigert")
             self.db.add(log)
+            db.session.commit()
             return result
         except Exception as e:
             raise RuntimeError(f"Failed to update semester courses for studyplan {studyplan_id}: {str(e)}")

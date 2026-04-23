@@ -72,6 +72,7 @@ def delete_course(course_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+
 @courses_bp.route("/<int:course_id>", methods=["PUT"])
 def update_course(course_id):
     try:
@@ -159,6 +160,7 @@ def get_valgemne_courses():
         return jsonify(valgemne_course.serialize()), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
     
 @courses_bp.route('/all_valgemne', methods=['GET'])
 def get_all_valgemne_courses():
