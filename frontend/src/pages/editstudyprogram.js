@@ -447,7 +447,7 @@ const EditStudyProgram = () => {
                             navigate(`/studyprograms/${program.id}`)
                           }
                         >
-                          Rediger studieplan
+                          Rediger studieplaner
                         </button>
                       </div>
                     </td>

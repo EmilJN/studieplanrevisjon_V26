@@ -14,8 +14,6 @@ def feide_login():
 
 @user_bp.route("/callback")
 def feide_callback():
-    from flask import current_app
-    print("SECRET_KEY:", current_app.config.get("SECRET_KEY"))
     token = oauth.feide.authorize_access_token()
     userinfo = token["userinfo"]
 
