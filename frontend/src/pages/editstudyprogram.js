@@ -163,7 +163,7 @@ const EditStudyProgram = () => {
     <div className="container py-4" style={{ maxWidth: "900px" }}>
       <h1 className="mb-4">Oversikt over studieprogram</h1>
       <button
-        className="btn btn-primary mb-3"
+        className="btn btn-outline-primary mb-3"
         onClick={() => setShowCreateForm((prev) => !prev)}
       >
         {showCreateForm ? "Lukk skjema" : "Legg til nytt studieprogram"}
@@ -385,13 +385,13 @@ const EditStudyProgram = () => {
                       )}
                       <div className="d-flex gap-2 mt-3">
                         <button
-                          className="btn btn-success"
+                          className="btn btn-outline-success"
                           onClick={() => handleSave(program)}
                         >
                           Lagre endringer
                         </button>
                         <button
-                          className="btn btn-outline-secondary"
+                          className="btn btn-outline-danger"
                           onClick={() => handleCancel()}
                         >
                           Avbryt

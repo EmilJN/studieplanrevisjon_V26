@@ -19,19 +19,19 @@ const Admin = () => {
                         <h1 className="mb-3 text-center">Admin Panel</h1>
                         <div className="d-flex flex-column gap-2">
                             <button
-                                className={`btn ${activePage === 'userList' ? 'btn-primary' : 'btn-outline-secondary'}`}
+                                className={`btn ${activePage === 'userList' ? 'btn-secondary' : 'btn-outline-secondary'}`}
                                 onClick={() => setActivePage('userList')}>
                                 Brukerliste</button>
                             <button
-                                className={`btn ${activePage === 'logs' ? 'btn-primary' : 'btn-outline-secondary'}`}
+                                className={`btn ${activePage === 'logs' ? 'btn-secondary' : 'btn-outline-secondary'}`}
                                 onClick={() => setActivePage('logs')}>
                                 Loggside</button>
                             <button
-                                className={`btn ${activePage === 'programs' ? 'btn-primary' : 'btn-outline-secondary'}`}
+                                className={`btn ${activePage === 'programs' ? 'btn-secondary' : 'btn-outline-secondary'}`}
                                 onClick={() => setActivePage('programs')}>
                                 Studieprogramliste</button>
                             <button
-                                className={`btn ${activePage === 'valgemneKategorier' ? 'btn-primary' : 'btn-outline-secondary'}`}
+                                className={`btn ${activePage === 'valgemneKategorier' ? 'btn-secondary' : 'btn-outline-secondary'}`}
                                 onClick={() => setActivePage('valgemneKategorier')}>
                                 Valgemne kategorier</button>
                         </div>

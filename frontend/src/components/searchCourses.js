@@ -8,7 +8,7 @@ const SearchBar = ({ searchTerm, setSearchTerm }) => (
     <input
       id="search-input"
       type="text"
-      placeholder="Search course..."
+      placeholder="Søk etter emner..."
       value={searchTerm}
       onChange={(e) => setSearchTerm(e.target.value)}
     />
@@ -27,7 +27,7 @@ const SearchCourses = ({
   maxResults = 10,
   allCourses,
   semesters,
-  onResultsChange = () => {},
+  onResultsChange = () => { },
 }) => {
   const [isDragging] = useState(false);
 
@@ -55,13 +55,12 @@ const SearchCourses = ({
 
   return (
     <div className="search-courses-container">
-      <h3>Søk etter emner...</h3>
       <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
       <div
         className={`search-results-container ${isDragging ? "dragging" : ""}`}
       >
-        <h3>Search Results ({filteredCourses.length})</h3>
+        <h3>Søke resultater ({filteredCourses.length})</h3>
         <Droppable
           droppableId="search-results" //mode="virtual"
           isDropDisabled={true}
@@ -90,7 +89,7 @@ const SearchCourses = ({
       </div>
 
       {filteredCourses.length === 0 && (
-        <div className="no-results">Ingen emner funnet</div>
+        <p className="text-muted mt-2 fs-5">Ingen emner funnet</p>
       )}
     </div>
   );

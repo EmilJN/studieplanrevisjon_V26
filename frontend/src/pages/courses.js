@@ -51,7 +51,7 @@ const Courses = () => {
     <div className="container py-4">
       <h1 className="mb-4">Oversikt over emner</h1>
       <button
-        className="btn btn-primary mb-3"
+        className="btn btn-outline-primary mb-3"
         onClick={() => setShowCreateCourseForm((prev) => !prev)}
       >
         {showCreateCourseForm ? "Lukk skjema" : "Legg til nytt emne"}

@@ -299,7 +299,7 @@ function CourseDetails() {
               )}
             </div>
             <div className="d-flex gap-2">
-              <button className="btn btn-success" onClick={handleSave}>
+              <button className="btn btn-outline-success" onClick={handleSave}>
                 Lagre
               </button>
               <button
@@ -328,7 +328,7 @@ function CourseDetails() {
             <h2 className="mb-0">{subject.name}</h2>
             <div className="d-flex gap-2">
               {subject.is_current && (
-                <button className="btn btn-primary" onClick={handleEdit}>
+                <button className="btn btn-outline-primary" onClick={handleEdit}>
                   Rediger emne
                 </button>
               )}
@@ -350,7 +350,7 @@ function CourseDetails() {
                 Er du sikker på at du vil slette {subject.courseCode}?
               </span>
               <button
-                className="btn btn-sm btn-danger"
+                className="btn btn-sm btn-outline-danger"
                 onClick={handleDeleteCourse}
               >
                 Ja

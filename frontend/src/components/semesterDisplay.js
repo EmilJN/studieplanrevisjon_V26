@@ -116,7 +116,7 @@ const SemesterDisplay = ({
                   handleAddValgemne(); // ← add + open overlay
                 }
               }}
-              className="btn btn-sm btn-secondary"
+              className="btn btn-sm btn-outline-secondary"
             >
               {hasValgemne ? "Administrer Valgemne" : "Legg til Valgemne"}
             </button>
