@@ -127,7 +127,7 @@ class Studyprogram(db.Model):
     program_code = db.Column(db.String(80), nullable=False)
     program_ansvarlig_id = db.Column(db.String(128), db.ForeignKey('user.feide_id', ondelete='SET NULL'), nullable=True )
     
-    program_ansvarlig = db.relationship('User', back_populates='studyprograms',lazy='joined')
+    program_ansvarlig = db.relationship('User', back_populates='studyprograms',lazy='joined',passive_deletes=True)
     institute = db.relationship('Institute', back_populates='studyprograms', lazy='joined')
     studyplans = db.relationship('Studyplan', back_populates='studyprogram', cascade='all, delete-orphan')
 
@@ -241,25 +241,29 @@ class User(db.Model):
 class Notifications(db.Model):
     __tablename__ = 'notifications'
     id = db.Column(db.Integer, primary_key=True)
-    program_id = db.Column(db.Integer, db.ForeignKey('studyprogram.id'), nullable=True)
-    course_id = db.Column(db.Integer, db.ForeignKey('course.id'), nullable=True)
-    source_program_id = db.Column(db.Integer, db.ForeignKey('studyprogram.id'), nullable=True)
-    recipient_id = db.Column(db.String(128), db.ForeignKey('user.feide_id'), nullable=True)
-    sender_id = db.Column(db.String(128), db.ForeignKey('user.feide_id'), nullable=True)
+    program_id = db.Column(db.Integer,db.ForeignKey('studyprogram.id', ondelete="SET NULL"),nullable=True)
+    course_id = db.Column(db.Integer,db.ForeignKey('course.id', ondelete="SET NULL"),nullable=True)
+    source_program_id = db.Column(db.Integer,db.ForeignKey('studyprogram.id', ondelete="SET NULL"),nullable=True)
+    recipient_id = db.Column(db.String(128),db.ForeignKey('user.feide_id', ondelete="SET NULL"),nullable=True)
+    sender_id = db.Column(db.String(128),db.ForeignKey('user.feide_id', ondelete="SET NULL"),nullable=True)
     message = db.Column(db.String(200), nullable=False)
     reason = db.Column(db.String(200), nullable=True)
     is_acknowledged = db.Column(db.Boolean, default=False)
     is_solved = db.Column(db.Boolean, default=False, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.datetime.now(datetime.timezone.utc), nullable=False)
+    created_at = db.Column(
+        db.DateTime,
+        default=datetime.datetime.now(datetime.timezone.utc),
+        nullable=False
+    )
+    
     email_sent = db.Column(db.Boolean, default=False)
-    noti_type = db.Column(db.Enum('studyprogram', 'studyplan', 'course', 'user', 'institute', name='noti_type'), nullable=False)
+    noti_type = db.Column(db.Enum('studyprogram', 'studyplan', 'course', 'user', 'institute', name='noti_type'),nullable=False)
     notification_group_id = db.Column(db.String(100), nullable=True)
-    target_term = db.Column(db.Enum('H', 'V', name='semester_type'), nullable=True)
-
-    program = db.relationship('Studyprogram', foreign_keys=[program_id], backref='notifications')
-    source_program = db.relationship('Studyprogram', foreign_keys=[source_program_id])
-    recipient = db.relationship('User', foreign_keys=[recipient_id], backref='notifications')
-    sender = db.relationship('User', foreign_keys=[sender_id])
+    target_term = db.Column(db.Enum('H', 'V', name='semester_type'),nullable=True)
+    program = db.relationship('Studyprogram',foreign_keys=[program_id],backref=db.backref('notifications', passive_deletes=True))
+    source_program = db.relationship('Studyprogram',foreign_keys=[source_program_id],passive_deletes=True)
+    recipient = db.relationship('User',foreign_keys=[recipient_id],backref=db.backref('notifications', passive_deletes=True))
+    sender = db.relationship('User',foreign_keys=[sender_id],passive_deletes=True)
 
     def serialize(self):
         result = {
