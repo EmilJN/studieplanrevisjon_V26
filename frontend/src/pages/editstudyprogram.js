@@ -1,9 +1,6 @@
 import React, { useState, useEffect, Fragment } from "react";
 //import "../styles/EditStudyprogram.css";
 import {
-  handleBecomeNotInCharge,
-} from "../utils/helpers";
-import {
   fetchAllInstitutes,
   searchStudyPrograms,
   fetchStudyPrograms,
@@ -421,14 +418,6 @@ const EditStudyProgram = () => {
                             ? program.program_ansvarlig_id === currentUser && (
                                 <span>
                                   {program.program_ansvarlig.name}{" "}
-                                  <button
-                                    className="btn btn-sm btn-outline-danger"
-                                    onClick={() =>
-                                      handleBecomeNotInCharge(program.id)
-                                    }
-                                  >
-                                    Ikke vær ansvarlig
-                                  </button>
                                 </span>
                               )
                             : "Ingen"}

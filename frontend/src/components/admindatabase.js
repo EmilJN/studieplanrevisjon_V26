@@ -25,7 +25,7 @@ const AdminDatabase = () => {
     setMessage("");
 
     try {
-      const res = await api.post("/db/backups/start-backup");
+      await api.post("/db/backups/start-backup");
       setMessage("Backup opprettet!");
       await fetchBackups();
     } catch (err) {

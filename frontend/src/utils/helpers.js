@@ -1,79 +1,114 @@
-
-
 /*
 
 This file contains helper functions and components used in more than 1 page.
 
 */
 
-
 import React from "react";
 import Notifications from "../components/notifications.js";
 // import { useAuth } from "../components/validateuser";
 import api from "../api.js";
-
 
 //whichYear, used in studyprogramdetail and generatestudyplan for determining year.
 export const determineBaseYear = (mostRecentPlan) => {
   return mostRecentPlan ? mostRecentPlan.year : new Date().getFullYear();
 };
 
+export const StudyProgramHeader = ({
+  studyProgram,
+  setStudyProgram,
+  baseYear,
+  setNotificationsRef,
+}) => {
+  const fetchStudyProgram = async (id) => {
+    try {
+      const response = await api.get(`/studyprograms/${id}`);
+      setStudyProgram(response.data);
+    } catch (err) {
+      console.error("Kunne ikke hente oppdatert studyProgram:", err);
+    }
+  };
 
-export const handleBecomeInCharge = async (studyProgramId) => {
-  await api.post(`studyprograms/becomeincharge/${studyProgramId}`)
-    .then(response => {
-      console.log(response)
-    })
-    .catch(error => {
-      console.log(error)
-    })
+  const handleBecomeInChargeClick = async () => {
+    try {
+      await api.post(`studyprograms/becomeincharge/${studyProgram.id}`);
+      await fetchStudyProgram(studyProgram.id);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
-}
-export const handleBecomeNotInCharge = async (studyProgramId) => {
-  await api.delete(`studyprograms/becomenotincharge/${studyProgramId}`)
-    .then(response => {
-      console.log(response)
-    })
-    .catch(error => {
-      console.log(error)
-    })
+  const handleBecomeNotInChargeClick = async () => {
+    try {
+      await api.delete(`studyprograms/becomenotincharge/${studyProgram.id}`);
+      await fetchStudyProgram(studyProgram.id);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
-}
+  return (
+    <div className="d-flex justify-content-between align-items-start mb-4">
+      <div className="d-flex flex-column gap-1">
+        <h1 className="mb-0">Studieplaner for: {studyProgram.name}</h1>
 
-// Used in studyprogramDetails.js(With Generate button) and used in generatestudyplan.js (without generate button)
-// Header func for "info at the top" of the study program detail and generate studyplan pages.
-export const StudyProgramHeader = ({ studyProgram, baseYear, setNotificationsRef }) => (
-  <div className="d-flex justify-content-between align-items-start mb-4">
-    <div className="d-flex flex-column gap-1">
-      <h1 className="mb-0">Studieplaner for: {studyProgram.name}</h1>
-      <Notifications
-        programId={studyProgram.id}
-        setNotificationsRef={setNotificationsRef}
-      />
-      <div className="d-flex flex-row gap-4 text-muted mt-1">
-        <span><strong>Grad type:</strong> {studyProgram.degree_type}</span>
-        <span><strong>Institutt:</strong> {studyProgram.institute_name}</span>
-        <span>
-          <strong>Ansvarlig:</strong>{" "}
-          {studyProgram.program_ansvarlig ? (
-            studyProgram.program_ansvarlig.name
-          ) : (
-            <button onClick={() => handleBecomeInCharge(studyProgram.id, studyProgram)} className="btn btn-sm btn-outline-secondary ms-1">
-              Bli Ansvarlig
-            </button>
-          )}
-        </span>
+        <Notifications
+          programId={studyProgram.id}
+          setNotificationsRef={setNotificationsRef}
+        />
+
+        <div className="d-flex flex-row gap-4 text-muted mt-1">
+          <span>
+            <strong>Grad type:</strong> {studyProgram.degree_type}
+          </span>
+
+          <span>
+            <strong>Institutt:</strong> {studyProgram.institute_name}
+          </span>
+
+          <span>
+            <strong>Ansvarlig:</strong>{" "}
+            {studyProgram.program_ansvarlig ? (
+              <>
+                {studyProgram.program_ansvarlig.name}
+
+                <button
+                  className="btn btn-sm btn-outline-danger ms-2"
+                  onClick={handleBecomeNotInChargeClick}
+                >
+                  Ikke vær ansvarlig
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={handleBecomeInChargeClick}
+                className="btn btn-sm btn-outline-secondary ms-1"
+              >
+                Bli Ansvarlig
+              </button>
+            )}
+          </span>
+        </div>
       </div>
     </div>
-  </div>
-);
-
-export const calculatedYear = (baseYear, semesterNumber, term) => {
-  return parseInt(baseYear) + Math.floor((semesterNumber - 1) / 2) + (term === "V" ? 1 : 0);
+  );
 };
 
-// Used in studyprogramdetail.js for å lista opp tidligere studieplaner.
-export const PreviousStudyPlans = ({ plans, latestPlanId, studyprogramId, onViewPlan, currentPlanId }) => (
+export const calculatedYear = (baseYear, semesterNumber, term) => {
+  return (
+    parseInt(baseYear) +
+    Math.floor((semesterNumber - 1) / 2) +
+    (term === "V" ? 1 : 0)
+  );
+};
+
+export const PreviousStudyPlans = ({
+  plans,
+  latestPlanId,
+  studyprogramId,
+  onViewPlan,
+  currentPlanId,
+}) => (
   <div>
     <h5 className="fw-semibold">Tidligere studieplaner</h5>
     {plans.length > 0 ? (
@@ -83,7 +118,8 @@ export const PreviousStudyPlans = ({ plans, latestPlanId, studyprogramId, onView
             key={plan.id}
             className={`btn ${plan.id === currentPlanId ? "btn-secondary" : "btn-outline-secondary"}`}
             onClick={() => onViewPlan(plan.id)}
-            disabled={plan.id === currentPlanId}>
+            disabled={plan.id === currentPlanId}
+          >
             Year: {plan.year} {plan.id === latestPlanId ? "(Valgt)" : ""}
           </button>
         ))}
@@ -96,7 +132,12 @@ export const PreviousStudyPlans = ({ plans, latestPlanId, studyprogramId, onView
 
 // used in valgemne.js, reuseable if needed.
 // Displaying search bar and autocomplete dropdown for subjects.
-export const SearchBar = ({ searchTerm, setSearchTerm, filteredCourses, onCourseSelect }) => (
+export const SearchBar = ({
+  searchTerm,
+  setSearchTerm,
+  filteredCourses,
+  onCourseSelect,
+}) => (
   <div className="position-relative">
     <input
       type="text"
@@ -106,7 +147,10 @@ export const SearchBar = ({ searchTerm, setSearchTerm, filteredCourses, onCourse
       className="form-control"
     />
     {searchTerm && filteredCourses.length > 0 && (
-      <ul className="list-group position-absolute w-100" style={{ zIndex: 1100 }}>
+      <ul
+        className="list-group position-absolute w-100"
+        style={{ zIndex: 1100 }}
+      >
         {filteredCourses.map((course) => (
           <li
             key={course.id}
@@ -123,18 +167,16 @@ export const SearchBar = ({ searchTerm, setSearchTerm, filteredCourses, onCourse
   </div>
 );
 
-// SearchBar og filterSubjects blir brukt for valgemne (oldschool way), no drag/drop her. 
+// SearchBar og filterSubjects blir brukt for valgemne (oldschool way), no drag/drop her.
 // Kan brukes plasser drag and drop kje går.
-
 
 export const filterCourses = (courses, searchTerm) => {
   return courses.filter(
     (course) =>
       course.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      course.courseCode.toLowerCase().includes(searchTerm.toLowerCase())
+      course.courseCode.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 };
-
 
 //semesterpairs, studyprogramdetail
 // Når man vil visa heila studieplanen i to og to semestre.
@@ -146,5 +188,3 @@ export const groupSemestersIntoPairs = (semesters) => {
   }
   return pairs;
 };
-
-

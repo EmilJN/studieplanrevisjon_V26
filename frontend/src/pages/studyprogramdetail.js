@@ -124,6 +124,7 @@ const StudyProgramDetail = () => {
     loading,
     error,
     studyProgram,
+    setStudyProgram,
     semesters,
     setSemesters,
     valgemne,
@@ -302,6 +303,7 @@ const StudyProgramDetail = () => {
       <div className="container py-4">
         <StudyProgramHeader
           studyProgram={studyProgram}
+          setStudyProgram={setStudyProgram}
           baseYear={latestStudyPlan?.year}
           onGenerate={() =>
             navigate(`/generatestudyplan/${id}`, {
@@ -309,6 +311,7 @@ const StudyProgramDetail = () => {
             })
           }
           setNotificationsRef={setFetchedNotifications}
+          onStatusChange={refreshData}
         />
         {errorMessage && <div className="error-message">{errorMessage}</div>}
         {successMessage && (
