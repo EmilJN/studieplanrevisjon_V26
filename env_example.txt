@@ -11,6 +11,7 @@ FRONTEND_URL=http://127.0.0.1:${FRONTEND_PORT}
 
 #Backend configuration
 ADMIN_USERS=admin_user_email@uis.no,admin_user_email_2@uis.no
+BACKUP_DIR=/app/instance/backups
 BACKEND_PORT=5000
 BACKEND_URL=http://127.0.0.1:${BACKEND_PORT}
 SECRET_KEY=

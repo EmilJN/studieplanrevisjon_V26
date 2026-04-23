@@ -179,7 +179,13 @@ class StudyprogramService:
         except Exception as e:
             raise RuntimeError(f"Failed to fetch studyprogram details: {str(e)}")
 
-
+    def get_studyprograms_by_program_ansvarlig_id(self, user_id):
+        user = self.db.query(User).get(user_id)
+        if not user:
+            raise ValueError(f"User with id {user_id} does not exist.")
+        
+        studyprograms = self.db.query(Studyprogram).filter_by(program_ansvarlig_id=user.feide_id).all()
+        return [sp.serialize() for sp in studyprograms]
     ##################### OPPE OK, NEDE DNO ########################
 
 

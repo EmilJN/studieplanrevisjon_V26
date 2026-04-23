@@ -9,10 +9,9 @@ from services import ServiceFactory
 notification_bp = Blueprint('notifications', __name__)
 
 
-@notification_bp.route("/", methods=["GET"])
-def get_notifications():
+@notification_bp.route("/<int:program_id>", methods=["GET"])
+def get_notifications(program_id):
     try:
-        program_id = request.args.get("program_id")
         if not program_id:
             return jsonify({"error": "Program ID is required"}), 400
 
@@ -30,7 +29,7 @@ def get_notifications():
         return jsonify([notification.serialize() for notification in notifications]), 200
     except Exception as e:
         print(f"Error fetching notifications: {str(e)}")
-        return jsonify({"error": str(e)}), 500
+        raise e
 
 @notification_bp.route('/acknowledge', methods=['POST'])
 def acknowledge_notification():
@@ -167,3 +166,17 @@ def delete_all_notifications():
         print(f"Error deleting all notifications: {str(e)}")
         return jsonify({"error": str(e)}), 500
     
+@notification_bp.route("/for_user/<string:user_id>", methods=["GET"])
+def get_user_notifications(user_id):
+    try:
+        notification_service = ServiceFactory.get_notification_service()
+        notifications = notification_service.get_notifications_by_user(user_id)
+        unread_count = sum(1 for n in notifications if not n.get('is_acknowledged', False))
+        
+        return jsonify({
+            'notifications': notifications,
+            'unread_count': unread_count
+        }), 200
+    except Exception as e:
+        print(f"Error fetching user notifications: {str(e)}")
+        return jsonify({"error": str(e)}), 500

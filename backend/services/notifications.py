@@ -1,3 +1,5 @@
+from sqlalchemy import desc
+
 from app import db
 from app.models import User, Studyprogram, Studyplan, Institute, Course, Notifications
 import threading
@@ -212,7 +214,12 @@ class NotificationService:
 
     def get_notifications_by_user(self, user_id):
         try:
-            notifications = self.db.query(Notifications).filter_by(recipient_id=user_id).order_by(Notifications.created_at.desc()).all()
+            notifications = (
+            self.db.query(Notifications)
+            .filter(Notifications.recipient_id == user_id)
+            .order_by(desc(Notifications.created_at))
+            .all()
+        )
             return [notification.serialize() for notification in notifications]
         except Exception as e:
             print(f"Error fetching user notifications: {str(e)}")
