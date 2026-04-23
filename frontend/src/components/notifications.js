@@ -89,7 +89,7 @@ const toggleNotifications = async () => {
       {isOpen && (
         <div className="notification-overlay" ref={overlayRef}>
           <div className="notification-header">
-            <h3>Notifikasjoner</h3>
+            <h3>Notifications</h3>
             <button className="close-button" onClick={() => setIsOpen(false)}>
               ✕
             </button>
@@ -98,7 +98,7 @@ const toggleNotifications = async () => {
           <div className="notification-list">
             {notifications.length === 0 ? (
               <div className="no-notifications">
-                <p>Ingen notifikasjoner</p>
+                <p>No notifications</p>
               </div>
             ) : (
               notifications.map((notification, index) => (
@@ -108,17 +108,17 @@ const toggleNotifications = async () => {
                 >
                   <div className="notification-content">
                     <p>
-                      <strong>Melding:</strong> {notification.message}
+                      <strong>Message:</strong> {notification.message}
                     </p>
                     <div className="notification-meta">
                       {new Date(notification.created_at).toLocaleString()}
                     </div>
                   </div>
                     <button
-                      className="btn btn-outline-danger"
+                      className="solved-button"
                       onClick={() => handleDeleteNotification(notification.id)}
                     >
-                      Slett
+                      Delete
                     </button>
                 </div>
               ))

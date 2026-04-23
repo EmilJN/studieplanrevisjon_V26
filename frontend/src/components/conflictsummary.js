@@ -72,12 +72,12 @@ const ConflictSummary = ({
         <div className="notification-overlay" style={{ zIndex: 1000 }}>
             <div className="notification-content">
                 <div className="notification-header">
-                    <h3>Oppsummering</h3>
+                    <h3>Conflict Summary</h3>
                     <button className="close-button" onClick={onClose}>×</button>
                 </div>
 
                 <div className="notification-body">
-                    <p>Følgende studieprogram vil bli påvirket av semesterkonflikter:</p>
+                    <p>The following study programs will be affected by term conflicts:</p>
 
                     {Object.values(programConflicts).map((item, idx) => (
                         <div key={idx} className="conflict-program">
@@ -87,8 +87,8 @@ const ConflictSummary = ({
                                     <li key={courseIdx}>
                                         <strong>{course.code}</strong> - {course.name}
                                         <div className="conflict-detail">
-                                            Ligger nå i <strong>{course.current_term}</strong> semester,
-                                            flyttes til <strong>{course.new_term}</strong> semester.
+                                            Currently in <strong>{course.current_term}</strong> term,
+                                            moved to <strong>{course.new_term}</strong> term.
                                         </div>
                                     </li>
                                 ))}
@@ -97,8 +97,8 @@ const ConflictSummary = ({
                     ))}
 
                     <p className="warning-text">
-                        Varsler vil bli sendt til alle berørte studieprogram.
-                        Vil du fortsette?
+                        Notifications will be sent to all affected programs.
+                        Do you want to continue?
                     </p>
                 </div>
 
@@ -107,13 +107,13 @@ const ConflictSummary = ({
                         className="cancel-button"
                         onClick={onCancel}
                     >
-                        Avbryt og gjennomgå
+                        Cancel and Review
                     </button>
                     <button
                         className="confirm-button"
                         onClick={handleConfirmConflicts}
                     >
-                        Bekreft og lagre
+                        Confirm and Save
                     </button>
                 </div>
             </div>
