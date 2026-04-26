@@ -134,29 +134,49 @@ for i in np.asarray(activePreReqs):
 connection.commit()
 print("Courses seeded")
 
-
+fix_dict = {}
 institutes = pd.read_excel('static/Data.xlsx','Steder - Fakultet og institutt')
 for x in institutes.values:
     if x[2] != 0:
-        cursor.execute("INSERT INTO institute VALUES (%s, %s, %s)",(x[2],x[5],None)) 
+        intitute_id = str(uuid.uuid4())
+        fix_dict[x[2]] = intitute_id
+        cursor.execute("INSERT INTO institute VALUES (%s, %s, %s)",(intitute_id,x[5],None)) 
 print("Institutes seeded")
 
-# Lese data om studieprogram fra fil og legge til i database
 xls = pd.ExcelFile('static/Data.xlsx')
 studyprograms = pd.read_excel(xls, 'Studieprogram')
 utvalg = studyprograms[['studieprogramkode','studieprognavn','tall_varighet','instituttnr_studieansv','status_utgatt']]
 
 codesToSkip = ["B-BYGG","B-ELE-YVEI","B-ELEKTRO","M-BIOENG","M-DATATEK-5","M-INDØKG","M-INDØKG5","M-LEKTREA","M-RISGOV","M-SAMSIK","M-ROBOT","M-MAFYS5"]
-#codesToSkip = ["test"]
+
 for i in np.asarray(utvalg):
-    program = [str(i[1])[:80],str(i[0])[:80],i[3],i[2]]
-    if i[0] in codesToSkip:
+    kode = i[0]
+    navn = str(i[1])[:80]
+    varighet = i[2]
+    institutt_nr = i[3]
+    status = i[4]
+
+    if kode in codesToSkip:
         continue
-    if i[0][0] == "B" and i[4] == "N" and i[1][-6:] != "deltid":
-        cursor.execute("INSERT INTO studyprogram (name, program_code, degree_type, institute_id, semester_number) VALUES (%s, %s, 'Bachelor', %s, %s);", program)
-        pass
-    elif i[0][0] == "M" and i[4] == "N" and i[0][-1] != 5 and i[1][-6:] != "deltid":
-        cursor.execute("INSERT INTO studyprogram (name, program_code, degree_type, institute_id, semester_number) VALUES (%s, %s, 'Master', %s, %s);", program)
+    institute_id = fix_dict.get(institutt_nr)
+
+    if institute_id is None:
+        print(f"Fant ikke mapping for institutt {institutt_nr}, hopper over {kode}")
+        continue
+
+    program = [navn, str(kode)[:80], institute_id, varighet]
+
+    if kode[0] == "B" and status == "N" and navn[-6:] != "deltid":
+        cursor.execute(
+            "INSERT INTO studyprogram (name, program_code, degree_type, institute_id, semester_number) VALUES (%s, %s, 'Bachelor', %s, %s);",
+            program
+        )
+
+    elif kode[0] == "M" and status == "N" and kode[-1] != "5" and navn[-6:] != "deltid":
+        cursor.execute(
+            "INSERT INTO studyprogram (name, program_code, degree_type, institute_id, semester_number) VALUES (%s, %s, 'Master', %s, %s);",
+            program
+        )
 
 print("Studyprograms seeded")
 

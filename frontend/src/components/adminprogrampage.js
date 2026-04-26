@@ -5,24 +5,27 @@ const AdminProgramList = () => {
   const [studyPrograms, setStudyPrograms] = useState([]);
 
   useEffect(() => {
-    const getUsers = async () => {
-      await api
-        .get("/studyprograms/getAllStudyPrograms")
-        .then((response) => {
-          setStudyPrograms(response.data);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    };
-    getUsers();
+    fetchPrograms();
   }, []);
 
-  const handleDeleteProgram = (e) => {
-    api
-      .delete("/studyprograms/" + e)
-      .then((response) => console.log(response))
-      .catch((response) => console.log(response));
+  const fetchPrograms = async () => {
+    try {
+      const response = await api.get("/studyprograms/getAllStudyPrograms");
+      setStudyPrograms(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleDeleteProgram = async (id) => {
+    try {
+      await api.delete("/studyprograms/" + id);
+
+      // 🔥 Oppdater state lokalt (ingen ny API call nødvendig)
+      setStudyPrograms((prev) => prev.filter((program) => program.id !== id));
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -55,8 +58,9 @@ const AdminProgramList = () => {
                       window.confirm(
                         `Er du sikker på at du vil slette ${studyprogram.name}?`,
                       )
-                    )
+                    ) {
                       handleDeleteProgram(studyprogram.id);
+                    }
                   }}
                 >
                   Slett studieprogram
@@ -69,4 +73,5 @@ const AdminProgramList = () => {
     </div>
   );
 };
+
 export default AdminProgramList;
