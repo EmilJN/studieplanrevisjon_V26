@@ -48,7 +48,7 @@ export default function CreateCourseForm() {
 
       <div className="col-md-6">
         <label htmlFor="coursedegree" className="form-label fw-semibold">Nivå:</label>
-        <select id="coursedegree" name="coursedegree">
+        <select id="coursedegree" name="coursedegree" className="form-select">
           <option value="Bachelor">Bachelor</option>
           <option value="Master">Master</option>
         </select>
