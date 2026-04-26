@@ -159,10 +159,10 @@ const EditStudyProgram = () => {
     <div className="container py-4" style={{ maxWidth: "900px" }}>
       <h1 className="mb-4">Oversikt over studieprogram</h1>
       <button
-        className="btn btn-outline-primary mb-3"
+        className={`btn mb-3 ${showCreateForm ? "btn-outline-danger" : "btn-outline-primary"}`}
         onClick={() => setShowCreateForm((prev) => !prev)}
       >
-        {showCreateForm ? "Lukk skjema" : "Legg til nytt studieprogram"}
+        {showCreateForm ? "Avbryt" : "Legg til nytt studieprogram"}
       </button>
 
       {showCreateForm && (

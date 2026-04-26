@@ -66,7 +66,7 @@ const ConflictSummary = ({
     };
 
     return (
-        <div className="notification-overlay" style={{ zIndex: 1000 }}>
+        <div className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center notification-overlay" style={{ zIndex: 1000 }}>
             <div className="notification-content">
                 <div className="notification-header">
                     <h3>Oppsummering</h3>
