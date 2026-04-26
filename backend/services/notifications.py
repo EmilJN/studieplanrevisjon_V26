@@ -1,10 +1,11 @@
 from sqlalchemy import desc
 
-from app import db
+from app import db, mail
 from app.models import User, Studyprogram, Studyplan, Institute, Course, Notifications
 import threading
+from flask_mail import Message
 from datetime import datetime
-from flask import request, jsonify
+from flask import jsonify
 import uuid
 
 class NotificationService:
@@ -68,7 +69,6 @@ class NotificationService:
             )
             print(f"Creating notification for program_id={program_id}, course_id={course_id}, group_id={notification.notification_group_id}")
             self.db.add(notification)
-            #self.send_send_email(program_id,source_program_id,message)
             self.db.commit()
             return notification.serialize()
         except Exception as e:
@@ -79,8 +79,8 @@ class NotificationService:
     def create_prog_notifications(self, source_program_id, term_conflicts):
         try:
             notifications = []
-
             grouped_conflicts = {}
+
             for conflict in term_conflicts:
                 course_id = conflict['course_id']
                 target_term = conflict['target_term']
@@ -92,7 +92,6 @@ class NotificationService:
                         "affected_programs": []
                     }
                 grouped_conflicts[course_id]["affected_programs"].append(conflict['affected_program_id'])
-
 
             for course_id, group_data in grouped_conflicts.items():
                 message = group_data["message"]
@@ -122,6 +121,8 @@ class NotificationService:
                 notification_group_id = self.generate_notification_group_id()
                 print(f"Created new notification group: group_id={notification_group_id}")
 
+                recipient_program_ids = []
+
                 for program_id in affected_programs:
                     if program_id == source_program_id:
                         continue
@@ -149,12 +150,30 @@ class NotificationService:
                     )
                     if notification:
                         notifications.append(notification)
+                        recipient_program_ids.append(program_id)
+                
+                if recipient_program_ids:
+                    recipients = []
+                    for program_id in recipient_program_ids:
+                        program = self.studyprogram_service.get_studyprogram_by_id(program_id)
+                        if program and program.program_ansvarlig and program.program_ansvarlig.email:
+                            recipients.append((program, program.program_ansvarlig.email, program.program_ansvarlig.name))
+                        else:
+                            print(f"Ingen email funnet for {program_id}, hopper over.")
+
+                    sender_program = self.studyprogram_service.get_studyprogram_by_id(source_program_id)
+
+                    email_thread = threading.Thread(
+                        target=self.send_email,
+                        args=(recipients, sender_program, message, reason),
+                        daemon=True
+                        )
+                    email_thread.start()
 
             return notifications
         except Exception as e:
             print(f"Error creating program notifications: {str(e)}")
             return None
-
 
 
     def get_prog_notifications(self, program_id):
@@ -251,26 +270,40 @@ class NotificationService:
             return False
     
     
-    
+    def send_email(self, recipients, sender_program, message, reason):
+        try:
+            if not recipients:
+                print("Ingen ansvarlige for program.")
+                return
+            
+            with mail.connect() as conn:
+                for program, email, name in recipients:
+                    print(f"[EMAIL] Sender til {name} ({email}) for program {program.name}")
+                    msg = Message(
+                        subject="Notifikasjon fra studieplanrevisjon",
+                        recipients=[email],
+                        body=f"Hei {name}!"
+                        f"{sender_program.name} har gjort følgende endring:\n\n "
+                        f"{message}\n\n"
+                        f"Oppgitt grunn:\n"
+                        f"{reason}"
+                        f"Dette påvirker studieprogrammet {program.name}"
+                        )
+                    msg.html = f"""
+                    <html>
+                        <body>
+                            <h2>Notifikasjon fra studieplanrevisjon</h2>
+                            <p>Hei {name}!<p>
+                            <p><strong>{sender_program.name}</strong> har gjort følgende endring:</p>
+                            <p>{message}</p>
+                            <p><strong>Oppgitt grunn:</strong> {reason}</p>
+                            <hr>
+                            <p>Dette påvirker studieprogrammet: <strong>{program.name}</strong></p>
+                        </body>
+                    </html>
+                    """
+                    conn.send(msg)
 
-    def send_send_email(self, recipient_program_id, sender_program_id, message):
-        # TODO: implement with flask_mailman
-        print(f"Email notification skipped - mail not yet configured")
-        pass
-
-#    def send_send_email(self, recipient_program_id, sender_program_id, message):
-#        try:
-#            program_service = self.studyprogram_service
-#            recipient_program = program_service.get_studyprogram_by_id(recipient_program_id)
-#            sender_program = program_service.get_studyprogram_by_id(sender_program_id)
-#            if not recipient_program.program_ansvarlig:
-#                return("No one in charge of this program")
-#            msg = Message(
-#                subject="Notifikasjon fra studieplanrevisjon",
-#                recipients=["truls244@gmail.com"],
-#                body=f"{sender_program.name} gjøre denne endringen: {message} Mottaker er: {recipient_program.program_ansvarlig.email}"
-#                )
-#            mail.send(msg)
-#        except Exception as e:
-#            print(f"Error sending email: {str(e)}")
-#            return []
+        except Exception as e:
+            print(f"Error sending email: {str(e)}")
+            return []

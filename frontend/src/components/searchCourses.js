@@ -22,7 +22,7 @@ const SearchCourses = ({
   maxResults = 10,
   allCourses,
   semesters,
-  onResultsChange = () => {},
+  onResultsChange = () => { },
 }) => {
   const [isDragging] = useState(false);
   const [showInactive, setShowInactive] = useState(false);
@@ -60,6 +60,9 @@ const SearchCourses = ({
         <h4 className="fw-semibold m-0">Søk etter emner</h4>
 
         <div className="form-check form-switch">
+          <label className="form-check-label" htmlFor="toggleInactive">
+            Vis eldre versjoner
+          </label>
           <input
             className="form-check-input"
             type="checkbox"
@@ -67,9 +70,6 @@ const SearchCourses = ({
             checked={showInactive}
             onChange={(e) => setShowInactive(e.target.checked)}
           />
-          <label className="form-check-label" htmlFor="toggleInactive">
-            Vis eldre versjoner
-          </label>
         </div>
       </div>
 

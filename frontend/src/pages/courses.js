@@ -51,10 +51,10 @@ const Courses = () => {
     <div className="container py-4">
       <h1 className="mb-4">Oversikt over emner</h1>
       <button
-        className="btn btn-outline-primary mb-3"
+        className={`btn mb-3 ${showCreateCourseForm ? "btn-outline-danger" : "btn-outline-primary"}`}
         onClick={() => setShowCreateCourseForm((prev) => !prev)}
       >
-        {showCreateCourseForm ? "Lukk skjema" : "Legg til nytt emne"}
+        {showCreateCourseForm ? "Avbryt" : "Legg til nytt emne"}
       </button>
       {showCreateCourseForm && (
         <div className="border rounded p-4 mb-3">
@@ -112,7 +112,7 @@ const Courses = () => {
               </select>
             </div>
             <div className="col-md-3">
-              <label className="form-label fw-semibold">Nåværende</label>
+              <label className="form-label fw-semibold">Versjoner</label>
               <select
                 className="form-select"
                 name="current"
@@ -167,7 +167,7 @@ const Courses = () => {
             <th>Nivå</th>
             <th>Semester</th>
             <th>Studiepoeng</th>
-            <th>Tidligere versjoner</th>
+            <th>Antall tidligere versjoner</th>
             <th>Aktiv</th>
           </tr>
         </thead>

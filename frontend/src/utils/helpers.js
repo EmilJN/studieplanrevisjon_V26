@@ -59,7 +59,7 @@ export const StudyProgramHeader = ({
 
         <div className="d-flex flex-row gap-4 text-muted mt-1">
           <span>
-            <strong>Grad type:</strong> {studyProgram.degree_type}
+            <strong>Nivå:</strong> {studyProgram.degree_type}
           </span>
 
           <span>
@@ -120,7 +120,7 @@ export const PreviousStudyPlans = ({
             onClick={() => onViewPlan(plan.id)}
             disabled={plan.id === currentPlanId}
           >
-            Year: {plan.year} {plan.id === latestPlanId ? "(Valgt)" : ""}
+            År: {plan.year} {plan.id === latestPlanId ? "(Valgt)" : ""}
           </button>
         ))}
       </div>
