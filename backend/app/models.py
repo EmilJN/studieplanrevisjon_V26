@@ -1,3 +1,5 @@
+import uuid
+
 from app import db
 import datetime
 import pytz
@@ -121,7 +123,7 @@ class Studyprogram(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
     degree_type = db.Column(db.String(80), nullable=False)
-    institute_id = db.Column(db.Integer, db.ForeignKey('institute.id'), nullable=False)
+    institute_id = db.Column(db.String(120), db.ForeignKey('institute.id'), nullable=False)
     semester_number = db.Column(db.Integer, nullable=False) # Antall semestre studieprogrammet går over
     is_active = db.Column(db.Boolean, default=True)
     program_code = db.Column(db.String(80), nullable=False)
@@ -161,7 +163,7 @@ class Studyprogram(db.Model):
 # Model for institutt
 class Institute(db.Model):
     __tablename__ = 'institute'
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(120), primary_key=True)
     name = db.Column(db.String(80), nullable=False)
     ansvarlig = db.Column(db.String(128), nullable=True)
 
@@ -177,8 +179,8 @@ class Institute(db.Model):
     def __repr__(self):
         return f'<Institute {self.name}>'
     
-    def __init__(self,id, name):
-        self.id = id
+    def __init__(self, name):
+        self.id = str(uuid.uuid4())
         self.name = name
 
 

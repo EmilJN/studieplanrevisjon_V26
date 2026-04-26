@@ -118,7 +118,7 @@ def search_program():
     
 
 # by insitute_id
-@studyprogram_bp.route("/institute/<int:institute_id>", methods=["GET"])
+@studyprogram_bp.route("/institute/<string:institute_id>", methods=["GET"])
 def get_studyprograms_by_institute(institute_id):
     try:
         studyprogram_service = ServiceFactory.get_studyprogram_service()
