@@ -422,7 +422,7 @@ const EditStudyProgram = () => {
                             : "Ingen"}
                         </div>
                       </div>
-                      <div className="mt-3">
+                      <div className="m-3">
                         <button
                           className="btn btn-outline-primary"
                           onClick={() => handleEditClick(program)}
