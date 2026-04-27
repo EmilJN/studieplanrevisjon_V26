@@ -1,4 +1,5 @@
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'
+import logo from "../assets/logo.jpg";
 import { Link, NavLink } from "react-router-dom";
 import { useAuth } from "./validateuser";
 
@@ -11,7 +12,7 @@ const NavBar = () => {
       style={{ backgroundColor: "var(--color-dark)" }}
     >
       <Link className="navbar-brand d-flex align-items-center gap-2" to="/">
-        <img src="../uis_logo.jpg" alt="UiS logo" height="40" />
+        <img src={logo} alt="logo" height="40" />
         <span>Studieplanrevisjon</span>
       </Link>
       {isAuthenticated && (

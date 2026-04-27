@@ -18,4 +18,11 @@ SECRET_KEY=
 FEIDE_CLIENT_ID=
 FEIDE_CLIENT_SECRET=
 
+#Mail configuration
+MAIL_USERNAME = "studieplanrevisjon@uis.no"
+MAIL_PASSWORD = "testpassord"
+MAIL_SERVER = "smtp.ux.uis.no"
+MAIL_PORT = 587
+MAIL_DEFAULT_SENDER = "studieplanrevisjon@uis.no"
+
 DEBUG=False

@@ -196,8 +196,6 @@ def get_studyprograms_by_program_ansvarlig_id(user_id):
     try:
         studyprogram_service = ServiceFactory.get_studyprogram_service()
         studyprograms = studyprogram_service.get_studyprograms_by_program_ansvarlig_id(user_id)
-        if not studyprograms:
-            return jsonify({"error": "No study programs found for this user"}), 404
 
         return jsonify(studyprograms), 200
     except Exception as e:

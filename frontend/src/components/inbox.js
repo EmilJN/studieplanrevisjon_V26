@@ -17,12 +17,12 @@ const Inbox = () => {
 
       try {
         const res = await api.get(
-          `/notifications/for_user/${currentUser.feide_id}`
+          `/notifications/for_user/${currentUser.feide_id}`,
         );
 
         console.log("API response:", res.data);
 
-        setNotifications(res.data.notifications || res.data);
+        setNotifications(res.data.notifications ?? []);
       } catch (err) {
         console.error("Failed to fetch notifications:", err);
       }
@@ -43,8 +43,8 @@ const Inbox = () => {
         prev.map((n) =>
           unread.some((u) => u.id === n.id)
             ? { ...n, is_acknowledged: true }
-            : n
-        )
+            : n,
+        ),
       );
     } catch (err) {
       console.error("Failed to acknowledge:", err);
@@ -62,7 +62,6 @@ const Inbox = () => {
 
   return (
     <div className="card shadow-sm" style={{ maxWidth: "400px" }}>
-      
       {/* Header */}
       <div className="card-header d-flex justify-content-between align-items-center">
         <h6 className="mb-0">Varsler</h6>
@@ -88,9 +87,7 @@ const Inbox = () => {
         style={{ maxHeight: "400px", overflowY: "auto" }}
       >
         {notifications.length === 0 ? (
-          <p className="text-muted text-center mt-2">
-            Ingen varsler
-          </p>
+          <p className="text-muted text-center mt-2">Ingen varsler</p>
         ) : (
           <div className="list-group">
             {notifications.map((n) => (
