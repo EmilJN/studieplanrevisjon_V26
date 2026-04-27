@@ -31,15 +31,13 @@ const Information = () => {
                 </div>
 
                 <div className="col-12 col-md-9">
-
                     {activePage === 'overview' && (
                         <div>
-                            <h4 className="mb-3">Oversikt</h4>
+                            <h3 className="mb-3">Oversikt</h3>
                             <p className="text-muted mb-4">
                                 Denne applikasjonen brukes til å administrere emner, studieprogram og studieplaner.
                                 Bruk menyen til venstre for å navigere mellom de ulike delene av veiledningen.
                             </p>
-
                             <h5 className="fw-semibold">Hva kan du gjøre i applikasjonen?</h5>
                             <ul>
                                 <li><strong>Emner</strong> - Se, søk og rediger emner. Legg til nye emner og administrer forkunnskaper og relasjoner.</li>
@@ -79,7 +77,6 @@ const Information = () => {
                                 og <span className="badge bg-secondary">Nyere versjoner</span>
                                 på emnesiden.
                             </p>
-
                             <h5 className="fw-semibold">Forkunnskaper</h5>
                             <p>
                                 Inne på et enkeltemne kan du registrere hvilke emner som eventuelt kreves som forkunnskaper.
@@ -92,13 +89,11 @@ const Information = () => {
                                 <span className="badge bg-secondary">Blir brukt i</span>, og hvilke andre emner det overlapper
                                 innholdsmessig med, <span className="badge bg-secondary">Overlapper med</span>.
                             </p>
-
                             <button className="btn btn-outline-secondary btn-sm mt-2" onClick={() => navigate('/courses')}>
                                 Gå til Emner →
                             </button>
                         </div>
                     )}
-
                     {activePage === 'studyPrograms' && (
                         <div>
                             <h3 className="mb-1">Studieprogram</h3>
@@ -123,7 +118,6 @@ const Information = () => {
                                 <span className="badge bg-primary">Initialiser studieplan</span>. Les mer om studieplaner
                                 <button className="btn btn-link p-0 align-baseline" style={{ fontSize: "inherit" }} onClick={() => setActivePage('studyPlan')}>her</button>.
                             </p>
-
                             <h5 className="fw-semibold">Rediger studieprogram</h5>
                             <p>
                                 Utvid et studieprogram for å se detaljene. Klikk
@@ -153,9 +147,7 @@ const Information = () => {
                             </p>
 
                             <h5 className="fw-semibold">Årsversjoner</h5>
-                            <p>
-                                I venstre panel kan du bytte mellom versjoner av studieplanen fra tidligere år.
-                            </p>
+                            <p>I venstre panel kan du bytte mellom versjoner av studieplanen fra tidligere år.</p>
 
                             <h5 className="fw-semibold">Rediger studieplan</h5>
                             <p>
@@ -185,15 +177,12 @@ const Information = () => {
                             </p>
 
                             <h5 className="fw-semibold">Pakker</h5>
-                            <p>
-                                I venstre panel kan du opprette pakker for å organisere emner i studieplanen. Det finnes to pakketyper:
-                            </p>
+                            <p>I venstre panel kan du opprette pakker for å organisere emner i studieplanen. Det finnes to pakketyper:</p>
                             <ul>
                                 <li><strong>Spesialisering</strong> - En faglig retning innenfor programmet.</li>
                                 <li><strong>Emnepakke</strong> - En gruppering av relaterte emner.</li>
                             </ul>
-                            <p className="text-muted small">Systemteknisk fungerer disse likt — forskjellen er hvilken etikett som passer best.</p>
-
+                            <p className="text-muted small">I praksis fungerer disse på samme måte, forskjellen er hvilken etikett som passer best.</p>
                             <h5 className="fw-semibold">Eksporter til Word</h5>
                             <p>
                                 Studieplanen kan eksporteres til Word via
