@@ -33,8 +33,6 @@ const Courses = () => {
       result = result.filter((c) => c.degree === filters.degree);
     if (filters.credits)
       result = result.filter((c) => String(c.credits) === filters.credits);
-    if (filters.is_active === "yes") result = result.filter((c) => c.is_active);
-    if (filters.is_active === "no") result = result.filter((c) => !c.is_active);
     if (filters.current === "yes") result = result.filter((c) => c.is_current);
     if (filters.current === "no") result = result.filter((c) => !c.is_current);
     setFilteredCourses(result);
@@ -142,19 +140,6 @@ const Courses = () => {
                   ))}
               </select>
             </div>
-            <div className="col-md-3">
-              <label className="form-label fw-semibold">Aktiv</label>
-              <select
-                className="form-select"
-                name="is_active"
-                value={filters.is_active}
-                onChange={handleFilterChange}
-              >
-                <option value="">Alle</option>
-                <option value="yes">Aktiv</option>
-                <option value="no">Inaktiv</option>
-              </select>
-            </div>
           </div>
         )}
       </div>
@@ -168,7 +153,7 @@ const Courses = () => {
             <th>Semester</th>
             <th>Studiepoeng</th>
             <th>Antall tidligere versjoner</th>
-            <th>Aktiv</th>
+            <th>Nyeste</th>
           </tr>
         </thead>
         <tbody>
@@ -192,9 +177,9 @@ const Courses = () => {
               <td>{course.version - 1 === 0 ? "Nei" : course.version - 1}</td>
               <td>
                 <span
-                  className={`badge ${course.is_active ? "bg-success" : "bg-secondary"}`}
+                  className={`badge ${course.is_current ? "bg-success" : "bg-danger"}`}
                 >
-                  {course.is_active ? "Ja" : "Nei"}
+                  {course.is_current ? "Ja" : "Nei"}
                 </span>
               </td>
             </tr>

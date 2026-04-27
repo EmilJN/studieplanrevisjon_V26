@@ -374,8 +374,8 @@ function CourseDetails() {
                 <span className="fw-semibold">Versjon:</span> {subject.version}
               </div>
               <div className="col-md-6">
-                <span className="fw-semibold">Aktiv:</span>{" "}
-                {subject.is_active ? "Ja" : "Nei"}
+                <span className="fw-semibold">Nyeste:</span>{" "}
+                {subject.is_current ? "Ja" : "Nei"}
               </div>
               <div className="col-md-6">
                 <span className="fw-semibold">Studiepoeng:</span>{" "}
