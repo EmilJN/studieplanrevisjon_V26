@@ -48,7 +48,7 @@ export const processConflicts = (termConflicts, course, destSemester, type) => {
 
 
 export const confirmWindow = (message) => {
-    const reason = prompt(`${message}\n\nPlease provide a reason for change:`);
+    const reason = prompt(`${message}\n\nVenligst skriv en grunn for endringen:`);
     if (reason === null || reason.trim() === "") {
 
         return null;

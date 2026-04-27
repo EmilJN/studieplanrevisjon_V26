@@ -25,6 +25,9 @@ const NavBar = () => {
             <NavLink className="btn btn-outline-light" to="/editstudyprogram">
               Studieprogram
             </NavLink>
+            <NavLink className="btn btn-outline-light" to="/information">
+              Informasjon
+            </NavLink>
 
             {currentUser.role === "admin" && (
               <NavLink className="btn btn-outline-danger" to="/admin">Admin</NavLink>

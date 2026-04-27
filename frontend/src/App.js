@@ -12,6 +12,7 @@ import EditStudyProgram from "./pages/editstudyprogram";
 import StudyProgramDetail from "./pages/studyprogramdetail";
 import GenerateStudyplan from "./pages/generatestudyplan";
 import CourseDetails from "./pages/coursedetails";
+import Information from "./pages/information";
 import Login from "./pages/login";
 import ProtectedRoute from "./components/protectedroute";
 import { AuthProvider } from "./components/validateuser";
@@ -47,6 +48,10 @@ function App() {
                 <Route
                   path="/generatestudyplan/:id"
                   element={<GenerateStudyplan />}
+                />
+                <Route
+                  path="/information"
+                  element={<Information />}
                 />
                 <Route path="/createsp" element={<CreateSP />} />
                 <Route path="/admin" element={<Admin />} />

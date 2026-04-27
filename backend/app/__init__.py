@@ -2,6 +2,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from flask_migrate import Migrate
+from flask_mail import Mail
 from app.config import Config
 from authlib.integrations.flask_client import OAuth
 
@@ -10,7 +11,7 @@ from os import environ
 db = SQLAlchemy()
 migrate = Migrate()
 oauth = OAuth()
-
+mail = Mail()
 
 def create_app():
     app = Flask(__name__)
@@ -22,6 +23,7 @@ def create_app():
     db.init_app(app)
     migrate.init_app(app, db)
     oauth.init_app(app)
+    mail.init_app(app)
 
     oauth.register(
         name='feide',

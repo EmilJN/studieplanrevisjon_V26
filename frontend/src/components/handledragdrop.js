@@ -67,7 +67,7 @@ export const handleDragEnd = async ({
           type,
         );
 
-        const confirmMessage = `Term Conflict Detected:\n\nCourse: "${course.name} (${course.courseCode})"\nFROM: "${termConflicts[0].current_term}" TO: "${destSemester.term}"\n\nConflicts in the following study programs:\n${affectedPrograms}\n\nDo you want to proceed?
+        const confirmMessage = `Semester konflikt funnet:\n\nEmne: "${course.name} (${course.courseCode})"\nFRA: "${termConflicts[0].current_term}" TO: "${destSemester.term}"\n\nKonflikter i følgene studieprogram:\n${affectedPrograms}\n\nVil du fortsette?
                 `;
         const reason = confirmWindow(confirmMessage);
         if (!reason) {
@@ -76,7 +76,7 @@ export const handleDragEnd = async ({
         updateConfirmedConflicts(
           newTermConflicts.map((conflict) => ({
             ...conflict,
-            message: `"${selectedProgram.name}": ${conflict.course.name} (${conflict.course.courseCode}) was moved from "${conflict.current_term}" to "${conflict.new_term}".`,
+            message: `"${selectedProgram.name}": ${conflict.course.name} (${conflict.course.courseCode}) var flyttet fra "${conflict.current_term}" til "${conflict.new_term}".`,
             reason: reason,
           })),
           setConfirmedConflicts,
