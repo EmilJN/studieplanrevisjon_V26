@@ -30,7 +30,7 @@ def create_app():
         client_id=app.config.get('FEIDE_CLIENT_ID'),
         client_secret=app.config.get('FEIDE_CLIENT_SECRET'),
         server_metadata_url='https://auth.dataporten.no/.well-known/openid-configuration',
-        client_kwargs={'scope': 'openid email userinfo-name'}
+        client_kwargs={'scope': 'openid email userinfo-name groups-org'}
     )
 
     return app

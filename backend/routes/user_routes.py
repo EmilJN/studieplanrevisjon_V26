@@ -1,4 +1,5 @@
 import os
+import requests
 from flask import Flask, jsonify, request, Blueprint, session, url_for, redirect
 from app.models import  User
 from app import oauth
@@ -16,11 +17,26 @@ def feide_login():
 def feide_callback():
     token = oauth.feide.authorize_access_token()
     userinfo = token["userinfo"]
+    access_token =token["access_token"]
+
+    groups_response = requests.get("https://groups-api.dataporten.no/groups/me/groups",
+        headers={"Authorization": f"Bearer {access_token}"})
+
+    groups_data = groups_response.json()
+    affiliation = None
+    for group in groups_data:
+        if group.get("type") == "fc:org":
+            affiliation = group.get("membership", {}).get("primaryAffiliation")
+            break
+
+    if affiliation not in ["staff", "employee", "faculty"]:
+        return redirect(f"{os.environ.get('FRONTEND_URL', 'http://localhost:3000')}/login")
 
     feide_id = userinfo["sub"]
     email = userinfo.get("email", "")
     name = userinfo.get("name", "")
-
+    
+    
     userservice = ServiceFactory.get_user_service()
     user = userservice.get_user_by_feide_id(feide_id)
     if not user:
