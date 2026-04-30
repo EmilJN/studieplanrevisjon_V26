@@ -2,9 +2,19 @@ from flask import Blueprint, jsonify, send_file
 from io import BytesIO
 from docx import Document
 from docx.shared import Pt, Inches
+from docx.oxml import OxmlElement
+from docx.oxml.ns import qn
 from services import ServiceFactory
 
 exportdocx_bp = Blueprint('exportdocx', __name__)
+
+# ===== HELPERS =====
+def set_cell_color(cell, color):
+    tc = cell._tc
+    tcPr = tc.get_or_add_tcPr()
+    shd = OxmlElement('w:shd')
+    shd.set(qn('w:fill'), color)
+    tcPr.append(shd)
 
 
 def calculate_year(studyplan_year, semester_number, term):
@@ -22,16 +32,36 @@ def generate_studyplan_docx(studyprogram, studyplans, course_to_package):
 
     first_studyplan = studyplans[0]
     start_year = first_studyplan['year']
+
     end_year = calculate_year(
         start_year,
         first_studyplan['semesters'][-1]['semester_number'],
         first_studyplan['semesters'][-1]['term']
     )
 
-    doc.add_heading(f"Studieplanmatrise", level=2)
+    doc.add_heading("Studieplanmatrise", level=2)
     doc.add_paragraph(f"Studieplan {start_year} - {end_year} for {studyprogram.name}")
 
-    table = doc.add_table(rows=len(first_studyplan['semesters']) + 1, cols=4)
+    # ===== FARGER =====
+    color_palette = [
+        "FFFF00", "FFA500", "00B050",
+        "0070C0", "FF0000", "FF66CC", "FFFFFF", "00FFFF", "C00000",
+    ]
+
+    package_colors = {}
+    color_index = 0
+
+    for pkg in course_to_package.values():
+        name = pkg["name"]
+        if name not in package_colors:
+            package_colors[name] = color_palette[color_index % len(color_palette)]
+            color_index += 1
+
+    package_colors["Faste emner"] = "D9D9D9"
+    package_colors["VALGEMNE"] = "0070C0"
+
+    # ===== TABELL =====
+    table = doc.add_table(rows=1, cols=4)
     table.style = 'Table Grid'
 
     header_cells = table.rows[0].cells
@@ -41,69 +71,137 @@ def generate_studyplan_docx(studyprogram, studyplans, course_to_package):
     header_cells[3].text = "10 sp"
 
     # ===== MATRISE =====
-    for row_idx, semester in enumerate(first_studyplan['semesters'], start=1):
-        row = table.rows[row_idx].cells
-        semester_year = calculate_year(start_year, semester['semester_number'], semester['term'])
+    for semester in first_studyplan['semesters']:
+        semester_year = calculate_year(
+            start_year,
+            semester['semester_number'],
+            semester['term']
+        )
 
-        row[0].text = f"{semester['semester_number']} ({semester['term']}-{semester_year})"
-
-        blocks = ["", "", ""]
+        blocks = [[], [], []]
         current_block = 0
         current_block_credits = 0
 
         for course in semester['semester_courses']:
             if course['is_elective']:
-                blocks = ["VALGEMNE", "VALGEMNE", "VALGEMNE"]
+                blocks = [[{
+                    "text": "VALGEMNE",
+                    "credits": 0,
+                    "pkg": "VALGEMNE"
+                }] for _ in range(3)]
                 break
+
+            course_id = course.get("id")
+            pkg = course_to_package.get(course_id)
+            pkg_name = pkg["name"] if pkg else "Andre emner"
+
+            course_data = {
+                "text": f"{course['courseCode']} ({course['credits']} sp)",
+                "credits": course['credits'] or 0,
+                "pkg": pkg_name
+            }
+
+            if current_block_credits + course_data["credits"] <= 10:
+                blocks[current_block].append(course_data)
+                current_block_credits += course_data["credits"]
             else:
-                course_text = f"{course['courseCode']} ({course['credits']} sp)"
-                course_credits = course['credits'] or 0
+                current_block += 1
+                if current_block < 3:
+                    blocks[current_block].append(course_data)
+                    current_block_credits = course_data["credits"]
 
-                if current_block_credits + course_credits <= 10:
-                    blocks[current_block] += course_text + "\n"
-                    current_block_credits += course_credits
-                else:
-                    current_block += 1
-                    if current_block < 3:
-                        blocks[current_block] += course_text + "\n"
-                        current_block_credits = course_credits
+        max_rows = max(len(b) for b in blocks)
+        semester_cells = []
 
-        for col_idx in range(3):
-            row[col_idx + 1].text = blocks[col_idx]
+        for i in range(max_rows):
+            row = table.add_row()
+            row_cells = row.cells
+
+            tr = row._tr
+            trPr = tr.get_or_add_trPr()
+            trHeight = OxmlElement('w:trHeight')
+            trHeight.set(qn('w:val'), "500")
+            trHeight.set(qn('w:hRule'), "atLeast")
+            trPr.append(trHeight)
+
+            if i == 0:
+                row_cells[0].text = f"{semester['semester_number']} ({semester['term']}-{semester_year})"
+            semester_cells.append(row_cells[0])
+
+            for col_idx in range(3):
+                cell = row_cells[col_idx + 1]
+
+                if i < len(blocks[col_idx]):
+                    c = blocks[col_idx][i]
+                    cell.text = c["text"]
+
+                    color = package_colors.get(c["pkg"], "FFFFFF")
+                    set_cell_color(cell, color)
+
+                    for paragraph in cell.paragraphs:
+                        for run in paragraph.runs:
+                            run.font.size = Pt(11)
+
+                    tcPr = cell._tc.get_or_add_tcPr()
+                    tcMar = OxmlElement('w:tcMar')
+                    for m in ["top", "left", "bottom", "right"]:
+                        node = OxmlElement(f"w:{m}")
+                        node.set(qn('w:w'), "100")
+                        node.set(qn('w:type'), 'dxa')
+                        tcMar.append(node)
+                    tcPr.append(tcMar)
+
+        for i in range(1, len(semester_cells)):
+            semester_cells[0].merge(semester_cells[i])
 
     doc.add_paragraph("\n")
 
-    # ===== EMNEOVERSIKT MED PAKKER =====
+    # ===== LEGENDE =====
+    legend_table = doc.add_table(rows=1, cols=len(package_colors))
+
+    for i, (pkg, color) in enumerate(package_colors.items()):
+        cell = legend_table.rows[0].cells[i]
+        cell.text = pkg
+        set_cell_color(cell, color)
+
+    doc.add_paragraph("\n")
+
+    # ===== EMNEOVERSIKT =====
     doc.add_heading("Emneoversikt", level=2)
 
     for semester in first_studyplan['semesters']:
-        semester_year = calculate_year(start_year, semester['semester_number'], semester['term'])
-        semester_heading = doc.add_heading(
+        semester_year = calculate_year(
+            start_year,
+            semester['semester_number'],
+            semester['term']
+        )
+
+        doc.add_heading(
             f"Semester {semester['semester_number']} ({semester['term']} {semester_year})",
             level=2
         )
-        semester_heading.paragraph_format.space_before = Pt(12)
-        semester_heading.paragraph_format.space_after = Pt(6)
 
         courses_by_package = {}
 
         for course in semester['semester_courses']:
-            if course['is_elective']:
-                continue
-
             course_id = course.get('id')
-            pkg = course_to_package.get(course_id)
 
-            pkg_name = pkg["name"] if pkg else "Faste emner"
+            if course['is_elective']:
+                category = course.get('category')
 
-            if pkg_name not in courses_by_package:
-                courses_by_package[pkg_name] = []
+                if category:
+                    pkg_name = f"{category.get('name')}"
+                else:
+                    pkg_name = "Valgfag (uten gruppe)"
+            else:
+                pkg = course_to_package.get(course_id)
+                pkg_name = pkg["name"] if pkg else "Andre emner"
 
-            courses_by_package[pkg_name].append(course)
+            courses_by_package.setdefault(pkg_name, []).append(course)
 
         sorted_packages = sorted(
             courses_by_package.items(),
-            key=lambda x: (x[0] != "Faste emner", x[0])
+            key=lambda x: (x[0] != "Andre emner", x[0])
         )
 
         for pkg_name, courses_in_pkg in sorted_packages:
@@ -112,15 +210,12 @@ def generate_studyplan_docx(studyprogram, studyplans, course_to_package):
             pkg_para = doc.add_paragraph(f"{pkg_name} (sp: {total_credits})")
             pkg_para.style = "Heading 3"
             pkg_para.paragraph_format.left_indent = Inches(0.3)
-            pkg_para.paragraph_format.space_before = Pt(6)
-            pkg_para.paragraph_format.space_after = Pt(2)
 
             for course in courses_in_pkg:
                 course_para = doc.add_paragraph(
                     f"{course['courseCode']} - {course['name']} ({course['credits']} sp)"
                 )
                 course_para.paragraph_format.left_indent = Inches(0.6)
-                course_para.paragraph_format.space_after = Pt(1)
 
     return doc
 
@@ -147,7 +242,6 @@ def export_to_docx(studyprogram_id):
         selected_plan_id = selected_plan.get('id')
 
         if not selected_plan_id:
-            print("WARNING: studyplan mangler id – hopper over pakker")
             packages = []
         else:
             packages = coursepackage_service.get_course_packages_by_studyplan(selected_plan_id)
@@ -163,7 +257,11 @@ def export_to_docx(studyprogram_id):
                     "type": pkg.packagetype
                 }
 
-        doc = generate_studyplan_docx(studyprogram, studyplans, course_to_package)
+        doc = generate_studyplan_docx(
+            studyprogram,
+            studyplans,
+            course_to_package
+        )
 
         buffer = BytesIO()
         doc.save(buffer)

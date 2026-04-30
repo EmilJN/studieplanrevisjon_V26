@@ -10,6 +10,7 @@ from services.semester import SemesterService
 from services.semestercourses import SemesterCoursesService
 
 
+
 class ServiceFactory:
     _instances = {}
     
