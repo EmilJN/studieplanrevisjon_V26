@@ -1,4 +1,5 @@
 import React from "react";
+import logo from "../assets/logo.jpg";
 
 const Login = () => {
   return (
@@ -15,7 +16,7 @@ const Login = () => {
         }}
       >
         <img
-          src="../uis_logo.jpg"
+          src={logo}
           alt="UiS logo"
           className="mx-auto mb-4"
           style={{ maxWidth: "100px" }}
