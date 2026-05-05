@@ -174,7 +174,7 @@ const Courses = () => {
                     : course.semester}
               </td>
               <td>{course.credits}</td>
-              <td>{course.version - 1 === 0 ? "Nei" : course.version - 1}</td>
+              <td>{course.version - 1 === 0 ? "Ingen" : course.version - 1}</td>
               <td>
                 <span
                   className={`badge ${course.is_current ? "bg-success" : "bg-danger"}`}
