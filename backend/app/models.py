@@ -426,7 +426,7 @@ class Log(db.Model):
     __tablename__ = 'log'
     id = db.Column(db.Integer, primary_key=True)
     time = db.Column(db.DateTime, default=datetime.timezone.utc, nullable=False)
-    message = db.Column(db.String(100), nullable=False)
+    message = db.Column(db.Text, nullable=False)
 
     def serialize(self):
         self.time = pytz.UTC.localize(self.time)
