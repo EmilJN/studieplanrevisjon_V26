@@ -37,7 +37,7 @@ const AdminDatabase = () => {
   };
 
   const handleRestore = async (filename) => {
-    if (!window.confirm(`Er du sikker på at du vil restore ${filename}?`))
+    if (!window.confirm(`Er du sikker på at du vil gjenopprette fra ${filename}?`))
       return;
 
     setLoading(true);
@@ -45,10 +45,10 @@ const AdminDatabase = () => {
 
     try {
       await api.post(`/db/backups/restore/${filename}`);
-      setMessage("Restore fullført!");
+      setMessage("Gjenoppretting fullført!");
     } catch (err) {
       console.error(err);
-      setMessage("Feil ved restore");
+      setMessage("Feil ved gjenoppretting");
     } finally {
       setLoading(false);
     }
@@ -124,7 +124,7 @@ const AdminDatabase = () => {
                     onClick={() => handleRestore(backup)}
                     disabled={loading}
                   >
-                    Restore
+                    Gjenopprett
                   </button>
                   <button
                     className="btn btn-danger btn-sm"

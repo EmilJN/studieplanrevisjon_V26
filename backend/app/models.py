@@ -248,8 +248,8 @@ class Notifications(db.Model):
     source_program_id = db.Column(db.Integer,db.ForeignKey('studyprogram.id', ondelete="SET NULL"),nullable=True)
     recipient_id = db.Column(db.String(128),db.ForeignKey('user.feide_id', ondelete="SET NULL"),nullable=True)
     sender_id = db.Column(db.String(128),db.ForeignKey('user.feide_id', ondelete="SET NULL"),nullable=True)
-    message = db.Column(db.String(200), nullable=False)
-    reason = db.Column(db.String(200), nullable=True)
+    message = db.Column(db.Text, nullable=False)
+    reason = db.Column(db.Text, nullable=True)
     is_acknowledged = db.Column(db.Boolean, default=False)
     is_solved = db.Column(db.Boolean, default=False, nullable=False)
     created_at = db.Column(

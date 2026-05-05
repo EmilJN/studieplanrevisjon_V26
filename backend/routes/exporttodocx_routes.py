@@ -57,7 +57,7 @@ def generate_studyplan_docx(studyprogram, studyplans, course_to_package):
             package_colors[name] = color_palette[color_index % len(color_palette)]
             color_index += 1
 
-    package_colors["Faste emner"] = "D9D9D9"
+    package_colors["Andre emner"] = "D9D9D9"
     package_colors["VALGEMNE"] = "0070C0"
 
     # ===== TABELL =====
