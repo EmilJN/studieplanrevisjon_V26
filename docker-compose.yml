@@ -22,7 +22,7 @@ services:
       BACKEND_URL: ${BACKEND_URL}
       FRONTEND_URL: ${FRONTEND_URL}
     volumes:
-      - ./instance/backups:/app/instance/backups
+      - ${BACKUP_VOLUME}:/app/instance/backups
 
   frontend:
     build: ./frontend
@@ -55,4 +55,4 @@ services:
 
 volumes:
   postgres_data:
-  backend_data:
+  backups_data:
