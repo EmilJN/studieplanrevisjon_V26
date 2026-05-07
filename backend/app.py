@@ -21,17 +21,17 @@ import subprocess, sys
 app = create_app()
 
 # Register the blueprints
-app.register_blueprint(backup_bp, url_prefix='/db/')
-app.register_blueprint(courses_bp, url_prefix='/courses/')
-app.register_blueprint(prerequisites_bp, url_prefix='/prerequisites' )
-app.register_blueprint(studyprogram_bp, url_prefix='/studyprograms/')
-app.register_blueprint(studyplan_bp, url_prefix='/studyplans/')
-app.register_blueprint(exportdocx_bp, url_prefix='/exportdocx/')
-app.register_blueprint(user_bp, url_prefix='/user/')
-app.register_blueprint(notification_bp, url_prefix='/notifications/')
-app.register_blueprint(institute_bp, url_prefix='/institutes')
-app.register_blueprint(semestercourses_bp, url_prefix='/semestercourses/')
-app.register_blueprint(coursepackage_bp, url_prefix='/coursepackage')
+app.register_blueprint(backup_bp, url_prefix='/api/db/')
+app.register_blueprint(courses_bp, url_prefix='/api/courses/')
+app.register_blueprint(prerequisites_bp, url_prefix='/api/prerequisites' )
+app.register_blueprint(studyprogram_bp, url_prefix='/api/studyprograms/')
+app.register_blueprint(studyplan_bp, url_prefix='/api/studyplans/')
+app.register_blueprint(exportdocx_bp, url_prefix='/api/exportdocx/')
+app.register_blueprint(user_bp, url_prefix='/api/user/')
+app.register_blueprint(notification_bp, url_prefix='/api/notifications/')
+app.register_blueprint(institute_bp, url_prefix='/api/institutes')
+app.register_blueprint(semestercourses_bp, url_prefix='/api/semestercourses/')
+app.register_blueprint(coursepackage_bp, url_prefix='/api/coursepackage')
 
 
 logging.basicConfig(level=logging.INFO, 

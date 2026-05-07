@@ -30,6 +30,7 @@ services:
     ports:
       - "${FRONTEND_PORT}:${FRONTEND_PORT}"
     environment:
+      - DANGEROUSLY_DISABLE_HOST_CHECK=${DANGEROUSLY_DISABLE_HOST_CHECK}
       - REACT_APP_BACKEND_URL=${BACKEND_URL}
     depends_on:
       - backend
