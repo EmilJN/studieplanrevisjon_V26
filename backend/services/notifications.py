@@ -161,6 +161,14 @@ class NotificationService:
                         else:
                             print(f"Ingen email funnet for {program_id}, hopper over.")
 
+                    for program, email, name in recipients:
+                        print(f"[EMAIL DRY RUN] Til: {name} ({email})")
+                        print(f"[EMAIL DRY RUN] Program: {program.name}")
+                        print(f"[EMAIL DRY RUN] Fra: {self.studyprogram_service.get_studyprogram_by_id(source_program_id).name}")
+                        print(f"[EMAIL DRY RUN] Melding: {message}")
+                        print(f"[EMAIL DRY RUN] Grunn: {reason}")
+                        print("-" * 40)
+
                     sender_program = self.studyprogram_service.get_studyprogram_by_id(source_program_id)
 
                     email_thread = threading.Thread(
