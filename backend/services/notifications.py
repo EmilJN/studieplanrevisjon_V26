@@ -262,17 +262,18 @@ class NotificationService:
         if program and program.program_ansvarlig and program.program_ansvarlig.email:
             from flask import current_app
             app = current_app._get_current_object()
-            recipients = [(program, program.program_ansvarlig.email, program.program_ansvarlig.name)]
+            recipients = (program.name, program.program_ansvarlig.email, program.program_ansvarlig.name)
+            sender_name = sender_program.name if sender_program else "Systemet"
             email_thread = threading.Thread(
                 target=self.send_email,
-                args=(recipients, sender_program, message, reason, app),
+                args=([recipients], sender_name, message, reason, app),
                 daemon=True
                 )
             email_thread.start()
         else:
             print(f"Ingen email funnet for {program_id}, hopper over.")
     
-    def send_email(self, recipients, sender_program, message, reason, app):
+    def send_email(self, recipients, sender_name, message, reason, app):
         with app.app_context():
             try:
                 if not recipients:
@@ -286,7 +287,7 @@ class NotificationService:
                             subject="Notifikasjon fra studieplanrevisjon",
                             recipients=[email],
                             body=f"Hei {name}!"
-                            f"{sender_program.name} har gjort følgende endring:\n\n "
+                            f"{sender_name} har gjort følgende endring:\n\n "
                             f"{message}\n\n"
                             f"Oppgitt grunn:\n"
                             f"{reason}"
@@ -297,7 +298,7 @@ class NotificationService:
                             <body>
                                 <h2>Notifikasjon fra studieplanrevisjon</h2>
                                 <p>Hei {name}!<p>
-                                <p><strong>{sender_program.name}</strong> har gjort følgende endring:</p>
+                                <p><strong>{sender_name}</strong> har gjort følgende endring:</p>
                                 <p>{message}</p>
                                 <p><strong>Oppgitt grunn:</strong> {reason}</p>
                                 <hr>
