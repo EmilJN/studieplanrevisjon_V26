@@ -50,7 +50,7 @@ class NotificationService:
             )
             self.db.add(notification)
             self.db.commit()
-            self.send_email_to_program(program_id, None, message, reason)
+            self.send_email_to_program([program_id], None, message, reason)
             return notification.serialize()
         except Exception as e:
             self.db.rollback()
@@ -155,8 +155,7 @@ class NotificationService:
                 
                 if recipient_program_ids:
                     sender_program = self.studyprogram_service.get_studyprogram_by_id(source_program_id)
-                    for program_id in recipient_program_ids:
-                        self.send_email_to_program(program_id, sender_program, message, reason)
+                    self.send_email_to_program(recipient_program_ids, sender_program, message, reason)
 
             return notifications
         except Exception as e:
@@ -257,21 +256,25 @@ class NotificationService:
             print(f"Error deleting all notifications: {str(e)}")
             return False
     
-    def send_email_to_program(self, program_id, sender_program, message, reason):
-        program = self.studyprogram_service.get_studyprogram_by_id(program_id)
-        if program and program.program_ansvarlig and program.program_ansvarlig.email:
+    def send_email_to_program(self, program_ids, sender_program, message, reason):
+        recipients = []
+        for program_id in program_ids:
+            program = self.studyprogram_service.get_studyprogram_by_id(program_id)
+            if program and program.program_ansvarlig and program.program_ansvarlig.email:
+                recipients.append((program.name, program.program_ansvarlig.email, program.program_ansvarlig.name))
+            else:
+                print(f"Ingen email funnet for {program_id}, hopper over.")
+
+        if recipients:        
             from flask import current_app
             app = current_app._get_current_object()
-            recipients = (program.name, program.program_ansvarlig.email, program.program_ansvarlig.name)
-            sender_name = sender_program.name if sender_program else "Systemet"
+            sender_name = sender_program.name if sender_program else "Studentplanrevisjon"
             email_thread = threading.Thread(
                 target=self.send_email,
-                args=([recipients], sender_name, message, reason, app),
+                args=(recipients, sender_name, message, reason, app),
                 daemon=True
                 )
             email_thread.start()
-        else:
-            print(f"Ingen email funnet for {program_id}, hopper over.")
     
     def send_email(self, recipients, sender_name, message, reason, app):
         with app.app_context():
@@ -281,17 +284,17 @@ class NotificationService:
                     return
 
                 with mail.connect() as conn:
-                    for program, email, name in recipients:
-                        print(f"[EMAIL] Sender til {name} ({email}) for program {program.name}")
+                    for program_name, email, name in recipients:
+                        print(f"[EMAIL] Sender til {name} ({email}) for program {program_name}")
                         msg = Message(
                             subject="Notifikasjon fra studieplanrevisjon",
                             recipients=[email],
-                            body=f"Hei {name}!"
+                            body=f"Hei {name}!\n\n"
                             f"{sender_name} har gjort følgende endring:\n\n "
                             f"{message}\n\n"
                             f"Oppgitt grunn:\n"
-                            f"{reason}"
-                            f"Dette påvirker studieprogrammet {program.name}"
+                            f"{reason}\n\n"
+                            f"Dette påvirker studieprogrammet {program_name}"
                             )
                         msg.html = f"""
                         <html>
@@ -302,7 +305,7 @@ class NotificationService:
                                 <p>{message}</p>
                                 <p><strong>Oppgitt grunn:</strong> {reason}</p>
                                 <hr>
-                                <p>Dette påvirker studieprogrammet: <strong>{program.name}</strong></p>
+                                <p>Dette påvirker studieprogrammet: <strong>{program_name}</strong></p>
                             </body>
                         </html>
                         """
