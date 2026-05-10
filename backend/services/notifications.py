@@ -50,7 +50,7 @@ class NotificationService:
             )
             self.db.add(notification)
             self.db.commit()
-            self.send_email_to_program([program_id], None, message, reason)
+            self.send_emails_to_programs([program_id], None, message, reason)
             return notification.serialize()
         except Exception as e:
             self.db.rollback()
@@ -155,7 +155,7 @@ class NotificationService:
                 
                 if recipient_program_ids:
                     sender_program = self.studyprogram_service.get_studyprogram_by_id(source_program_id)
-                    self.send_email_to_program(recipient_program_ids, sender_program, message, reason)
+                    self.send_emails_to_programs(recipient_program_ids, sender_program, message, reason)
 
             return notifications
         except Exception as e:
