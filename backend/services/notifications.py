@@ -256,7 +256,7 @@ class NotificationService:
             print(f"Error deleting all notifications: {str(e)}")
             return False
     
-    def send_email_to_program(self, program_ids, sender_program, message, reason):
+    def send_emails_to_programs(self, program_ids, sender_program, message, reason):
         recipients = []
         for program_id in program_ids:
             program = self.studyprogram_service.get_studyprogram_by_id(program_id)
