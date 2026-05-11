@@ -30,10 +30,11 @@ I denne versjonen er følgende forbedringer og ny funksjonalitet innført:
 
 ### 1. Klargjør miljøet
 
-Opprett .env fil i root mappen.  Kopier over og fyll inn feltene fra den vedlakte eksempelfilen (env_example.txt). 
-For å gi en bruker administratortilgang ved første innlogging, legg til e-postadressen i `ADMIN_USERS` feltet i `.env` filen. 
-    Administratortilgang kan senere administreres via admin-panelet i applikasjonen.
-Sett `DEBUG=False` i produksjonsmiljø. DEBUG-modus omgår FEIDE-autentisering og oppretter testbrukere, og skal kun brukes under utvikling.
+- Opprett .env fil i root mappen.  
+- Kopier over og fyll inn feltene fra den vedlakte eksempelfilen (env_example.txt). 
+- For å gi en bruker administratortilgang ved første innlogging, legg til e-postadressen i `ADMIN_USERS` feltet i `.env` filen. 
+    - Administratortilgang kan senere administreres via admin-panelet i applikasjonen.
+- Sett `DEBUG=False` i produksjonsmiljø. DEBUG-modus omgår FEIDE-autentisering og oppretter testbrukere, og skal kun brukes under utvikling.
 ---
 
 ### 2. Start prosjektet med Docker
