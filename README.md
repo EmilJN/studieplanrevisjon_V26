@@ -94,7 +94,6 @@ Merk: `docker compose down -v` sletter databasen permanent. All data må seedes 
 
 ```
 
-
 |   .dockerignore
 |   .env
 |   .gitignore
