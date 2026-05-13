@@ -7,6 +7,9 @@ Et moderne system for håndtering, administrasjon og revisjon av studieplaner.
 ---
 
 ##  Kom i gang
+Denne applikasjonen er docker basert. Derfor kreves det at docker er instalert på maskinen/serveren som skal kjøre prosjektet. 
+
+https://www.docker.com/products/docker-desktop/
 
 ### 1. Klargjør miljøet
 
