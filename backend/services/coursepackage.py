@@ -12,14 +12,30 @@ class CoursePackageService:
         self.db = db_session or db.session
         
     def create_course_package(self, name, studyplan_id, packagetype):
-        try: 
+        try:
+            studyplan = Studyplan.query.get(studyplan_id)
+
+            if not studyplan:
+                raise ValueError(f"Studyplan {studyplan_id} does not exist")
+
             course_package_id = str(uuid.uuid4())
-            new_course_package = Coursepackage(id=course_package_id, name=name, studyplan_id=studyplan_id, packagetype=packagetype)
+
+            new_course_package = Coursepackage(
+                id=course_package_id,
+                name=name,
+                studyplan_id=studyplan_id,
+                packagetype=packagetype
+            )
             self.db.add(new_course_package)
-            log = Log(f"Ny {packagetype} har blitt opprettet: '{name}' for studieplan {studyplan_id}")
+            log = Log(
+                f"Ny {packagetype} har blitt opprettet: '{name}' for studieplan {studyplan_id}"
+            )
+
             self.db.add(log)
             self.db.commit()
+
             return new_course_package
+
         except Exception as e:
             self.db.rollback()
             print(f"Error creating course package: {str(e)}")

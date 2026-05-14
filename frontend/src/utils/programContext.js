@@ -13,7 +13,7 @@ export const ProgramProvider = ({ children }) => {
                 setPrograms(response);
             } catch (error) {
                 console.error("Failed to fetch programs:", error);
-                setPrograms([]); // empty array if error
+                setPrograms([]);
             }
         };
 

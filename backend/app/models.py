@@ -11,35 +11,39 @@ prerequisites = db.Table(
 
 class Coursepackage(db.Model):
     __tablename__ = 'coursepackage'
+
     id = db.Column(db.String(120), primary_key=True)
     name = db.Column(db.String(80), nullable=False)
-    studyplan_id = db.Column(db.Integer, nullable=False)
-    packagetype = db.Column(db.Enum('Emnepakke', 'Spesialisering', name='packagetype'), nullable=False)
+
+    studyplan_id = db.Column(
+        db.Integer,
+        db.ForeignKey('studyplan.id'),
+        nullable=False
+    )
+
+    packagetype = db.Column(
+        db.Enum('Emnepakke', 'Spesialisering', name='packagetype'),
+        nullable=False
+    )
+
+    studyplan = db.relationship(
+        'Studyplan',
+        back_populates='coursepackages'
+    )
 
     courses = db.relationship(
         'Course',
         secondary='association',
         back_populates='coursepackages'
     )
-
+    
     def serialize(self):
         return {
             "id": self.id,
             "name": self.name,
             "studyplan_id": self.studyplan_id,
-            "courses": [course.id for course in self.courses],
             "packagetype": self.packagetype
         }
-
-    def __repr__(self):
-        return f'<Coursepackage {self.name}>'
-
-    def __init__(self, id, name, studyplan_id, packagetype):
-        self.id = id
-        self.name = name
-        self.studyplan_id = studyplan_id
-        self.packagetype = packagetype
-
 association = db.Table(
     'association',
     db.Column('course_id', db.Integer, db.ForeignKey('course.id')),
@@ -192,6 +196,10 @@ class Studyplan(db.Model):
     studyprogram_id = db.Column(db.Integer, db.ForeignKey('studyprogram.id'), nullable=False) # foreign key
 
     semesters = db.relationship('Semester', back_populates='studyplan', cascade='all, delete-orphan', lazy='joined')
+    coursepackages = db.relationship(
+    'Coursepackage',
+    back_populates='studyplan'
+)
     studyprogram = db.relationship('Studyprogram', back_populates='studyplans', lazy='joined')
     __table_args__ = (
         db.UniqueConstraint('year', 'studyprogram_id', name='unique_year_studyprogram'),

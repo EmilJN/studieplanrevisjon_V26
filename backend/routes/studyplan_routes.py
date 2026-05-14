@@ -4,13 +4,10 @@ from app import db
 from services import ServiceFactory
 
 
-# http://localhost:5000/backend/studyplans/
-# LA LINJÅ OPPFOR STÅ - brukan te å lett henta URLen te POSTMAN. 
 
-## Create a Blueprint
 studyplan_bp = Blueprint('studyplans', __name__)
 
-# Create
+
 @studyplan_bp.route('/create/sp', methods=['POST'])
 def create_studyplan():
     try:
@@ -44,8 +41,6 @@ def create_studyplan():
         return jsonify({"error": str(e)}), 500
 
 
-
-# get by id
 @studyplan_bp.route('/<int:studyplan_id>', methods=['GET'])
 def get_studyplanById(studyplan_id):
     try:
@@ -63,7 +58,6 @@ def get_studyplanById(studyplan_id):
         return jsonify({"error": str(e)}), 500
 
 
-# Delete
 @studyplan_bp.route('/<int:studyplan_id>', methods=['DELETE'])
 def delete_studyplan(studyplan_id):
     try:
@@ -77,7 +71,6 @@ def delete_studyplan(studyplan_id):
 
 
 
-# update courses in studyplan
 @studyplan_bp.route('/<int:studyplan_id>/updatecourses', methods=['PUT'])
 def update_studyplan_courses(studyplan_id):
     try:
@@ -87,9 +80,7 @@ def update_studyplan_courses(studyplan_id):
         if not data.get('semester_courses'):
             return jsonify({"error": "Missing required field: semester_courses"}), 400
         semester_courses = data.get('semester_courses', {})
-        # studyplan_service = ServiceFactory.get_studyplan_service()
         result = studyplan_service.update_semesters_courses(studyplan_id, semester_courses)
-        # db.session.commit()
         print("Updated study plan courses:", result)
         return jsonify(result), 200
 
@@ -103,7 +94,6 @@ def update_studyplan_courses(studyplan_id):
 
 
 
-# Henter all informasjon om emner, semestre, valgemner, etc. med studieplanID
 @studyplan_bp.route('/<int:studyplan_id>/full', methods=['GET'])
 def get_full_studyplan(studyplan_id):
     try:
@@ -116,8 +106,6 @@ def get_full_studyplan(studyplan_id):
         return jsonify({"error": str(e)}), 500
 
  
-
-# Sjekk for om en studieplan eksisterer for et studieprogram og et år
 @studyplan_bp.route('/check', methods=['GET'])
 def check_studyplan():
     studyprogram_id = request.args.get('studyprogram_id')
@@ -139,7 +127,6 @@ def check_studyplan():
 
 
 
-# Henter ALLE studieplaner for ett gitt studieprogram 
 @studyplan_bp.route('/studyprograms/<int:studyprogram_id>', methods=['GET'])
 def get_studyplans_for_studyprogram(studyprogram_id):
     try:
@@ -148,7 +135,7 @@ def get_studyplans_for_studyprogram(studyprogram_id):
         if not studyplans:
             return jsonify({"message": "No study plans found for this study program"}), 404
 
-        return jsonify(studyplans), 200 #Serialized i service
+        return jsonify(studyplans), 200 
     
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
@@ -156,7 +143,7 @@ def get_studyplans_for_studyprogram(studyprogram_id):
         return jsonify({"error": str(e)}), 500
     
 
-# Henter studieplan for en gitt studieplanID
+
 @studyplan_bp.route('/<int:studyplan_id>', methods=['GET'])
 def get_studyplan_by_id(studyplan_id):
     try:
@@ -188,7 +175,6 @@ def get_studyplan_basic(studyplan_id):
 
 
 
-# Hente semestre med emner (inkl all info), i en studieplan.
 @studyplan_bp.route('/<int:studyplan_id>/with-courses', methods=['GET'])
 def get_studyplan_with_courses(studyplan_id):
     try:
@@ -203,15 +189,15 @@ def get_studyplan_with_courses(studyplan_id):
         return jsonify({'error': str(e)}), 500
     
 
-# sjekke term conflict.
+
 @studyplan_bp.route('/courses/<int:course_id>/term-conflicts', methods=['GET'])
 def detect_term_conflicts(course_id):
     try:
         new_term = request.args.get('new_term')
         studyprogram_id = request.args.get('studyprogram_id', type=int)
 
-        print(f"Received new_term: {new_term}")  # Debug log
-        print(f"Received studyprogram_id: {studyprogram_id}")  # Debug log
+        print(f"Received new_term: {new_term}")  
+        print(f"Received studyprogram_id: {studyprogram_id}")  
 
         if not new_term:
             return jsonify({"error": "Missing new_term"}), 400
@@ -223,7 +209,6 @@ def detect_term_conflicts(course_id):
 
         return jsonify({
             'course_id': course_id,
-            # 'semester_number': semester_number,
             'has_conflicts': len(termConflicts) > 0,
             'termConflicts': termConflicts
         })
@@ -231,8 +216,7 @@ def detect_term_conflicts(course_id):
         print(f"Error detecting term conflicts: {str(e)}")
         return jsonify({"error": str(e)}), 500
     
-
-# Endepunkt for å finne semesterene for en studieplan (inkl. litt info om emnene)   
+ 
 @studyplan_bp.route('/<int:studyplan_id>/semesters', methods=['GET'])
 def get_studyplan_semesters(studyplan_id):
     try:
@@ -242,7 +226,6 @@ def get_studyplan_semesters(studyplan_id):
         return jsonify({"error": str(e)}), 500
 
 
-# Endepunkt for å hente den siste SP'en for et studieprogram
 @studyplan_bp.route('/<int:studyprogram_id>/latestplan', methods=['GET'])
 def get_latest_sp(studyprogram_id):
     try:
@@ -343,7 +326,7 @@ def get_full_semesters(studyplan_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-#brukes i hook (studyplandata)
+
 @studyplan_bp.route('/<int:studyplan_id>/completesp', methods=['GET'])
 def get_complete_sp(studyplan_id):
     try:
@@ -361,8 +344,7 @@ def get_complete_sp(studyplan_id):
         return jsonify({"error": str(e)}), 500
 
 
-    
-# endepunkt for å få semesterstruktur for et studieprogram
+
 @studyplan_bp.route('/studyprograms/<int:studyprogram_id>/semesterinfo', methods=['GET'])
 def get_program_semester_structure(studyprogram_id):
     try:

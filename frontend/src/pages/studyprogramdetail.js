@@ -477,7 +477,6 @@ const StudyProgramDetail = () => {
 
           {/* HØYRE SIDE */}
           <div className="col-12 col-md-9">
-            {/* Search bar if in edit mode */}
             {isEditMode && (
               <div className="mb-3">
                 <SearchCourses
@@ -535,7 +534,6 @@ const StudyProgramDetail = () => {
             </div>
           </div>
         </div>
-        {/* Valgemne overlay */}
         <ValgemneOverlay
           isOpen={showOverlay}
           closeOverlay={() => setShowOverlay(false)}

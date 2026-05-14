@@ -89,8 +89,6 @@ def get_logs():
     logs = userservice.get_logs()
     return jsonify(logs)
 
-
-# Promote user to admin
 @user_bp.route("/promote_user/<string:user_id>", methods=["PUT"])
 def promote_user(user_id):
     userservice = ServiceFactory.get_user_service()

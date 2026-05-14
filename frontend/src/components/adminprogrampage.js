@@ -20,8 +20,6 @@ const AdminProgramList = () => {
   const handleDeleteProgram = async (id) => {
     try {
       await api.delete("/studyprograms/" + id);
-
-      // 🔥 Oppdater state lokalt (ingen ny API call nødvendig)
       setStudyPrograms((prev) => prev.filter((program) => program.id !== id));
     } catch (error) {
       console.log(error);

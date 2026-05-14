@@ -4,8 +4,6 @@ export const checkForConflicts = async (courseId, destSemester, studyprogramId) 
     try {
         const response = await api.get(`studyplans/courses/${courseId}/term-conflicts`, {
             params: {
-                // semester_number: destSemester,
-                // studyplan_id: studyplanId,
                 new_term: destSemester.term,
                 studyprogram_id: studyprogramId,
             },

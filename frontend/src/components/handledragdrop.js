@@ -18,8 +18,6 @@ export const handleDragEnd = async ({
   studyplanId,
   selectedProgram,
 }) => {
-  // if (!result.destination) return;
-
   const { source, destination } = result;
   if (!result.destination) return;
 
@@ -90,13 +88,11 @@ export const handleDragEnd = async ({
     }
   };
 
-  // drag from search to semester
   if (
     source.droppableId === "search-results" &&
     destination.droppableId.startsWith("semester-")
   ) {
     const courseToAdd = searchResults[source.index];
-    // console.log("courseToAdd:", courseToAdd);
 
     try {
       const destSemester = semesters[destSemesterNumber];
@@ -136,7 +132,6 @@ export const handleDragEnd = async ({
     }
   }
 
-  // drag from semester to semester
   if (
     source.droppableId.startsWith("semester-") &&
     destination.droppableId.startsWith("semester-")

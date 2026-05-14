@@ -23,7 +23,6 @@ const AdminDatabase = () => {
   const handleBackup = async () => {
     setLoading(true);
     setMessage("");
-
     try {
       await api.post("/db/backups/start-backup");
       setMessage("Backup opprettet!");
@@ -57,10 +56,8 @@ const AdminDatabase = () => {
   const handleDelete = async (filename) => {
     if (!window.confirm(`Er du sikker på at du vil slette ${filename}?`))
       return;
-
     setLoading(true);
     setMessage("");
-
     try {
       await api.delete(`/db/backups/delete/${filename}`);
       setMessage("Backup slettet!");
@@ -76,11 +73,7 @@ const AdminDatabase = () => {
   return (
     <div className="container mt-4">
       <h2>Database Backups</h2>
-
-      {/* Statusmelding */}
       {message && <div className="alert alert-info mt-3">{message}</div>}
-
-      {/* Knapper */}
       <div className="mb-3 d-flex gap-2">
         <button
           className="btn btn-primary"
@@ -99,7 +92,6 @@ const AdminDatabase = () => {
         </button>
       </div>
 
-      {/* Tabell */}
       <table className="table table-bordered table-hover">
         <thead className="table-dark">
           <tr>

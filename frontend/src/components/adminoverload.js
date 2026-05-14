@@ -16,7 +16,6 @@ const AdminOverload = () => {
             })
             }
         getUsers();
-
     }, []);
     
     return(

@@ -1,14 +1,6 @@
 import api from "../api.js";
 import { calculatedYear } from "./helpers.js";
-/*
 
-This file contains helper fetches used in more than 1 page.
-
-
-*/
-
-
-// Fetch all institutes
 export const fetchAllInstitutes = async () => {
   try {
     const response = await api.get("institutes/get_all");
@@ -19,14 +11,13 @@ export const fetchAllInstitutes = async () => {
   }
 };
 
-// eksportere te word docx.
 export const exportStudyPlan = async (studyProgramId) => {
   try {
     const response = await api.get(`exportdocx/${studyProgramId}`, {
       responseType: "blob",
     });
 
-    // Dynamic filename from backend
+
     const contentDisposition = response.headers['content-disposition'];
     const filename = contentDisposition
       ? contentDisposition.split('filename=')[1].replace(/"/g, '')
@@ -45,7 +36,6 @@ export const exportStudyPlan = async (studyProgramId) => {
   }
 };
 
-// search for studyprograms 
 export const searchStudyPrograms = async (query) => {
   const response = await api.get(`studyprograms/search?query=${query}`);
   return response.data;

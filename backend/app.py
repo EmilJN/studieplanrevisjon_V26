@@ -44,13 +44,9 @@ if not os.path.exists(app.config['BACKUP_DIR']):
     os.makedirs(app.config['BACKUP_DIR'])
 
 
-
-# Run the app
 if __name__ == "__main__":
     with app.app_context():
-        # Ensure tables are created
         db.create_all()
-        # Seed database if empty
         from app.models import Course
         if Course.query.count() == 0:
             print("Database is empty, running seed scripts...")

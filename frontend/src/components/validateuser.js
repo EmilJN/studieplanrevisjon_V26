@@ -1,15 +1,12 @@
-// AuthContext.jsx
+
 import { createContext, useContext, useState, useEffect } from "react";
 import api from "../api";
 
-// Create context
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-
-  // Check authentication status when the app loads
   useEffect(() => {
     const checkAuthStatus = async () => {
       try {

@@ -27,10 +27,6 @@ cursor.execute("DELETE FROM institute")
 cursor.execute("DELETE FROM prerequisites")
 cursor.execute("DELETE FROM course")
 
-
-# SEED COURSES
-
-
 xls = pd.ExcelFile('static/Data.xlsx')
 courses = pd.read_excel(xls, 'Emner 2018V-2028H')
 UHCourses = pd.read_excel('static/DataMedEmnerFraTNSVUH.xlsx', 'Emner ved UH-fak 2018V-2028H')
@@ -39,9 +35,6 @@ utvalg = courses[['emnekode','emnenavn_bokmal','vektingstall','terminkode_und_fo
 UHutvalg = UHCourses[['emnekode','emnenavn_bokmal','vektingstall','terminkode_und_forste','arstall_und_siste']].copy()
 SVutvalg = SVCourses[['emnekode','emnenavn_bokmal','vektingstall','terminkode_und_forste','arstall_und_siste']].copy()
 
-
-
-#Endre semester fra Vår/Høst til V/H og fjerne sommmer
 utvalg['terminkode_und_forste'] = utvalg['terminkode_und_forste'].str.replace('HØST','H')
 utvalg['terminkode_und_forste'] = utvalg['terminkode_und_forste'].str.replace('VÅR','V')
 utvalg = utvalg[~utvalg['terminkode_und_forste'].str.contains('SOM', case=True, na=False)]
@@ -54,7 +47,7 @@ SVutvalg['terminkode_und_forste'] = SVutvalg['terminkode_und_forste'].str.replac
 SVutvalg['terminkode_und_forste'] = SVutvalg['terminkode_und_forste'].str.replace('VÅR','V')
 SVutvalg = SVutvalg[~SVutvalg['terminkode_und_forste'].str.contains('SOM', case=True, na=False)]
 
-#Legge til emner som e i bruk ette 2023 og sette emner som har siste undervisning i 2024 og 2025 som inavtive
+
 for i in np.asarray(utvalg):
     course = [str(i[1])[:80],str(i[0])[:80],i[3],i[2]]
     print(course)
@@ -97,11 +90,11 @@ for i in np.asarray(SVutvalg):
         
 for i in range(0, 30, 5):
     course = [
-        "Valgemner " + str(i) + " Poeng",  # name
-        "VALGEMNE" + str(i),              # courseCode
-        str(uuid.uuid4()),               # course_group_id
-        "H",                              # semester
-        i                                 # credits
+        "Valgemner " + str(i) + " Poeng",  
+        "VALGEMNE" + str(i),              
+        str(uuid.uuid4()),               
+        "H",                              
+        i                                 
     ]
 
     cursor.execute('''
@@ -112,12 +105,10 @@ for i in range(0, 30, 5):
 
 connection.commit()
 
-#Lese data fra excel fil og plukke ut relevant info
 preReqs = pd.read_excel('static/cleaned_prerequisites.xlsx')
 preReqs = preReqs[['emnekode','kravinnhold','arstall_til']]
 activePreReqs = preReqs[preReqs['arstall_til'].isna()]
 
-#Finne id te emnene også legge til i forkunnskap
 for i in np.asarray(activePreReqs):
     if i[0] in courselist and isinstance(i[1],str):
         preReqCode = i[1].split()
@@ -181,41 +172,8 @@ for i in np.asarray(utvalg):
 print("Studyprograms seeded")
 
 
-
 connection.commit()
 connection.close()
 
-'''
-
-# Open the CSV file and insert data
-studyprogram_years = pd.read_excel('static/StudyprogramCode_Year.xlsx','Sheet1')
-
-courses = pd.read_excel('static/Data.xlsx','Emnekombinasjoner')
 
 
-#Seed institutes
-
-# Henter emnekombinasjoner med id fra excelfil OBS funker ikke hvis course blir seedet på nytt!!!
-studyplan_subjects = pd.read_excel('static/Emnekombinasjoner_med_ID.xlsx')
-# Henter id og studieprogram kodene fra database
-studyprograms = pd.read_sql("SELECT id,program_code, semester_number FROM studyprogram", connection)
-
-
-for i in studyprogram_years.values:
-    if i[0] in studyprograms.values:
-        program = studyprograms[studyprograms["program_code"] == i[0]].head(1)
-        cursor.execute("INSERT INTO studyplan (year, studyprogram_id) VALUES (?,?)",(i[1],int(program["id"].values)))
-        studyplan_id = cursor.lastrowid
-        for j in studyplan_subjects.values:
-            if j[0] == program['program_code'].values and j[1] == i[1] and j[2] == 'O' and j[0][-1] != str(5):
-                if str(j[5][-3:])=="BAC" or str(j[5][-3:]) == "MAS":
-                    j[3] = j[3]+1
-                cursor.execute("INSERT OR IGNORE INTO studyplan_courses (studyplan_id,course_id,semester) VALUES (?,?,?)",(studyplan_id,j[7],j[3]))
-            if j[0] == program['program_code'].values and j[1] == i[1] and j[2] == 'V' and j[0][-1] != str(5):
-                cursor.execute("INSERT OR IGNORE INTO studyplan_courses (studyplan_id,course_id,semester) VALUES (?,?,?)",(studyplan_id,j[7],j[3]))
-print("studyplans seeded")
-
-connection.commit()
-connection.close()
-
-'''

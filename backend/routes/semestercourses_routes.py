@@ -3,9 +3,6 @@ from app.models import SemesterCourses, ElectiveGroup
 from app import db
 from services import ServiceFactory
 
-# http://localhost:5000/backend/semestercourses/
-
-
 semestercourses_bp = Blueprint('/semestercourses', __name__)
 
 

@@ -1,4 +1,5 @@
 from app import db
+from services.backup import BackupService
 from services.institute import InstituteService
 from services.studyplan import StudyplanService
 from services.studyprogram import StudyprogramService
@@ -13,6 +14,12 @@ from services.semestercourses import SemesterCoursesService
 
 class ServiceFactory:
     _instances = {}
+    
+    @classmethod
+    def get_backup_service(cls):
+        if 'backup' not in cls._instances:
+            cls._instances['backup'] = BackupService()
+        return cls._instances['backup']
     
     @classmethod
     def get_institute_service(cls):

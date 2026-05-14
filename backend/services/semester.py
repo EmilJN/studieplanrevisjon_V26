@@ -8,18 +8,12 @@ class SemesterService:
     def __init__(self, db_session=None):
         self.db = db_session or db.session
 
-
-    # map id to semester number
     def get_semester_mapping(self, semesters):
         return {semester.semester_number: semester.id for semester in semesters}
     
-    # serialize semesters
     def serialize_semesters(self, semesters):
         return [semester.serialize() for semester in semesters]
 
-
-
-    # Create
     def create_semesters(self, studyplan_id, studyprogram_id):
         try:
             studyprogram = self.db.query(Studyprogram).get(studyprogram_id)

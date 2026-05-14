@@ -5,8 +5,6 @@ from flask_migrate import Migrate
 
 prerequisites_bp = Blueprint('prerequisites', __name__)
 
-
-# Legg til prerequisite
 @prerequisites_bp.route("/add/<int:parent_id>", methods=["POST"])
 def add_prerequisites(parent_id):
     prereqiered_course_list = request.get_json()
