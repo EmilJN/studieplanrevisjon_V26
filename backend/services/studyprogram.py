@@ -184,6 +184,21 @@ class StudyprogramService:
     
     
     ##################### OPPE OK, NEDE DNO ########################
+    
+    def get_semesterNumber(self, studyprogram_id):
+        studyprogram = self.get_studyprogram_by_id(studyprogram_id)
+        if studyprogram is None:
+            raise ValueError("Studyprogram not found")
+        
+        semesterNumber = getattr(studyprogram, 'semester_number', None)
+        if semesterNumber is None:
+            degree_type = getattr(studyprogram, 'degree_type', None).lower()
+            if degree_type == 'bachelor':
+                semesterNumber = 6
+            elif degree_type == 'master':
+                semesterNumber = 4
+            else:
+                raise ValueError("Invalid degree type or semester number")
 
     def get_studyplans_by_studyprogramId(self, studyprogram_id):
         return self.db.query(Studyplan).filter_by(
