@@ -2,13 +2,12 @@ import React, { useState, useEffect } from "react";
 import api from "../api";
 
 const EditCourse = () => {
-    const [subjects, setSubjects] = useState([]); // All subjects fetched from the backend
-    const [filteredSubjects, setFilteredSubjects] = useState([]); // filtersøk på emne
-    const [searchTerm, setSearchTerm] = useState(""); // søkeord
-    const [editingSubjectId, setEditingSubjectId] = useState(null); // endre basert på ID
-    const [editedSubject, setEditedSubject] = useState({}); // Etter emne er endret.
+    const [subjects, setSubjects] = useState([]); 
+    const [filteredSubjects, setFilteredSubjects] = useState([]); 
+    const [searchTerm, setSearchTerm] = useState(""); 
+    const [editingSubjectId, setEditingSubjectId] = useState(null); 
+    const [editedSubject, setEditedSubject] = useState({}); 
 
-    // Henta emner
     useEffect(() => {
         api.get("/subjects/")
             .then(response => {
@@ -20,12 +19,9 @@ const EditCourse = () => {
             });
     }, []);
 
-    // søkebar input
     const handleSearch = (e) => {
         const value = e.target.value.toLowerCase();
         setSearchTerm(value);
-
-        // Søk på navn/emnekode
         const filtered = subjects.filter((subject) =>
             subject.name.toLowerCase().includes(value) ||
             subject.subjectCode.toLowerCase().includes(value)
@@ -33,13 +29,11 @@ const EditCourse = () => {
         setFilteredSubjects(filtered);
     };
 
-    // Klikk på navnet for å redigera
     const handleEditClick = (subject) => {
         setEditingSubjectId(subject.id);
-        setEditedSubject({ ...subject }); // Lagra eksisterende verdier
+        setEditedSubject({ ...subject }); 
     };
 
-    // Håndtere endringer i input
     const handleFieldChange = (e) => {
         const { name, value } = e.target;
         setEditedSubject((prev) => ({
@@ -48,11 +42,9 @@ const EditCourse = () => {
         }));
     };
 
-    // Lagre endringer i databasen
     const handleSave = () => {
         api.put(`/subjects/${editingSubjectId}`, editedSubject)
             .then(response => {
-                // oppdatere emnelista
                 setSubjects((prevSubjects) =>
                     prevSubjects.map((subject) =>
                         subject.id === editingSubjectId ? response.data : subject
@@ -63,14 +55,12 @@ const EditCourse = () => {
                         subject.id === editingSubjectId ? response.data : subject
                     )
                 );
-                setEditingSubjectId(null); // Exit edit mode
+                setEditingSubjectId(null); 
             })
             .catch(error => {
                 console.error("There was an error updating the subject!", error);
             });
     };
-
-    // Avbryte redigering
     const handleCancel = () => {
         setEditingSubjectId(null);
         setEditedSubject({});
@@ -79,8 +69,6 @@ const EditCourse = () => {
     return (
         <div>
             <h1>Edit Subjects</h1>
-
-            {/* Søkebar */}
             <input
                 type="text"
                 placeholder="Search by Name or Subject Code"
@@ -89,7 +77,6 @@ const EditCourse = () => {
                 style={{ marginBottom: "20px", width: "100%", padding: "10px", fontSize: "16px" }}
             />
 
-            {/* Emne tabell */}
             <table className="table table-bordered table-hover">
                 <thead className="table-dark">
                     <tr>

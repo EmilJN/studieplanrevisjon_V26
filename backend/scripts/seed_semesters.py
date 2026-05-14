@@ -17,8 +17,7 @@ def seed_studyplans(file_path):
     - year
     """
     print("Seeding studyplans...")
-    
-    # Read Excel file
+
     df = pd.read_excel(file_path)
     
     studyplans_created = 0
@@ -29,14 +28,12 @@ def seed_studyplans(file_path):
             studyprogram_code = row['Studieprogramkode']
             year = int(row['Arstall fra - emnekomb'])
             
-            # Find the studyprogram by code
             studyprogram = Studyprogram.query.filter_by(program_code=studyprogram_code).first()
             
             if not studyprogram:
                 print(f"Warning: Studyprogram with code {studyprogram_code} not found. Skipping.")
                 continue
             
-            # Check if studyplan already exists
             existing_studyplan = Studyplan.query.filter_by(
                 year=year, 
                 studyprogram_id=studyprogram.id
@@ -47,7 +44,6 @@ def seed_studyplans(file_path):
                 studyplans_skipped += 1
                 continue
             
-            # Create new studyplan
             studyplan = Studyplan(
                 year=year,
                 studyprogram_id=studyprogram.id
@@ -55,9 +51,8 @@ def seed_studyplans(file_path):
             
             try:
                 db.session.add(studyplan)
-                db.session.flush()  # Flush to get the ID but don't commit yet
+                db.session.flush()  
                 
-                # Create 10 semesters for this studyplan (5 years × 2 semesters)
                 for i in range(1,studyprogram.semester_number+1):
                     term = 'H' if i % 2 == 1 else 'V'
                     semester = Semester(
@@ -90,7 +85,6 @@ def seed_semester_courses(file_path):
     """
     print("Seeding semester courses...")
     
-    # Read Excel file
     df = pd.read_excel(file_path)
     
     courses_linked = 0
@@ -111,7 +105,7 @@ def seed_semester_courses(file_path):
                 if not course_test:
                     continue
                 if course_test.semester == "V":
-                    semester_number = 2  # Default value
+                    semester_number = 2  
                 else:
                     semester_number = 3
             else:
@@ -119,15 +113,14 @@ def seed_semester_courses(file_path):
             course_code = row['courseCode']
             elective_status = row['Emnevalgstatuskode']
             
-            # Find the studyprogram by code
+
             studyprogram = Studyprogram.query.filter_by(program_code=studyprogram_code).first()
             
             if not studyprogram:
                 print(f"Warning: Studyprogram with code {studyprogram_code} not found. Skipping.")
                 courses_skipped += 1
                 continue
-            
-            # Find the studyplan
+
             studyplan = Studyplan.query.filter_by(
                 year=year, 
                 studyprogram_id=studyprogram.id
@@ -143,7 +136,7 @@ def seed_semester_courses(file_path):
                     semester_number += 1
             except:
                 print(course_code)
-            # Find the semester
+
             semester = Semester.query.filter_by(
                 semester_number=semester_number,
                 studyplan_id=studyplan.id
@@ -154,7 +147,7 @@ def seed_semester_courses(file_path):
                 courses_skipped += 1
                 continue
             
-            # Find the course by code
+
             course = Course.query.filter_by(courseCode=course_code).first()
             
             if not course:
@@ -162,7 +155,6 @@ def seed_semester_courses(file_path):
                 courses_skipped += 1
                 continue
             
-            # Check if the course is already linked to this semester
             existing_link = SemesterCourses.query.filter_by(
                 semester_id=semester.id,
                 course_id=course.id
@@ -174,13 +166,12 @@ def seed_semester_courses(file_path):
                 continue
             if pd.isna(row['Emnevalgstatuskode']):
                 elective_status = "O"
-            # Create new semester_course link (assuming most courses are mandatory, not elective)
-            # You may need to adjust this logic if your Excel has data about elective courses
+
             if elective_status == "O":
                 semester_course = SemesterCourses(
                     semester_id=semester.id,
                     course_id=course.id,
-                    is_elective=False  # Assuming most courses are mandatory
+                    is_elective=False  
                 )
             else:
                 continue
@@ -199,11 +190,8 @@ def seed_semester_courses(file_path):
 def seed_elective_courses(file_path):
     
     print("Seeding elective courses...")
-    
-    # Read Excel file
     df = pd.read_excel(file_path)
     
-    # Add a default category column if it doesn't exist
     if 'Emnevalgstatuskode' not in df.columns:
         df['category'] = 'Anbefalte valgemner'
     
@@ -221,13 +209,10 @@ def seed_elective_courses(file_path):
                 continue
             if pd.isna(row['Emnevalgstatuskode']):
                 continue
-            # 'Velg ett emne', 'Anbefalte valgemner', 'Andre valgemner'
 
             cat1 = ElectiveGroup.query.filter_by(id=1).first()
             cat2 = ElectiveGroup.query.filter_by(id=2).first()
             cat3 = ElectiveGroup.query.filter_by(id=3).first()
-
-            # Handle missing semester_number
 
             course_code = row['courseCode']
             if pd.isna(row['Terminnr default']):
@@ -235,7 +220,7 @@ def seed_elective_courses(file_path):
                 if not course_test:
                     continue
                 if course_test.semester == "V":
-                    semester_number = 2  # Default value
+                    semester_number = 2  
                 else:
                     semester_number = 3
             else:
@@ -249,7 +234,6 @@ def seed_elective_courses(file_path):
                 print(f"Warning: Invalid category '{category}' for course {course_code}. Using 'Anbefalte valgemner'.")
                 category = 'Anbefalte valgemner'
             '''
-            # Find the studyprogram by code
             studyprogram = Studyprogram.query.filter_by(program_code=studyprogram_code).first()
             
             if not studyprogram:
@@ -257,7 +241,6 @@ def seed_elective_courses(file_path):
                 electives_skipped += 1
                 continue
             
-            # Find the studyplan
             studyplan = Studyplan.query.filter_by(
                 year=year, 
                 studyprogram_id=studyprogram.id
@@ -268,7 +251,6 @@ def seed_elective_courses(file_path):
                 electives_skipped += 1
                 continue
             
-            # Find the semester
             semester = Semester.query.filter_by(
                 semester_number=semester_number,
                 studyplan_id=studyplan.id
@@ -279,7 +261,6 @@ def seed_elective_courses(file_path):
                 electives_skipped += 1
                 continue
             
-            # Find the course by code
             course = Course.query.filter_by(courseCode=course_code).first()
             
             if not course:
@@ -287,7 +268,6 @@ def seed_elective_courses(file_path):
                 electives_skipped += 1
                 continue
             
-            # Check if the course is already linked to this semester
             existing_link = SemesterCourses.query.filter_by(
                 semester_id=semester.id,
                 course_id=course.id
@@ -301,7 +281,6 @@ def seed_elective_courses(file_path):
                 category = cat2
             elif elect[0] == "M":
                 category = cat1
-            # Create new semester_course link for elective course
             try:
                 semester_course = SemesterCourses(
                     semester_id=semester.id,
@@ -338,11 +317,9 @@ def seed_elective_groups():
 
 
 if __name__ == "__main__":
-    # Update these paths with your actual Excel file paths
     studyplans_file = "static/test.xlsx"
     semester_courses_file = "static/StudyprogramCode_Year.xlsx"
     electives_file = "static/test.xlsx"
-    # Uncomment the lines below to run the seeding
     seed_studyplans(semester_courses_file)
     seed_semester_courses(studyplans_file)
     seed_elective_groups()

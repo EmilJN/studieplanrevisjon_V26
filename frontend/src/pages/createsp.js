@@ -1,4 +1,3 @@
-// src/pages/createsp.js
 import React, { useState, useEffect } from "react";
 import api from "../api.js";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -72,7 +71,6 @@ const CreateSP = () => {
     }
   };
 
-  // Select a study program
   const selectProgram = (program) => {
     setSelectedProgram(program);
     setProgramSearchQuery(program.name);
@@ -224,8 +222,6 @@ const CreateSP = () => {
                   placeholder="Søk etter studieprogram..."
                   disabled={isInitialized || isLoading}
                 />
-
-                {/* Show search results */}
                 {filteredPrograms.length > 0 && (
                   <ul className="list-group position-absolute w-100" style={{ zIndex: 1100 }}>
                     {filteredPrograms.map((program) => (
@@ -242,8 +238,6 @@ const CreateSP = () => {
                   </ul>
                 )}
               </div>
-
-              {/* Display selected program */}
               {selectedProgram && (
                 <div className="selected-program">
                   <div className="mt-2 text-muted small">
@@ -349,7 +343,6 @@ const CreateSP = () => {
               </button>
             </div>
 
-            {/* ValgemneOverlay */}
             <ValgemneOverlay
               isOpen={valgemneOverlayOpen}
               closeOverlay={() => setValgemneOverlayOpen(false)}

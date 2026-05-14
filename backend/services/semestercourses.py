@@ -8,7 +8,6 @@ class SemesterCoursesService:
     def __init__(self, db_session=None):
         self.db = db_session or db.session
 
-    # create
     def create_semester_course(self, semester_id, course_id, is_elective=False, category_id=None):
         semester_course = SemesterCourses(
             semester_id=semester_id,
@@ -37,7 +36,6 @@ class SemesterCoursesService:
                 ]
         return formatted_courses
 
-    # add
     def batch_add_all_courses(self, studyplan_id, formatted_courses):
         try:
             for semester_id, courses in formatted_courses.items():
@@ -59,8 +57,6 @@ class SemesterCoursesService:
             raise RuntimeError(f"Failed to add courses to semesters: {str(e)}")
             self.db.rollback()
 
-
-    # update
     def update_courses(self, formatted_courses):
         try:
             for semester_id, courses in formatted_courses.items():
@@ -123,7 +119,6 @@ class SemesterCoursesService:
                 if not course:
                     continue
 
-                # Serialize course data
                 course_data = course.serialize()
                 course_data['semester_course_id'] = sc.id
                 course_data['is_elective'] = sc.is_elective
@@ -137,8 +132,6 @@ class SemesterCoursesService:
         except Exception as e:
             raise RuntimeError(f"Failed to serialize courses: {str(e)}")
     
-
-    # ELECTIVE / VALGEMNER LOGIC
 
     def create_elective_group(self, new_category):
 

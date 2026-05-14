@@ -57,14 +57,12 @@ const DroppableSemester = ({
           ))}
           {provided.placeholder}
 
-          {/* drop indikator (når tom) */}
           {courses.length === 0 && !snapshot.isDraggingOver && (
             <div className="empty-semester">
               {readOnly ? "No courses in this semester" : "Drag courses here"}
             </div>
           )}
 
-          {/* drop indikator */}
           {snapshot.isDraggingOver && courses.length === 0 && (
             <div className="drop-indicator">
               <p>Release to add course</p>

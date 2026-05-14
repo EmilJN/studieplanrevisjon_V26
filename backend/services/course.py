@@ -11,8 +11,7 @@ from flask import jsonify, request
 class CourseService:
     def __init__(self, db_session=None):
         self.db = db_session or db.session
-
-    # Hent emne basert på ID
+        
     def get_course_by_id(self, course_id):
         if not course_id or not isinstance(course_id, int):
             raise ValueError("Invalid course ID")
@@ -21,18 +20,15 @@ class CourseService:
             raise ValueError(f"Course with ID {course_id} not found")
         return course
     
-    # Henter emner basert på IDer (flere emner)
     def get_courses_by_ids(self, course_ids):
         if not course_ids:
             return []
             
         return self.db.query(Course).filter(Course.id.in_(course_ids)).all()
 
-    # Hent alle emner (serialisert) fra databasen
     def get_all_courses(self):
         return self.db.query(Course).all()
-        # courses = self.db.query(Course).all()
-        # return [course.serialize() for course in courses]
+
 
     def course_exists(self, name=None, course_code=None):
         try:
@@ -48,7 +44,6 @@ class CourseService:
             print(f"Error checking course existence: {str(e)}")
             return False
 
-    # Søk etter emne, enten på emnenavn eller emnekode. (evt term(semester))
     def search_courses(self, query, term=None):
         search = f"%{query}%"
         filters = [
@@ -60,7 +55,7 @@ class CourseService:
             return self.db.query(Course).filter(db.or_(*filters), Course.semester == term).all()
         return self.db.query(Course).filter(db.or_(*filters)).all()
     
-    # Legg til nytt emne
+
     def add_course(self, name, course_code, semester, credits, degree):
         course = Course(
             name=name,
@@ -178,7 +173,6 @@ class CourseService:
         log_text = f"Ny versjon av emne {new_course.courseCode} har blitt opprettet"
         return new_course,log_text
     
-    # Slett emne
     def delete_course(self, course_id):
         course = self.get_course_by_id(course_id)
         course_group = self.get_all_courses_in_group(course_id)
@@ -229,7 +223,7 @@ class CourseService:
                 SemesterCourses.course_id == course_id
             ).first()
 
-            return in_use is not None  # True if in use
+            return in_use is not None  
         except Exception as e:
             print(f"Error checking if course is in use: {str(e)}")
             return False

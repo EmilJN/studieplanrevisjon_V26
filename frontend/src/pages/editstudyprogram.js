@@ -10,8 +10,8 @@ import { useNavigate } from "react-router-dom";
 import CreateStudyProgramForm from "../components/createstudyprogramform";
 
 const EditStudyProgram = () => {
-  const [studyPrograms, setStudyPrograms] = useState([]); // Fetched study programs
-  const [searchTerm, setSearchTerm] = useState(""); // Current search term
+  const [studyPrograms, setStudyPrograms] = useState([]); 
+  const [searchTerm, setSearchTerm] = useState("");
   const [selectedProgram, setSelectedProgram] = useState(null);
   const [editingID, setEditingId] = useState(null);
   const [editingProgram, setEditingProgram] = useState({});
@@ -30,7 +30,6 @@ const EditStudyProgram = () => {
     has_responsible: "",
   });
 
-  // henta fra backend
   useEffect(() => {
     const fetchOnLoad = async () => {
       const inst = await fetchAllInstitutes();
@@ -41,7 +40,6 @@ const EditStudyProgram = () => {
     fetchOnLoad();
   }, []);
 
-  // søkebarinput
   const handleSearch = async (e) => {
     const value = e.target.value;
     if (editingID) {
@@ -49,7 +47,6 @@ const EditStudyProgram = () => {
     } else {
       setSearchTerm(value);
       if (value) {
-        // Søke ette program hvis det blir søkt etter noe, ellers fetche alle programmene
         const progs = await searchStudyPrograms(value);
         setStudyPrograms(progs);
       } else {
@@ -60,7 +57,7 @@ const EditStudyProgram = () => {
   };
   const handleEditClick = (program) => {
     setEditingId(program.id);
-    setEditingProgram({ ...program }); // Lagra eksisterende verdier
+    setEditingProgram({ ...program }); 
   };
   const handleCancel = () => {
     setEditingId(null);
@@ -114,7 +111,6 @@ const EditStudyProgram = () => {
     return formErrors;
   };
 
-  // Håndtere endringer i input
   const handleFieldChange = (e) => {
     const { name, value } = e.target;
     setEditingProgram((prev) => ({

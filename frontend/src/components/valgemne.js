@@ -55,8 +55,6 @@ const ValgemneOverlay = ({
   );
 
 
-
-  // Legg te emne i kategori
   const addCourseToGroup = () => {
     if (!selectedCourse || !selectedGroup) {
       alert("Please select a course and a category.");
@@ -74,7 +72,6 @@ const ValgemneOverlay = ({
     }));
 
     setSelectedCourse(null);
-    //setSelectedGroup("");
     setSearchTerm("");
   };
 
@@ -95,8 +92,6 @@ const ValgemneOverlay = ({
       const updatedCategory = prev[categoryId]?.filter(
         (course) => course.id !== courseId
       );
-
-      // Hvis kategori ble tomt itte fjerning, fjern kategorien.
       if (!updatedCategory || updatedCategory.length === 0) {
         const { [categoryId]: _, ...rest } = prev;
         return rest;

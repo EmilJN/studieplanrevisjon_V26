@@ -62,7 +62,6 @@ const Inbox = () => {
 
   return (
     <div className="card shadow-sm" style={{ maxWidth: "400px" }}>
-      {/* Header */}
       <div className="card-header d-flex justify-content-between align-items-center">
         <h6 className="mb-0">Varsler</h6>
 
@@ -80,8 +79,6 @@ const Inbox = () => {
           )}
         </button>
       </div>
-
-      {/* Body */}
       <div
         className="card-body p-2"
         style={{ maxHeight: "400px", overflowY: "auto" }}

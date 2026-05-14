@@ -13,7 +13,7 @@ export const CoursesProvider = ({ children }) => {
                 setCourses(response);
             } catch (error) {
                 console.error("Failed to fetch courses:", error);
-                setCourses([]); // empty array if error
+                setCourses([]); 
             }
         };
 

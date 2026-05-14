@@ -6,11 +6,8 @@ import { fetchValgemne} from "../utils/fetchHelpers";
 import "../styles/dragdrop.css";
 
 export function useStudyPlanData(programId) {
-  // const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  // State for data
   const [studyProgram, setStudyProgram] = useState(null);
   const [semesters, setSemesters] = useState([]);
   const [valgemne, setValgemne] = useState({});
@@ -49,35 +46,6 @@ export function useStudyPlanData(programId) {
           year: currentPlan.year,
           studyprogram_id: currentPlan.studyprogram_id,
         });
-        // let fetchedValgemneCourse = null;
-        // try {
-        //   // fetchedValgemneCourse = await fetchAllValgemner();
-        //   fetchedValgemneCourse = await fetchValgemne();
-        //   // console.log(typeof(fetchedValgemneCourse))
-        //   setValgemneCourse(fetchedValgemneCourse);
-        //   console.log("Fetched VALGEMNE course:", fetchedValgemneCourse);
-        // } catch (error) {
-        //   console.error("Could not fetch VALGEMNE course:", error);
-        // }
-
-        // const updatedSemesters = {};
-        // const valgemneData = {};
-
-        // currentPlan.semesters.forEach((semester) => {
-        //   const hasElectives = semester.semester_courses.some((course) => course.is_elective);
-
-        //   if (hasElectives && fetchedValgemneCourse) {
-        //     const credits = semester.semester_courses.filter(course => course.is_elective === false).reduce((sum, course) => sum + course.credits, 0)
-        //     const alreadyHasValgemne = semester.semester_courses.some(
-        //       (course) => courseToMove.courseCode.includes("VALGEMNE"
-        //     );
-        //     if (credits > 30) { credits = 0 }
-        //     if (!alreadyHasValgemne) {
-        //       // const correct_valgemne = fetchedValgemneCourse.filter(course => course.credits === 30 - credits)
-        //       // console.log(correct_valgemne[0])
-        //       // semester.semester_courses.push(correct_valgemne[0]);
-        //     }
-        //   }
 
         let fetchedValgemneCourse = null;
         try {

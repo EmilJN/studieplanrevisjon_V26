@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 
 const CreateFollowupForm = ({ differences = [], onSave }) => {
-    const [reasoning, setReasoning] = useState({}); // Store the reasoning for each subject
-  
+    const [reasoning, setReasoning] = useState({}); 
     const handleReasonChange = (subjectId, value) => {
       setReasoning((prev) => ({
         ...prev,

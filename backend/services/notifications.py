@@ -211,7 +211,7 @@ class NotificationService:
             print(f"Error acknowledging notification: {str(e)}")
             return False
 
-    # get all notifications for a studyprogram
+
     def get_notifications_by_program(self, program_id):
         
         query = self.db.query(Notifications).filter(Notifications.program_id == program_id)

@@ -55,7 +55,6 @@ const SearchCourses = ({
 
   return (
     <div className="search-courses-container">
-      {/* Header */}
       <div className="d-flex justify-content-between align-items-center mb-2">
         <h4 className="fw-semibold m-0">Søk etter emner</h4>
 
@@ -75,7 +74,6 @@ const SearchCourses = ({
 
       <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
-      {/* Results */}
       <div
         className={`card shadow-sm border-0 ${isDragging ? "dragging" : ""}`}
       >

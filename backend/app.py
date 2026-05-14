@@ -20,7 +20,6 @@ import subprocess, sys
 
 app = create_app()
 
-# Register the blueprints
 app.register_blueprint(backup_bp, url_prefix='/db/backups')
 app.register_blueprint(courses_bp, url_prefix='/courses/')
 app.register_blueprint(prerequisites_bp, url_prefix='/prerequisites' )
@@ -44,13 +43,9 @@ if not os.path.exists(app.config['BACKUP_DIR']):
     os.makedirs(app.config['BACKUP_DIR'])
 
 
-
-# Run the app
 if __name__ == "__main__":
     with app.app_context():
-        # Ensure tables are created
         db.create_all()
-        # Seed database if empty
         from app.models import Course
         if Course.query.count() == 0:
             print("Database is empty, running seed scripts...")

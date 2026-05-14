@@ -75,7 +75,6 @@ const Notifications = ({ programId, setNotificationsRef }) => {
 
   return (
     <div className="notification-container">
-      {/* Notification Badge/Button */}
       <button
         className="notification-badge"
         onClick={toggleNotifications}
@@ -84,8 +83,6 @@ const Notifications = ({ programId, setNotificationsRef }) => {
         <span className="badge-icon">🔔</span>
         {unreadCount > 0 && <span className="badge-count">{unreadCount}</span>}
       </button>
-
-      {/* Notification Overlay */}
       {isOpen && (
         <div className="notification-overlay" ref={overlayRef}>
           <div className="notification-header">

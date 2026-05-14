@@ -1,15 +1,7 @@
-/*
-
-This file contains helper functions and components used in more than 1 page.
-
-*/
-
 import React from "react";
 import Notifications from "../components/notifications.js";
-// import { useAuth } from "../components/validateuser";
 import api from "../api.js";
 
-//whichYear, used in studyprogramdetail and generatestudyplan for determining year.
 export const determineBaseYear = (mostRecentPlan) => {
   return mostRecentPlan ? mostRecentPlan.year : new Date().getFullYear();
 };
@@ -167,8 +159,7 @@ export const SearchBar = ({
   </div>
 );
 
-// SearchBar og filterSubjects blir brukt for valgemne (oldschool way), no drag/drop her.
-// Kan brukes plasser drag and drop kje går.
+
 
 export const filterCourses = (courses, searchTerm) => {
   return courses.filter(
@@ -178,9 +169,7 @@ export const filterCourses = (courses, searchTerm) => {
   );
 };
 
-//semesterpairs, studyprogramdetail
-// Når man vil visa heila studieplanen i to og to semestre.
-// 1-2, 3-4, 5-6 osv.
+
 export const groupSemestersIntoPairs = (semesters) => {
   const pairs = [];
   for (let i = 0; i < semesters.length; i += 2) {

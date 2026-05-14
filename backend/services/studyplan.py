@@ -17,8 +17,6 @@ class StudyplanService:
         self.semester_service = semester_service
         self.semesterCourses_service = semesterCourses_service
 
-
-    # Create (med flush)
     def add_studyplan(self, year, studyprogram_id):
         existing_studyplan = self.db.query(Studyplan).filter_by(year=year, studyprogram_id=studyprogram_id).first()
         if existing_studyplan:
@@ -32,7 +30,6 @@ class StudyplanService:
             self.db.rollback()
             raise RuntimeError(f"Failed to add studyplan: {str(e)}")
 
-    # Delete
     def delete_studyplan(self, studyplan_id):
         try:
             studyplan = self.get_studyplan(studyplan_id)
@@ -49,7 +46,6 @@ class StudyplanService:
             raise RuntimeError(f"Failed to delete studyplan: {str(e)}")
 
 
-    # update
     def update_semesters_courses(self, studyplan_id, semester_courses):
         course_service = self.course_service or CourseService(self.db)
         try:
@@ -70,7 +66,6 @@ class StudyplanService:
             raise RuntimeError(f"Failed to update semester courses for studyplan {studyplan_id}: {str(e)}")
 
 
-    # get by id
     def get_studyplan(self, studyplan_id):
         try:
             studyplan = self.db.query(Studyplan).get(studyplan_id)
@@ -80,7 +75,6 @@ class StudyplanService:
         except Exception as e:
             raise RuntimeError(f"Failed to get studyplan: {str(e)}")
 
-    # check if studyplan exists
     def check_studyplan_exists(self, studyprogram_id, year):
 
         return self.db.query(Studyplan).filter_by(
@@ -88,7 +82,6 @@ class StudyplanService:
             year=year
         ).first() is not None
 
-    # get all plans by progID (not serialized)
     def get_all_studyplans(self, studyprogram_id):
         try:
             studyplans = self.db.query(Studyplan).filter_by(studyprogram_id=studyprogram_id).order_by(Studyplan.year.desc()).all()
@@ -97,7 +90,6 @@ class StudyplanService:
             raise RuntimeError(f"Failed to get all studyplans: {str(e)}")
             return []
 
-    #create new studyplan with semesters and courses(createSP)
     def create_complete_studyplan(self, year, studyprogram_id, semester_courses):
         if self.check_studyplan_exists(year, studyprogram_id):
             raise ValueError("A studyplan already exists for this year and program")
@@ -134,8 +126,6 @@ class StudyplanService:
             raise RuntimeError(f"Failed to get latest studyplan: {str(e)}")
 
 
-
-    # get all studyplans
     def get_studyplans(self):
         try:
             studyplan = self.db.query(Studyplan).all()
@@ -143,7 +133,6 @@ class StudyplanService:
         except Exception as e:
             raise RuntimeError(f"Failed to get studyplan: {str(e)}")
 
-    # get latest studyplan per program
     def get_all_latest_studyplans(self):
         try:
             latest_years_subquery = self.db.query(
@@ -227,7 +216,6 @@ class StudyplanService:
 
     def get_studyplan_with_courses(self, studyplan_id):
         try:
-            # Fetch the basic studyplan data
             studyplan_data = self.get_sp_basic(studyplan_id)
 
             for semester in studyplan_data.get('semesters', []):
@@ -294,7 +282,6 @@ class StudyplanService:
                 .limit(3)
                 .all()
             )
-
             if not studyplans:
                 raise ValueError(f"No study plans found for program ID {studyprogram_id}")
 

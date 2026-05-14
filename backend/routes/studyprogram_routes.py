@@ -3,14 +3,10 @@ from app.models import Course, Studyprogram, Institute, Studyplan
 from app import db
 from services import ServiceFactory
 
-# http://localhost:5000/backend/studyprograms/
-# LA LINJÅ OPPFOR STÅ - brukan te å lett henta URLen te POSTMAN. 
 
-# Create a Blueprint
 studyprogram_bp = Blueprint('studyprograms', __name__)
 
-# Studyprogram
-# Create
+
 @studyprogram_bp.route("/create", methods=["POST"])
 def create_studyprogram():
     try:
@@ -38,7 +34,7 @@ def create_studyprogram():
         return jsonify({"error": str(e)}), 500
 
 
-# Delete
+
 @studyprogram_bp.route("/<int:studyprogram_id>", methods=["DELETE"])
 def delete_studyprogram(studyprogram_id):
     try:
@@ -50,7 +46,7 @@ def delete_studyprogram(studyprogram_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# Update
+
 @studyprogram_bp.route("/<int:studyprogram_id>/update", methods=["PUT"])
 def update_studyprogram(studyprogram_id):
     try:
@@ -70,13 +66,14 @@ def update_studyprogram(studyprogram_id):
         )
         return jsonify(studyprogram.serialize()), 200
     except ValueError as e:
-        return jsonify({"error": str(e)}), 404
+        raise e 
+        #return jsonify({"error": str(e)}), 404
     except Exception as e:
+        raise Exception(f"{str(e)} - {institute}")
+        #return jsonify({"error": str(e)}), 500
         return jsonify({"error": str(e)}), 500
 
 
-
-# Get by id
 @studyprogram_bp.route("/<int:studyprogram_id>", methods=["GET"])
 def get_studyprogram_by_id(studyprogram_id):
     try:
@@ -88,7 +85,7 @@ def get_studyprogram_by_id(studyprogram_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# get all
+
 @studyprogram_bp.route("/getAllStudyPrograms", methods=["GET"])
 def get_studyprograms():
     try:
@@ -102,7 +99,6 @@ def get_studyprograms():
         return jsonify({"error": str(e)}), 500
 
 
-# Søk etter studieprogram, enten på studieprogramnavn eller degree_type.
 @studyprogram_bp.route('/search', methods=['GET'])
 def search_program():
     query = request.args.get('query', '').lower()
@@ -117,7 +113,6 @@ def search_program():
         return jsonify({"error": str(e)}), 500
     
 
-# by insitute_id
 @studyprogram_bp.route("/institute/<string:institute_id>", methods=["GET"])
 def get_studyprograms_by_institute(institute_id):
     try:
@@ -132,7 +127,6 @@ def get_studyprograms_by_institute(institute_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# get institute by program id
 @studyprogram_bp.route("/<int:studyprogram_id>/institute", methods=["GET"])
 def get_institute_by_program_id(studyprogram_id):
     try:
@@ -178,7 +172,6 @@ def become_not_in_charge(studyprogram_id):
         return jsonify({"error": str(e)}), 500
 
 
-# Henter "degree_type"/"semester_number" fra studyprogram og lager semestre. 
 @studyprogram_bp.route('/<int:studyprogram_id>/semester-info', methods=['GET'])
 def get_program_semester_info(studyprogram_id):
     try:
@@ -204,15 +197,12 @@ def get_studyprograms_by_program_ansvarlig_id(user_id):
 ##################### OPPE OK, NEDE DNO ########################
 
 
-
-# get studyprogram
 @studyprogram_bp.route("/<int:id>", methods=["GET"])
 def get_studyprogram(id):
     studyprogram = Studyprogram.query.get(id)
     if not studyprogram:
         return jsonify({"error": "Studyprogram not found"}), 404
     
-    # query institute (konvertera Id til navn)
     data = studyprogram.serialize()
     data["institute_name"] = studyprogram.institute.name
     return jsonify(data)
@@ -225,8 +215,6 @@ def getStudyprogramById(id):
     return jsonify(studyprogram.serialize()), 200
 
 
-
-# update studyprograms
 @studyprogram_bp.route("/<string:name>", methods=["PUT"])
 def update_studyprogram_name(name):
     studyprogram = Studyprogram.query.get(name)
@@ -256,7 +244,7 @@ def get_semester_structure(studyprogram_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
-#få programmer som har semestere med over 30 poeng
+
 @studyprogram_bp.get('/get_plans_with_too_many_credits')
 def get_plans_too_many_credits():
     programservice = ServiceFactory.get_studyprogram_service()

@@ -294,7 +294,7 @@ function CourseDetails() {
                 <div className="alert alert-warning mt-2">
                   Dette emnet brukes i {studyPrograms.length} studieprogrammer.
                   Hvis du gjør endringer uten å opprette en ny versjon, vil det
-                  sendes e-post til alle berørte programmeransvarlige.
+                  sendes e-post til alle berørte programme ansvarlige.
                 </div>
               )}
             </div>

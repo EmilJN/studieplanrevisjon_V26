@@ -26,9 +26,7 @@ class CoursePackageService:
                 studyplan_id=studyplan_id,
                 packagetype=packagetype
             )
-
             self.db.add(new_course_package)
-
             log = Log(
                 f"Ny {packagetype} har blitt opprettet: '{name}' for studieplan {studyplan_id}"
             )

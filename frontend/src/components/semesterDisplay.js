@@ -92,14 +92,12 @@ const SemesterDisplay = ({
     }, 0);
   };
   const creditsPerPackage = {};
-
   regularCourses.forEach((course) => {
     const pkgId = courseToPackageMap?.[course.id] || "none";
 
     if (!creditsPerPackage[pkgId]) {
       creditsPerPackage[pkgId] = 0;
     }
-
     creditsPerPackage[pkgId] += course.credits || 0;
   });
   return (
@@ -111,9 +109,9 @@ const SemesterDisplay = ({
             <button
               onClick={() => {
                 if (hasValgemne) {
-                  onAdministrerValgemner(); // ← manage existing valgemne
+                  onAdministrerValgemner();
                 } else {
-                  handleAddValgemne(); // ← add + open overlay
+                  handleAddValgemne(); 
                 }
               }}
               className="btn btn-sm btn-outline-secondary"
@@ -138,15 +136,12 @@ const SemesterDisplay = ({
         readOnly={readOnly}
       />
       <div className="text-muted small mt-2">
-        {/* Faste emner først */}
         {creditsPerPackage["none"] > 0 && (
           <div className="d-flex justify-content-between fw-semibold">
             <span>Faste emner</span>
             <span>{creditsPerPackage["none"]} sp</span>
           </div>
         )}
-
-        {/* Pakkene */}
         {Object.entries(creditsPerPackage)
           .filter(([pkgId]) => pkgId !== "none")
           .map(([pkgId, credits]) => {
