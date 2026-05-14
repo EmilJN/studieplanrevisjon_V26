@@ -50,6 +50,7 @@ class NotificationService:
             )
             self.db.add(notification)
             self.db.commit()
+            self.send_emails_to_programs([program_id], None, message, reason)
             return notification.serialize()
         except Exception as e:
             self.db.rollback()
@@ -153,30 +154,8 @@ class NotificationService:
                         recipient_program_ids.append(program_id)
                 
                 if recipient_program_ids:
-                    recipients = []
-                    for program_id in recipient_program_ids:
-                        program = self.studyprogram_service.get_studyprogram_by_id(program_id)
-                        if program and program.program_ansvarlig and program.program_ansvarlig.email:
-                            recipients.append((program, program.program_ansvarlig.email, program.program_ansvarlig.name))
-                        else:
-                            print(f"Ingen email funnet for {program_id}, hopper over.")
-
-                    for program, email, name in recipients:
-                        print(f"[EMAIL DRY RUN] Til: {name} ({email})")
-                        print(f"[EMAIL DRY RUN] Program: {program.name}")
-                        print(f"[EMAIL DRY RUN] Fra: {self.studyprogram_service.get_studyprogram_by_id(source_program_id).name}")
-                        print(f"[EMAIL DRY RUN] Melding: {message}")
-                        print(f"[EMAIL DRY RUN] Grunn: {reason}")
-                        print("-" * 40)
-
                     sender_program = self.studyprogram_service.get_studyprogram_by_id(source_program_id)
-
-                    email_thread = threading.Thread(
-                        target=self.send_email,
-                        args=(recipients, sender_program, message, reason),
-                        daemon=True
-                        )
-                    email_thread.start()
+                    self.send_emails_to_programs(recipient_program_ids, sender_program, message, reason)
 
             return notifications
         except Exception as e:
@@ -277,41 +256,61 @@ class NotificationService:
             print(f"Error deleting all notifications: {str(e)}")
             return False
     
-    
-    def send_email(self, recipients, sender_program, message, reason):
-        try:
-            if not recipients:
-                print("Ingen ansvarlige for program.")
-                return
-            
-            with mail.connect() as conn:
-                for program, email, name in recipients:
-                    print(f"[EMAIL] Sender til {name} ({email}) for program {program.name}")
-                    msg = Message(
-                        subject="Notifikasjon fra studieplanrevisjon",
-                        recipients=[email],
-                        body=f"Hei {name}!"
-                        f"{sender_program.name} har gjort følgende endring:\n\n "
-                        f"{message}\n\n"
-                        f"Oppgitt grunn:\n"
-                        f"{reason}"
-                        f"Dette påvirker studieprogrammet {program.name}"
-                        )
-                    msg.html = f"""
-                    <html>
-                        <body>
-                            <h2>Notifikasjon fra studieplanrevisjon</h2>
-                            <p>Hei {name}!<p>
-                            <p><strong>{sender_program.name}</strong> har gjort følgende endring:</p>
-                            <p>{message}</p>
-                            <p><strong>Oppgitt grunn:</strong> {reason}</p>
-                            <hr>
-                            <p>Dette påvirker studieprogrammet: <strong>{program.name}</strong></p>
-                        </body>
-                    </html>
-                    """
-                    conn.send(msg)
+    def send_emails_to_programs(self, program_ids, sender_program, message, reason):
+        recipients = []
+        for program_id in program_ids:
+            program = self.studyprogram_service.get_studyprogram_by_id(program_id)
+            if program and program.program_ansvarlig and program.program_ansvarlig.email:
+                recipients.append((program.name, program.program_ansvarlig.email, program.program_ansvarlig.name))
+            else:
+                print(f"Ingen email funnet for {program_id}, hopper over.")
 
-        except Exception as e:
-            print(f"Error sending email: {str(e)}")
-            return []
+        if recipients:        
+            from flask import current_app
+            app = current_app._get_current_object()
+            sender_name = sender_program.name if sender_program else "Studentplanrevisjon"
+            email_thread = threading.Thread(
+                target=self.send_email,
+                args=(recipients, sender_name, message, reason, app),
+                daemon=True
+                )
+            email_thread.start()
+    
+    def send_email(self, recipients, sender_name, message, reason, app):
+        with app.app_context():
+            try:
+                if not recipients:
+                    print("Ingen ansvarlige for program.")
+                    return
+
+                with mail.connect() as conn:
+                    for program_name, email, name in recipients:
+                        print(f"[EMAIL] Sender til {name} ({email}) for program {program_name}")
+                        msg = Message(
+                            subject="Notifikasjon fra studieplanrevisjon",
+                            recipients=[email],
+                            body=f"Hei {name}!\n\n"
+                            f"{sender_name} har gjort følgende endring:\n\n "
+                            f"{message}\n\n"
+                            f"Oppgitt grunn:\n"
+                            f"{reason}\n\n"
+                            f"Dette påvirker studieprogrammet {program_name}"
+                            )
+                        msg.html = f"""
+                        <html>
+                            <body>
+                                <h2>Notifikasjon fra studieplanrevisjon</h2>
+                                <p>Hei {name}!<p>
+                                <p><strong>{sender_name}</strong> har gjort følgende endring:</p>
+                                <p>{message}</p>
+                                <p><strong>Oppgitt grunn:</strong> {reason}</p>
+                                <hr>
+                                <p>Dette påvirker studieprogrammet: <strong>{program_name}</strong></p>
+                            </body>
+                        </html>
+                        """
+                        conn.send(msg)
+
+            except Exception as e:
+                print(f"Error sending email: {str(e)}")
+                return []
