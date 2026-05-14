@@ -17,7 +17,7 @@ class Coursepackage(db.Model):
 
     studyplan_id = db.Column(
         db.Integer,
-        db.ForeignKey('studyplan.id'),
+        db.ForeignKey('studyplan.id', ondelete='CASCADE'),
         nullable=False
     )
 
@@ -198,8 +198,10 @@ class Studyplan(db.Model):
     semesters = db.relationship('Semester', back_populates='studyplan', cascade='all, delete-orphan', lazy='joined')
     coursepackages = db.relationship(
     'Coursepackage',
-    back_populates='studyplan'
-)
+    back_populates='studyplan',
+    cascade='all, delete-orphan',
+    passive_deletes=True
+    )
     studyprogram = db.relationship('Studyprogram', back_populates='studyplans', lazy='joined')
     __table_args__ = (
         db.UniqueConstraint('year', 'studyprogram_id', name='unique_year_studyprogram'),
