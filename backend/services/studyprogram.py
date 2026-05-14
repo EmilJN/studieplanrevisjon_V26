@@ -200,6 +200,8 @@ class StudyprogramService:
             else:
                 raise ValueError("Invalid degree type or semester number")
 
+        return semesterNumber
+    
     def get_studyplans_by_studyprogramId(self, studyprogram_id):
         return self.db.query(Studyplan).filter_by(
             studyprogram_id=studyprogram_id
