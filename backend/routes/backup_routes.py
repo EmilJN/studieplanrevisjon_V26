@@ -1,120 +1,65 @@
-import datetime
-import subprocess
-import os
-from flask import Blueprint, jsonify, request
-import logging
-from app import db
+from flask import Blueprint, jsonify
+from services import ServiceFactory
 
-logging.basicConfig(level=logging.INFO, 
-                   format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                   filename='database_operations.log')
-logger = logging.getLogger(__name__)
+backup_bp = Blueprint("backups", __name__)
 
-
-backup_bp = Blueprint('backup', __name__)
-
-
-def backup_db():
-    try:
-        backup_dir = os.getenv("BACKUP_DIR", "./instance/backups")
-        os.makedirs(backup_dir, exist_ok=True)
-
-        filename = f"backup_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.sql"
-        filepath = os.path.join(backup_dir, filename)
-
-        env = os.environ.copy()
-        env["PGPASSWORD"] = os.getenv("DB_PASSWORD")
-
-        with open(filepath, "w") as f:
-            result = subprocess.run(
-                [
-                    "pg_dump",
-                    "--clean",
-                    "--if-exists",
-                    "-h", os.getenv("DB_HOST"),
-                    "-U", os.getenv("DB_USER"),
-                    "-d", os.getenv("DB_NAME"),
-                    "-p", os.getenv("DB_PORT", "5432"),
-                ],
-                stdout=f,
-                text=True,
-                env=env,
-                check=True
-            )
-
-        return filename
-
-    except Exception as e:
-        raise Exception(f"Error during backup: {str(e)}")
-    
-
-def find_all_backups():
-    backup_dir = os.getenv("BACKUP_DIR", "./instance/backups")
-    if not os.path.exists(backup_dir):
-        return []
-    return [f for f in os.listdir(backup_dir) if f.endswith('.sql')]
-
-
-@backup_bp.route('/backups/start-backup', methods=['POST'])
-def backup():
-    try:
-        backup_file = backup_db()
-        return jsonify({
-        "message": "Backup successful",
-        "file": backup_file,
-    }),200
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-    
-@backup_bp.route('/backups/delete/<string:filename>', methods=['DELETE'])
-def delete_backup(filename):
-    backup_dir = os.getenv("BACKUP_DIR", "./instance/backups")
-    filepath = os.path.join(backup_dir, filename)
-
-    if not os.path.exists(filepath):
-        return jsonify({'error': 'Backup file not found'}), 404
-
-    try:
-        os.remove(filepath)
-        
-        return jsonify({'message': 'Backup deleted successfully'})
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-@backup_bp.route('/backups/restore/<string:filename>', methods=['POST'])
-def restore_backup(filename):
-    backup_dir = os.getenv("BACKUP_DIR", "./instance/backups")
-    filepath = os.path.join(backup_dir, filename)
-
-    if not os.path.exists(filepath):
-        return jsonify({'error': 'Backup file not found'}), 404
-
-    env = os.environ.copy()
-    env["PGPASSWORD"] = os.getenv("DB_PASSWORD")
-
-    try:
-        with open(filepath, "r") as f:
-            subprocess.run(
-                [
-                    "psql",
-                    "-h", os.getenv("DB_HOST"),
-                    "-U", os.getenv("DB_USER"),
-                    "-d", os.getenv("DB_NAME"),
-                    "-p", os.getenv("DB_PORT", "5432"),
-                ],
-                stdin=f,
-                text=True,
-                env=env,
-                check=True
-            )
-        return jsonify({'message': 'Restore successful'})
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-@backup_bp.route('/backups/list', methods=['GET'])
+@backup_bp.route('/list', methods=['GET'])
 def list_backups():
+    backup_service = ServiceFactory.get_backup_service()
     try:
-        backups = find_all_backups()
-        return jsonify(sorted(backups, reverse=True))
+        backups = backup_service.list_backups()
+        return jsonify(backups), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@backup_bp.route('/start-backup', methods=['POST'])
+def start_backup():
+    backup_service = ServiceFactory.get_backup_service()
+    try:
+        backup_path = backup_service.backup_database()
+
+        return jsonify({
+            'message': 'Backup created successfully',
+            'backup_path': backup_path
+        }), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@backup_bp.route('/restore/<string:filename>', methods=['POST'])
+def restore_backup(filename):
+    backup_service = ServiceFactory.get_backup_service()
+    try:
+        backup_service.restore_database(filename)
+
+        return jsonify({
+            'message': 'Backup restored successfully'
+        }), 200
+
+    except FileNotFoundError:
+        return jsonify({
+            'error': 'Backup file not found'
+        }), 404
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+@backup_bp.route('/delete/<string:filename>', methods=['DELETE'])
+def delete_backup(filename):
+    backup_service = ServiceFactory.get_backup_service()
+    try:
+        backup_service.delete_backup(filename)
+        return jsonify({
+            'message': 'Backup deleted successfully'
+        }), 200
+
+    except FileNotFoundError:
+        return jsonify({
+            'error': 'Backup file not found'
+        }), 404
+
     except Exception as e:
         return jsonify({'error': str(e)}), 500
