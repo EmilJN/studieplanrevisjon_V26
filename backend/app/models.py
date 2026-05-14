@@ -44,10 +44,20 @@ class Coursepackage(db.Model):
             "studyplan_id": self.studyplan_id,
             "packagetype": self.packagetype
         }
+        
+        
 association = db.Table(
     'association',
-    db.Column('course_id', db.Integer, db.ForeignKey('course.id')),
-    db.Column('coursepackage_id', db.String(120), db.ForeignKey('coursepackage.id'))
+    db.Column(
+        'course_id',
+        db.Integer,
+        db.ForeignKey('course.id', ondelete='CASCADE')
+    ),
+    db.Column(
+        'coursepackage_id',
+        db.String(120),
+        db.ForeignKey('coursepackage.id', ondelete='CASCADE')
+    )
 )
 
 # Model for Emne
