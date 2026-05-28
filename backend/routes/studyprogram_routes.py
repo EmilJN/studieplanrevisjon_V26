@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request, Blueprint, session
 from app.models import Course, Studyprogram, Institute, Studyplan
 from app import db
 from services import ServiceFactory
+from utils.auth.decorators import admin_required
 
 
 studyprogram_bp = Blueprint('studyprograms', __name__)
@@ -36,6 +37,7 @@ def create_studyprogram():
 
 
 @studyprogram_bp.route("/<int:studyprogram_id>", methods=["DELETE"])
+@admin_required
 def delete_studyprogram(studyprogram_id):
     try:
         studyprogram_service = ServiceFactory.get_studyprogram_service()

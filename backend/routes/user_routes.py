@@ -4,6 +4,7 @@ from flask import Flask, jsonify, request, Blueprint, session, url_for, redirect
 from app.models import  User
 from app import oauth
 from services import ServiceFactory
+from utils.auth.decorators import admin_required
 
 user_bp = Blueprint('user', __name__)
 
@@ -56,6 +57,7 @@ def logout():
     return redirect(f"{os.environ.get('FRONTEND_URL', 'http://localhost:3000')}/login")
 
 @user_bp.route("/delete/<string:user_id>", methods=["DELETE"])
+@admin_required
 def delete_user(user_id):
     try: 
         userservice = ServiceFactory.get_user_service()
@@ -90,6 +92,7 @@ def get_logs():
     return jsonify(logs)
 
 @user_bp.route("/promote_user/<string:user_id>", methods=["PUT"])
+@admin_required
 def promote_user(user_id):
     userservice = ServiceFactory.get_user_service()
     success = userservice.promote_user(user_id)
@@ -97,3 +100,4 @@ def promote_user(user_id):
         return jsonify({"message": "User promoted to admin"}), 200
     else:
         return jsonify({"error": "User not found"}), 404
+

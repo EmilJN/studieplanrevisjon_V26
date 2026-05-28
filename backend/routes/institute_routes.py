@@ -1,5 +1,6 @@
 from flask import jsonify, request, Blueprint
 from services.service_factory import ServiceFactory
+from utils.auth.decorators import admin_required
 
 institute_bp = Blueprint('institutes', __name__)
 
@@ -23,6 +24,7 @@ def get_all_institutes():
 
 
 @institute_bp.post("/add")
+@admin_required
 def add_institute():
     data = request.get_json()
 
@@ -49,6 +51,7 @@ def add_institute():
 
 
 @institute_bp.delete("/delete/<string:institute_id>")
+@admin_required
 def delete_institute(institute_id):
     institute_service = ServiceFactory.get_institute_service()
 
@@ -71,6 +74,7 @@ def delete_institute(institute_id):
 
 
 @institute_bp.put("/update/<string:institute_id>")
+@admin_required
 def update_institute(institute_id):
     data = request.get_json()
 

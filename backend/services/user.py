@@ -8,6 +8,10 @@ class UserService:
 
     def get_user_by_id(self, feide_id):
         return self.db.get(User, feide_id)
+    
+    def is_admin(self, feide_id):
+        user = self.get_user_by_id(feide_id)
+        return user and user.role == 'admin'
 
     def get_user_by_email(self, email):
         return self.db.query(User).filter(User.email == email).first()

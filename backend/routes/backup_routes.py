@@ -1,9 +1,11 @@
 from flask import Blueprint, jsonify
 from services import ServiceFactory
+from utils.auth.decorators import admin_required
 
 backup_bp = Blueprint("backups", __name__)
 
 @backup_bp.route('/list', methods=['GET'])
+@admin_required
 def list_backups():
     backup_service = ServiceFactory.get_backup_service()
     try:
@@ -15,6 +17,7 @@ def list_backups():
 
 
 @backup_bp.route('/start-backup', methods=['POST'])
+@admin_required
 def start_backup():
     backup_service = ServiceFactory.get_backup_service()
     try:
@@ -30,6 +33,7 @@ def start_backup():
 
 
 @backup_bp.route('/restore/<string:filename>', methods=['POST'])
+@admin_required
 def restore_backup(filename):
     backup_service = ServiceFactory.get_backup_service()
     try:
@@ -48,6 +52,7 @@ def restore_backup(filename):
         return jsonify({'error': str(e)}), 500
     
 @backup_bp.route('/delete/<string:filename>', methods=['DELETE'])
+@admin_required
 def delete_backup(filename):
     backup_service = ServiceFactory.get_backup_service()
     try:

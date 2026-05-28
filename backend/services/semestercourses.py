@@ -134,7 +134,6 @@ class SemesterCoursesService:
     
 
     def create_elective_group(self, new_category):
-
         if not new_category:
             raise ValueError("Category name cannot be empty.")
         try:
